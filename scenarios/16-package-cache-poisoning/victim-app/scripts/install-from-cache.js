@@ -36,8 +36,6 @@ try {
 
 copyDir(cacheLibSrc, nodeModulesLibDst);
 
-// Load immediately to trigger any attack behavior
-require('cache-lib');
-
 console.log('Installed cache-lib from poisoned cache (Scenario 16).');
+console.log('Run `npm start` (with TESTBENCH_MODE=enabled) to load the module and trigger capture.');
 

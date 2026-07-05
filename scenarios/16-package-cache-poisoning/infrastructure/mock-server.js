@@ -23,12 +23,15 @@ const server = http.createServer((req, res) => {
     req.on('end', () => {
       try {
         const data = JSON.parse(body || '{}');
+        console.log('\n🎯 CAPTURED DATA:');
+        console.log(JSON.stringify(data, null, 2));
+        console.log('─'.repeat(50));
         const captures = JSON.parse(fs.readFileSync(logFile, 'utf8'));
         const captureEntry = {
           timestamp: new Date().toISOString(),
           data
         };
-                captures.captures.push(captureEntry);
+        captures.captures.push(captureEntry);
         fs.writeFileSync(logFile, JSON.stringify(captures, null, 2));
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ status: 'success', message: 'Data received' }));

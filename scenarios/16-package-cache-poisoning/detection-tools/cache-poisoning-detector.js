@@ -17,19 +17,23 @@ function readIfExists(p) {
   }
 }
 
-const scenarioRoot = path.join(process.cwd());
-// When called with "victim-app", cwd might be scenario root or elsewhere.
-const target = process.argv[2] || '.';
-const root = path.isAbsolute(target) ? target : path.join(process.cwd(), target);
+const target = process.argv[2] || 'victim-app';
+const victimApp = path.isAbsolute(target) ? target : path.join(process.cwd(), target);
+const scenarioRoot = fs.existsSync(path.join(victimApp, 'package.json'))
+  ? path.dirname(victimApp)
+  : process.cwd();
 
-const cachePath = path.join(root, 'cache', 'cache-lib', 'index.js');
-const index = readIfExists(cachePath);
+const cachePath = path.join(scenarioRoot, 'cache', 'cache-lib', 'index.js');
+const installedPath = path.join(victimApp, 'node_modules', 'cache-lib', 'index.js');
+const index = readIfExists(cachePath) || readIfExists(installedPath);
 
 const suspicious = (index || '').includes('localhost:3016') || (index || '').includes('package-cache-poisoning');
 
 console.log('🔍 Cache Poisoning Detector (Scenario 16)\n');
 if (!index) {
-  console.log('❌ Could not find cache-lib code. Expected:', cachePath);
+  console.log('❌ Could not find cache-lib code. Checked:');
+  console.log('  -', cachePath);
+  console.log('  -', installedPath);
   process.exit(1);
 }
 
