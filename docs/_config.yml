@@ -10,3 +10,4 @@ include:
   - 404.html
   - robots.txt
   - sitemap.xml
+  - site.webmanifest

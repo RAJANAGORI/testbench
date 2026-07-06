@@ -5,8 +5,6 @@ Allow: /
 Disallow: /assets/css/
 Disallow: /assets/js/
 Disallow: /_sources/
-Disallow: /site.webmanifest
-
 # Both canonical URLs are the same site
 Host: simulator.rajanagori.in
 
