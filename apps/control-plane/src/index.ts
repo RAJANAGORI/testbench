@@ -6,8 +6,9 @@ import { resolve } from 'node:path';
 import { createApiRouter } from './routes/api.js';
 import { processManager } from './process-manager.js';
 
-const HOST = '127.0.0.1';
+const HOST = process.env.CONTROL_PLANE_HOST ?? '0.0.0.0';
 const PORT = Number(process.env.CONTROL_PLANE_PORT ?? 3101);
+const PUBLIC_HOST = process.env.SCAS_PUBLIC_HOST ?? '0.0.0.0';
 
 // When launched from apps/control-plane, cwd is repo root's child — walk up to repo root
 const cwd = process.cwd();
@@ -19,7 +20,7 @@ const REPO_ROOT = cwd.endsWith('control-plane')
 process.env.SCAS_REPO_ROOT = REPO_ROOT;
 
 const app = express();
-app.use(cors({ origin: ['http://127.0.0.1:3100', 'http://localhost:3100', 'http://127.0.0.1:5173', 'http://localhost:5173'] }));
+app.use(cors({ origin: true }));
 app.use(express.json());
 
 app.get('/', (_req, res) => {
@@ -32,8 +33,8 @@ app.get('/', (_req, res) => {
       platform: '/api/platform/status',
       logs: '/ws/logs',
     },
-    dashboard: 'http://127.0.0.1:3100',
-    landing: 'http://127.0.0.1:5173',
+    dashboard: `http://${PUBLIC_HOST}:3100`,
+    landing: `http://${PUBLIC_HOST}:5173`,
   });
 });
 
@@ -43,7 +44,7 @@ const server = createServer(app);
 const wss = new WebSocketServer({ server, path: '/ws/logs' });
 
 wss.on('connection', (ws, req) => {
-  const url = new URL(req.url ?? '', `http://${HOST}`);
+  const url = new URL(req.url ?? '', `http://${req.headers.host ?? '0.0.0.0'}`);
   const sessionFilter = url.searchParams.get('session');
 
   const send = (data: unknown) => {

@@ -6,9 +6,11 @@ The CLI remains the canonical way to run labs. The dashboard is an optional cont
 
 | Service | URL | Role |
 |---------|-----|------|
-| Landing (Vite) | http://127.0.0.1:5173 | Xero-style hero + **Start Dashboard** CTA |
-| Dashboard (Next.js) | http://127.0.0.1:3100 | Scenario catalog, service controls, live logs |
-| Control plane | http://127.0.0.1:3101 | Process supervisor, WebSocket logs, capture proxy |
+| Landing (Vite) | http://0.0.0.0:5173 | SCAS hero + **Start Dashboard** CTA |
+| Dashboard (Next.js) | http://0.0.0.0:3100 | Scenario catalog, service controls, live logs |
+| Control plane | http://0.0.0.0:3101 | Process supervisor, WebSocket logs, capture proxy |
+
+Services bind on **0.0.0.0** (all interfaces). Open the same host in your browser — e.g. `http://localhost:5173` or `http://<your-machine-ip>:5173`.
 
 ## Quick start
 
@@ -23,28 +25,30 @@ Or run components separately:
 
 ```bash
 npm install
-npm run dev:control-plane   # terminal 1
-npm run dev:dashboard       # terminal 2
-npm run dev:landing         # terminal 3
+npm run dev:control-plane   # terminal 1 — 0.0.0.0:3101
+npm run dev:dashboard       # terminal 2 — 0.0.0.0:3100
+npm run dev:landing         # terminal 3 — 0.0.0.0:5173
 ```
 
-Open http://127.0.0.1:5173 and click **Start Dashboard**.
+Then open:
 
-**Control plane not loading?** It must be running separately. Verify:
+- Landing: http://0.0.0.0:5173 (or http://localhost:5173)
+- Dashboard: http://0.0.0.0:3100
+- Control plane health: http://0.0.0.0:3101/api/health
+
+**Control plane not loading?** Verify:
 
 ```bash
-curl http://127.0.0.1:3101/api/health
+curl http://0.0.0.0:3101/api/health
 # → {"ok":true,"port":3101,...}
 ```
 
-If you only ran `npm run dev:landing`, the dashboard will show errors — start all three services or use `./scripts/start-dashboard.sh`.
-
 ## Safety
 
-- Control plane binds to **127.0.0.1** only.
+- UI services bind to **0.0.0.0** for local/LAN access — use only in isolated lab environments.
 - All spawned lab processes receive `TESTBENCH_MODE=enabled`.
-- Capture endpoints remain localhost-only; the dashboard proxies existing mock APIs.
-- Do not expose the control plane to a network.
+- Scenario payload exfiltration remains **127.0.0.1** only; the dashboard proxies existing mock APIs.
+- Do not expose the control plane to untrusted networks.
 
 ## What the dashboard can do
 

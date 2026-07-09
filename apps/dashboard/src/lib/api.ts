@@ -1,7 +1,7 @@
-const CONTROL_PLANE = process.env.NEXT_PUBLIC_CONTROL_PLANE_URL ?? 'http://127.0.0.1:3101';
+import { controlPlaneUrl } from './hosts';
 
 async function api<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${CONTROL_PLANE}/api${path}`, {
+  const res = await fetch(`${controlPlaneUrl()}/api${path}`, {
     ...init,
     headers: { 'Content-Type': 'application/json', ...init?.headers },
     cache: 'no-store',
@@ -68,7 +68,7 @@ export const cp = {
   teardown: () => api('/platform/teardown', { method: 'POST' }),
   logs: (session?: string) => api<LogEntry[]>(session ? `/logs?session=${session}` : '/logs'),
   processes: () => api('/processes'),
-  wsUrl: () => CONTROL_PLANE.replace('http', 'ws') + '/ws/logs',
+  wsUrl: () => controlPlaneUrl().replace(/^http/, 'ws') + '/ws/logs',
 };
 
-export { CONTROL_PLANE };
+export { controlPlaneUrl } from './hosts';

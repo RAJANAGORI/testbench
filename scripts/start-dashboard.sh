@@ -5,11 +5,16 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
+BIND_HOST="${SCAS_BIND_HOST:-0.0.0.0}"
+PUBLIC_HOST="${SCAS_PUBLIC_HOST:-0.0.0.0}"
+
 export SCAS_REPO_ROOT="$ROOT"
+export CONTROL_PLANE_HOST="$BIND_HOST"
 export CONTROL_PLANE_PORT="${CONTROL_PLANE_PORT:-3101}"
-export NEXT_PUBLIC_CONTROL_PLANE_URL="${NEXT_PUBLIC_CONTROL_PLANE_URL:-http://127.0.0.1:3101}"
-export VITE_DASHBOARD_URL="${VITE_DASHBOARD_URL:-http://127.0.0.1:3100}"
-export VITE_CONTROL_PLANE_URL="${VITE_CONTROL_PLANE_URL:-http://127.0.0.1:3101}"
+export SCAS_PUBLIC_HOST="$PUBLIC_HOST"
+export NEXT_PUBLIC_CONTROL_PLANE_URL="${NEXT_PUBLIC_CONTROL_PLANE_URL:-http://${PUBLIC_HOST}:3101}"
+export VITE_DASHBOARD_URL="${VITE_DASHBOARD_URL:-http://${PUBLIC_HOST}:3100}"
+export VITE_CONTROL_PLANE_URL="${VITE_CONTROL_PLANE_URL:-http://${PUBLIC_HOST}:3101}"
 
 if [[ ! -d node_modules ]]; then
   echo "Installing workspace dependencies…"
@@ -40,23 +45,23 @@ wait_for() {
   return 1
 }
 
-echo "Starting control plane on 127.0.0.1:${CONTROL_PLANE_PORT}…"
+echo "Starting control plane on ${BIND_HOST}:${CONTROL_PLANE_PORT}…"
 npm run dev:control-plane &
 wait_for "http://127.0.0.1:${CONTROL_PLANE_PORT}/api/health" "Control plane"
 
-echo "Starting dashboard on 127.0.0.1:3100…"
+echo "Starting dashboard on ${BIND_HOST}:3100…"
 npm run dev:dashboard &
 wait_for "http://127.0.0.1:3100" "Dashboard"
 
-echo "Starting landing on 127.0.0.1:5173…"
+echo "Starting landing on ${BIND_HOST}:5173…"
 npm run dev:landing &
 wait_for "http://127.0.0.1:5173" "Landing"
 
 echo ""
-echo "SCAS UI ready:"
-echo "  Landing:       http://127.0.0.1:5173"
-echo "  Dashboard:     http://127.0.0.1:3100"
-echo "  Control plane: http://127.0.0.1:${CONTROL_PLANE_PORT}"
+echo "SCAS UI ready (bound on ${BIND_HOST}):"
+echo "  Landing:       http://${PUBLIC_HOST}:5173"
+echo "  Dashboard:     http://${PUBLIC_HOST}:3100"
+echo "  Control plane: http://${PUBLIC_HOST}:${CONTROL_PLANE_PORT}/api/health"
 echo ""
 echo "Press Ctrl+C to stop all services."
 

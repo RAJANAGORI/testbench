@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { Alert, Btn, Card, PageHeader, StatTile, StatusPill } from '@/components/ui';
 import { cp, type PlatformStatus } from '@/lib/api';
+import { controlPlaneUrl } from '@/lib/hosts';
 
 interface ServiceRowProps {
   name: string;
@@ -108,7 +109,7 @@ export default function OverviewPage() {
         <StatTile
           label="Control plane"
           value={cpReachable ? 'Online' : 'Offline'}
-          sub={`127.0.0.1:${status?.controlPlane.port ?? 3101}`}
+          sub={controlPlaneUrl().replace(/^https?:\/\//, '')}
           accent={cpReachable ? 'ok' : 'warn'}
         />
         <StatTile label="Stack services" value={`${runningServices}/3`} sub="ES · Kibana · Floci" accent="warn" />
@@ -178,7 +179,8 @@ export default function OverviewPage() {
         </Card>
         <Card title="Safety" subtitle="Education-only constraints">
           <ul className="space-y-2 text-sm text-ink-muted">
-            <li>• All traffic stays on <span className="text-ink-secondary">127.0.0.1</span></li>
+            <li>• Lab exfil still targets <span className="text-ink-secondary">127.0.0.1</span> only</li>
+            <li>• UI binds on <span className="text-ink-secondary">0.0.0.0</span> for local/LAN access</li>
             <li>• Payloads require <span className="font-mono text-xs text-ink-secondary">TESTBENCH_MODE=enabled</span></li>
             <li>• Use Reset lab when finished to free ports</li>
           </ul>

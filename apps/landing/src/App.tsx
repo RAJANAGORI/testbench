@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 
-const DASHBOARD_URL = import.meta.env.VITE_DASHBOARD_URL ?? 'http://127.0.0.1:3100';
-const CONTROL_PLANE_URL = import.meta.env.VITE_CONTROL_PLANE_URL ?? 'http://127.0.0.1:3101';
+function resolveUrl(envUrl: string | undefined, port: string): string {
+  if (typeof window !== 'undefined') {
+    return `http://${window.location.hostname}:${port}`;
+  }
+  return envUrl ?? `http://0.0.0.0:${port}`;
+}
 
 function useBeamAnimation(
   pipelineRef: React.RefObject<HTMLDivElement | null>,
@@ -133,7 +137,7 @@ export default function App() {
 
   useEffect(() => {
     const check = () => {
-      fetch(`${CONTROL_PLANE_URL}/api/health`)
+      fetch(`${resolveUrl(import.meta.env.VITE_CONTROL_PLANE_URL, '3101')}/api/health`)
         .then((r) => setCpOnline(r.ok))
         .catch(() => setCpOnline(false));
     };
@@ -143,7 +147,7 @@ export default function App() {
   }, []);
 
   const openDashboard = () => {
-    window.location.href = DASHBOARD_URL;
+    window.location.href = resolveUrl(import.meta.env.VITE_DASHBOARD_URL, '3100');
   };
 
   return (
@@ -161,8 +165,8 @@ export default function App() {
         </button>
         <div className={`nav-menu${menuOpen ? ' active' : ''}`}>
           <ul className="nav-links">
-            <li><a href={DASHBOARD_URL}>Scenarios</a></li>
-            <li><a href={`${DASHBOARD_URL}/console`}>Console</a></li>
+            <li><a href={resolveUrl(import.meta.env.VITE_DASHBOARD_URL, '3100')}>Scenarios</a></li>
+            <li><a href={`${resolveUrl(import.meta.env.VITE_DASHBOARD_URL, '3100')}/console`}>Console</a></li>
             <li><a href="https://github.com/RAJANAGORI/supply-chain-attack-simulator" target="_blank" rel="noreferrer">Docs</a></li>
           </ul>
           <div className="nav-actions">

@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { landingUrl } from '@/lib/hosts';
 
 const mainNav = [
   { href: '/', label: 'Overview', icon: '◈' },
@@ -15,6 +17,11 @@ const utilityNav = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const [landing, setLanding] = useState('http://0.0.0.0:5173');
+
+  useEffect(() => {
+    setLanding(landingUrl());
+  }, []);
 
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href);
@@ -71,7 +78,7 @@ export function Sidebar() {
 
       <div className="border-t border-line p-4">
         <a
-          href="http://127.0.0.1:5173"
+          href={landing}
           className="flex items-center justify-between rounded-xl border border-line bg-canvas-surface px-3 py-2.5 text-xs text-ink-muted transition hover:border-line-strong hover:text-ink-secondary"
         >
           <span>Landing page</span>
