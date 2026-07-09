@@ -21,6 +21,11 @@ package-lock.json.bak
 # Build outputs
 dist/
 build/
+.next/
+apps/dashboard/.next/
+apps/landing/dist/
+apps/control-plane/dist/
+*.tsbuildinfo
 *.log
 
 # Coverage reports
@@ -93,6 +98,7 @@ test-results/
 
 # Local writing / content drafts
 subsstack/
+linkedin_posts.md
 
 # IDE and editor folders
 .vscode/

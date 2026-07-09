@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-inter: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+}
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-canvas text-ink-primary antialiased;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(200, 80, 154, 0.08), transparent),
+      radial-gradient(ellipse 60% 40% at 100% 0%, rgba(110, 181, 255, 0.04), transparent);
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    @apply bg-brand/30 text-ink-primary;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply rounded-2xl border border-line bg-canvas-surface/80 shadow-panel backdrop-blur-sm;
+  }
+
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas;
+  }
+}

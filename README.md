@@ -13,6 +13,7 @@ Pick **one** path; everything else links out so you are not stuck in a long READ
 | You are… | Do this |
 |----------|---------|
 | **New to the project** | [Full-stack setup](documentation/getting-started/FULL_STACK_SETUP.md) (SCAS + ES + Floci) or `./START_HERE.sh` |
+| **Prefer a browser UI** | [Dashboard](documentation/platform/DASHBOARD.md) — `./scripts/start-dashboard.sh` (localhost only) |
 | **Planning teaching or a curriculum** | Use the [Scenario learning path](documentation/learning-path/SCENARIO_LEARNING_PATH.md) (beginner → intermediate → advanced) |
 | **Comfortable with npm, shells, and isolated VMs** | [Quick Start](#quick-start-experienced-users) below, then open the README inside each scenario folder |
 
@@ -20,7 +21,7 @@ Pick **one** path; everything else links out so you are not stuck in a long READ
 
 ## Overview
 
-This test bench provides hands-on scenarios for supply chain attacks—among the most critical risks in modern software development. Learners set up intentionally vulnerable environments, walk through attacks, practice detection, and implement defenses. The runtime is **CLI-only** (no web dashboard required).
+This test bench provides hands-on scenarios for supply chain attacks—among the most critical risks in modern software development. Learners set up intentionally vulnerable environments, walk through attacks, practice detection, and implement defenses. The default runtime is **CLI-only**; an optional [localhost dashboard](documentation/platform/DASHBOARD.md) is available.
 
 **At a glance**
 

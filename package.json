@@ -10,6 +10,18 @@
     "url": "https://github.com/rajanagori/supply-chain-attack-simulator.git"
   },
   "homepage": "https://simulator.rajanagori.in",
+  "workspaces": [
+    "apps/landing",
+    "apps/dashboard",
+    "apps/control-plane"
+  ],
+  "scripts": {
+    "dev:landing": "npm run dev -w @scas/landing",
+    "dev:dashboard": "npm run dev -w @scas/dashboard",
+    "dev:control-plane": "npm run dev -w @scas/control-plane",
+    "dev:ui": "npm run dev:control-plane & npm run dev:dashboard & npm run dev:landing",
+    "start:ui": "bash scripts/start-dashboard.sh"
+  },
   "scas": {
     "provenance": "SCAS-FP-RN-8d4f2c9a1e7b3065",
     "provenanceFile": "SCAS_PROVENANCE.json"
