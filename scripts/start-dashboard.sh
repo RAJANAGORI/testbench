@@ -59,9 +59,9 @@ wait_for "http://127.0.0.1:5173" "Landing"
 
 echo ""
 echo "SCAS UI ready (bound on ${BIND_HOST}):"
-echo "  Landing:       http://${PUBLIC_HOST}:5173"
-echo "  Dashboard:     http://${PUBLIC_HOST}:3100"
-echo "  Control plane: http://${PUBLIC_HOST}:${CONTROL_PLANE_PORT}/api/health"
+echo "  Landing:       http://localhost:5173  (network: check Vite output above)"
+echo "  Dashboard:     http://localhost:3100  (network: http://<your-ip>:3100)"
+echo "  Control plane: http://localhost:${CONTROL_PLANE_PORT}/api/health"
 echo ""
 echo "Press Ctrl+C to stop all services."
 
