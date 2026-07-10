@@ -43,8 +43,8 @@ export function LogConsole({ sessionId, className = '', tall }: LogConsoleProps)
   };
 
   return (
-    <div className={`overflow-hidden rounded-2xl border border-line bg-canvas/80 ${className}`}>
-      <div className="flex items-center justify-between border-b border-line px-4 py-3">
+    <div className={`overflow-hidden rounded-2xl liquid-glass ${className}`}>
+      <div className="flex items-center justify-between border-b border-gray-800 px-4 py-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-ink-muted">Terminal</p>
           <p className="text-[11px] text-ink-faint">

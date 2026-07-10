@@ -55,7 +55,7 @@ export default function ScenariosPage() {
           placeholder="Search by name or number…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="focus-ring w-full max-w-md rounded-xl border border-line bg-canvas-surface px-4 py-2.5 text-sm text-ink-primary placeholder:text-ink-faint sm:w-80"
+          className="focus-ring w-full max-w-md rounded-full liquid-glass px-4 py-2.5 text-sm text-ink-primary placeholder:text-gray-500 sm:w-80"
         />
         <div className="flex flex-wrap gap-2">
           {levels.map((l) => (
@@ -63,10 +63,10 @@ export default function ScenariosPage() {
               key={l}
               type="button"
               onClick={() => setLevel(l)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+              className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
                 level === l
-                  ? 'bg-brand/15 text-brand-light ring-1 ring-brand/30'
-                  : 'text-ink-muted hover:bg-canvas-hover hover:text-ink-secondary'
+                  ? 'liquid-glass text-white'
+                  : 'text-gray-400 hover:bg-white/5 hover:text-gray-300'
               }`}
             >
               {l}
@@ -82,13 +82,13 @@ export default function ScenariosPage() {
           <Link
             key={s.id}
             href={`/scenarios/${s.id}`}
-            className="group glass-panel block p-5 transition hover:border-brand/30 hover:shadow-glow"
+            className="group glass-panel block p-5 transition hover:shadow-glow"
           >
             <div className="flex items-start justify-between gap-2">
-              <span className="font-mono text-xs text-ink-faint">#{s.id.padStart(2, '0')}</span>
+              <span className="font-mono text-xs text-gray-500">#{s.id.padStart(2, '0')}</span>
               <LevelBadge level={s.level} />
             </div>
-            <h2 className="mt-3 text-base font-semibold text-ink-primary group-hover:text-brand-light transition">
+            <h2 className="mt-3 text-base font-semibold text-white transition group-hover:text-gray-300">
               {s.title}
             </h2>
             <div className="mt-4 flex flex-wrap items-center gap-2">

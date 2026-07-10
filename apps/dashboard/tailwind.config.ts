@@ -6,11 +6,11 @@ const config: Config = {
     extend: {
       colors: {
         canvas: {
-          DEFAULT: '#09090f',
-          elevated: '#0f0f16',
-          surface: '#15151e',
-          hover: '#1c1c28',
-          overlay: '#22222f',
+          DEFAULT: '#000000',
+          elevated: '#0a0a0a',
+          surface: '#111111',
+          hover: '#1a1a1a',
+          overlay: '#171717',
         },
         line: {
           subtle: 'rgba(255,255,255,0.05)',
@@ -18,22 +18,22 @@ const config: Config = {
           strong: 'rgba(255,255,255,0.14)',
         },
         ink: {
-          primary: '#f4f4f8',
-          secondary: '#a8a8b8',
-          muted: '#6b6b7b',
-          faint: '#45455a',
+          primary: '#ffffff',
+          secondary: '#d1d5db',
+          muted: '#9ca3af',
+          faint: '#6b7280',
         },
         brand: {
-          DEFAULT: '#c8509a',
-          light: '#e879c0',
-          dark: '#9a3070',
-          glow: 'rgba(200, 80, 154, 0.18)',
+          DEFAULT: '#ffffff',
+          light: '#f3f4f6',
+          dark: '#e5e7eb',
+          glow: 'rgba(255, 255, 255, 0.08)',
         },
         state: {
           ok: '#3ecf8e',
           warn: '#f5b942',
           error: '#f07178',
-          info: '#6eb5ff',
+          info: '#9ca3af',
         },
       },
       fontFamily: {
@@ -41,12 +41,15 @@ const config: Config = {
         mono: ['var(--font-mono)', 'ui-monospace', 'Menlo', 'monospace'],
       },
       boxShadow: {
-        panel: '0 1px 0 rgba(255,255,255,0.04) inset, 0 8px 32px rgba(0,0,0,0.35)',
-        glow: '0 0 40px rgba(200, 80, 154, 0.12)',
+        panel: 'inset 0 1px 1px rgba(255,255,255,0.1), 0 8px 32px rgba(0,0,0,0.5)',
+        glow: '0 0 40px rgba(255, 255, 255, 0.06)',
       },
       borderRadius: {
         xl: '14px',
         '2xl': '18px',
+      },
+      letterSpacing: {
+        cinematic: '-0.04em',
       },
       animation: {
         'fade-in': 'fadeIn 0.35s ease-out',

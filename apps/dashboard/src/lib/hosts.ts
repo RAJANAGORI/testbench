@@ -5,6 +5,12 @@ export function clientHost(): string {
   return DEFAULT_HOST;
 }
 
+/** SSR-safe host:port label — matches first paint before hydration. */
+export function controlPlaneDisplayHost(): string {
+  const port = process.env.NEXT_PUBLIC_CONTROL_PLANE_PORT ?? '3101';
+  return `${DEFAULT_HOST}:${port}`;
+}
+
 export function controlPlaneUrl(): string {
   const port = process.env.NEXT_PUBLIC_CONTROL_PLANE_PORT ?? '3101';
   const envUrl = process.env.NEXT_PUBLIC_CONTROL_PLANE_URL;

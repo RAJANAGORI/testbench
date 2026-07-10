@@ -90,7 +90,7 @@ export default function ScenarioDetailPage({ params }: { params: Promise<{ id: s
 
   return (
     <div className="animate-fade-in">
-      <Link href="/scenarios" className="text-xs font-medium text-ink-muted hover:text-brand-light transition">
+      <Link href="/scenarios" className="text-xs font-medium text-gray-400 transition hover:text-gray-300">
         ← All labs
       </Link>
 
@@ -152,7 +152,7 @@ export default function ScenarioDetailPage({ params }: { params: Promise<{ id: s
                     Stop
                   </Btn>
                 </div>
-                <ul className="mt-4 space-y-1.5 border-t border-line pt-4">
+                <ul className="mt-4 space-y-1.5 border-t border-gray-800 pt-4">
                   {scenario.services.map((svc) => (
                     <li key={svc.id} className="flex items-center gap-2 text-xs text-ink-muted">
                       <span className="h-1 w-1 rounded-full bg-ink-faint" />
@@ -213,7 +213,7 @@ export default function ScenarioDetailPage({ params }: { params: Promise<{ id: s
                 </Btn>
               }
             >
-              <pre className="max-h-72 overflow-auto rounded-xl border border-line bg-canvas/80 p-4 font-mono text-[11px] leading-relaxed text-ink-secondary">
+              <pre className="max-h-72 overflow-auto rounded-xl liquid-glass p-4 font-mono text-[11px] leading-relaxed text-gray-400">
                 {JSON.stringify(captures, null, 2)}
               </pre>
             </Card>

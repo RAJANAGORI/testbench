@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { Alert, Btn, Card, PageHeader, StatTile, StatusPill } from '@/components/ui';
 import { cp, type PlatformStatus } from '@/lib/api';
-import { controlPlaneUrl } from '@/lib/hosts';
+import { useControlPlaneDisplayHost } from '@/lib/use-hosts';
 
 interface ServiceRowProps {
   name: string;
@@ -16,7 +16,7 @@ interface ServiceRowProps {
 
 function ServiceRow({ name, description, online, url, actions }: ServiceRowProps) {
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-line bg-canvas-elevated/60 p-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-3 rounded-xl liquid-glass p-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           <h3 className="text-sm font-medium text-ink-primary">{name}</h3>
@@ -24,7 +24,7 @@ function ServiceRow({ name, description, online, url, actions }: ServiceRowProps
         </div>
         <p className="mt-1 text-xs text-ink-muted">{description}</p>
         {url && (
-          <a href={url} target="_blank" rel="noreferrer" className="mt-1 inline-block text-xs text-brand-light hover:underline">
+          <a href={url} target="_blank" rel="noreferrer" className="mt-1 inline-block text-xs text-gray-400 hover:text-gray-300 hover:underline">
             {url}
           </a>
         )}
@@ -39,6 +39,7 @@ export default function OverviewPage() {
   const [scenarioCount, setScenarioCount] = useState(23);
   const [busy, setBusy] = useState('');
   const [cpReachable, setCpReachable] = useState(true);
+  const cpDisplayHost = useControlPlaneDisplayHost();
 
   const refresh = useCallback(async () => {
     try {
@@ -109,7 +110,7 @@ export default function OverviewPage() {
         <StatTile
           label="Control plane"
           value={cpReachable ? 'Online' : 'Offline'}
-          sub={controlPlaneUrl().replace(/^https?:\/\//, '')}
+          sub={cpDisplayHost}
           accent={cpReachable ? 'ok' : 'warn'}
         />
         <StatTile label="Stack services" value={`${runningServices}/3`} sub="ES · Kibana · Floci" accent="warn" />
@@ -169,9 +170,9 @@ export default function OverviewPage() {
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <Card title="Quick start" subtitle="Recommended flow for first-time users">
           <ol className="space-y-3 text-sm text-ink-secondary">
-            <li className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-brand/15 text-xs font-bold text-brand-light">1</span>Open a lab from the Labs page</li>
-            <li className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-brand/15 text-xs font-bold text-brand-light">2</span>Run <strong className="text-ink-primary">Prepare</strong> then <strong className="text-ink-primary">Execute</strong></li>
-            <li className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-brand/15 text-xs font-bold text-brand-light">3</span>Watch captures and terminal output</li>
+            <li className="flex gap-3"><span className="liquid-glass flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white">1</span>Open a lab from the Labs page</li>
+            <li className="flex gap-3"><span className="liquid-glass flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white">2</span>Run <strong className="text-ink-primary">Prepare</strong> then <strong className="text-ink-primary">Execute</strong></li>
+            <li className="flex gap-3"><span className="liquid-glass flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white">3</span>Watch captures and terminal output</li>
           </ol>
           <Link href="/scenarios" className="mt-5 inline-block">
             <Btn variant="secondary">Go to labs</Btn>

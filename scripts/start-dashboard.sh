@@ -45,6 +45,19 @@ wait_for() {
   return 1
 }
 
+detect_lan_ip() {
+  if command -v ip >/dev/null 2>&1; then
+    ip -4 route get 1.1.1.1 2>/dev/null | awk '{for (i = 1; i <= NF; i++) if ($i == "src") { print $(i + 1); exit }}'
+  elif command -v hostname >/dev/null 2>&1; then
+    hostname -I 2>/dev/null | awk '{print $1}'
+  fi
+}
+
+LAN_IP="$(detect_lan_ip || true)"
+if [[ -n "${LAN_IP}" ]]; then
+  export SCAS_LAN_IP="${LAN_IP}"
+fi
+
 echo "Starting control plane on ${BIND_HOST}:${CONTROL_PLANE_PORT}…"
 npm run dev:control-plane &
 wait_for "http://127.0.0.1:${CONTROL_PLANE_PORT}/api/health" "Control plane"
@@ -59,9 +72,16 @@ wait_for "http://127.0.0.1:5173" "Landing"
 
 echo ""
 echo "SCAS UI ready (bound on ${BIND_HOST}):"
-echo "  Landing:       http://localhost:5173  (network: check Vite output above)"
-echo "  Dashboard:     http://localhost:3100  (network: http://<your-ip>:3100)"
+echo "  Landing:       http://localhost:5173"
+echo "  Dashboard:     http://localhost:3100"
 echo "  Control plane: http://localhost:${CONTROL_PLANE_PORT}/api/health"
+if [[ -n "${LAN_IP}" ]]; then
+  echo ""
+  echo "  Network (LAN):"
+  echo "    Landing:       http://${LAN_IP}:5173"
+  echo "    Dashboard:     http://${LAN_IP}:3100"
+  echo "    Control plane: http://${LAN_IP}:${CONTROL_PLANE_PORT}/api/health"
+fi
 echo ""
 echo "Press Ctrl+C to stop all services."
 

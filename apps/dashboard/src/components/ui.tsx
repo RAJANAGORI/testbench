@@ -12,13 +12,13 @@ export function StatusPill({
   const styles = {
     online: 'bg-state-ok/12 text-state-ok border-state-ok/25',
     offline: 'bg-canvas-hover text-ink-muted border-line',
-    busy: 'bg-brand/12 text-brand-light border-brand/25',
+    busy: 'liquid-glass text-ink-secondary',
     warn: 'bg-state-warn/12 text-state-warn border-state-warn/25',
   };
   const dots = {
     online: 'bg-state-ok',
     offline: 'bg-ink-faint',
-    busy: 'bg-brand-light animate-pulse-soft',
+    busy: 'bg-white animate-pulse-soft',
     warn: 'bg-state-warn',
   };
   return (
@@ -59,7 +59,7 @@ export function PageHeader({
     <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between animate-fade-in">
       <div>
         {eyebrow && (
-          <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-brand-light">{eyebrow}</p>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-ink-muted">{eyebrow}</p>
         )}
         <h1 className="text-2xl font-semibold tracking-tight text-ink-primary sm:text-3xl">{title}</h1>
         {description && <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-secondary">{description}</p>}
@@ -143,8 +143,8 @@ export function Btn({
     lg: 'px-5 py-2.5 text-sm',
   };
   const variants: Record<BtnVariant, string> = {
-    primary: 'bg-brand text-white shadow-glow hover:bg-brand-light border border-brand/50',
-    secondary: 'bg-canvas-hover text-ink-primary border border-line hover:border-line-strong hover:bg-canvas-overlay',
+    primary: 'bg-white text-black hover:bg-gray-200 border border-transparent',
+    secondary: 'liquid-glass text-ink-primary hover:text-white',
     ghost: 'text-ink-secondary hover:text-ink-primary hover:bg-canvas-hover border border-transparent',
     danger: 'bg-state-error/12 text-state-error border border-state-error/25 hover:bg-state-error/20',
     success: 'bg-state-ok/12 text-state-ok border border-state-ok/25 hover:bg-state-ok/20',
@@ -154,7 +154,7 @@ export function Btn({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className={`focus-ring inline-flex items-center justify-center gap-2 rounded-xl font-medium transition disabled:cursor-not-allowed disabled:opacity-45 ${sizes[size]} ${variants[variant]} ${className}`}
+      className={`focus-ring inline-flex items-center justify-center gap-2 rounded-full font-medium transition disabled:cursor-not-allowed disabled:opacity-45 ${sizes[size]} ${variants[variant]} ${className}`}
     >
       {children}
     </button>
@@ -173,7 +173,7 @@ export function WorkflowTabs({
   onChange: (id: string) => void;
 }) {
   return (
-    <div className="flex flex-wrap gap-2 rounded-2xl border border-line bg-canvas-elevated p-1.5">
+    <div className="flex flex-wrap gap-2 rounded-2xl liquid-glass p-1.5">
       {steps.map((step, i) => {
         const isActive = step.id === active;
         return (
@@ -183,8 +183,8 @@ export function WorkflowTabs({
             onClick={() => onChange(step.id)}
             className={`focus-ring flex flex-1 min-w-[120px] flex-col items-start rounded-xl px-4 py-3 text-left transition ${
               isActive
-                ? 'bg-brand/15 text-ink-primary shadow-sm ring-1 ring-brand/30'
-                : 'text-ink-muted hover:bg-canvas-hover hover:text-ink-secondary'
+                ? 'bg-white/10 text-ink-primary'
+                : 'text-ink-muted hover:bg-white/5 hover:text-ink-secondary'
             }`}
           >
             <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-faint">
@@ -213,7 +213,7 @@ export function StatTile({
   accent?: 'brand' | 'ok' | 'warn';
 }) {
   const accentBar = {
-    brand: 'from-brand to-brand-light',
+    brand: 'from-white/50 to-white/10',
     ok: 'from-state-ok to-emerald-300',
     warn: 'from-state-warn to-amber-300',
   };

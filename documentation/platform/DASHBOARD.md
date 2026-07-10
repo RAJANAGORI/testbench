@@ -10,7 +10,11 @@ The CLI remains the canonical way to run labs. The dashboard is an optional cont
 | Dashboard (Next.js) | http://0.0.0.0:3100 | Scenario catalog, service controls, live logs |
 | Control plane | http://0.0.0.0:3101 | Process supervisor, WebSocket logs, capture proxy |
 
-Services bind on **0.0.0.0** (all interfaces). Open the same host in your browser — e.g. `http://localhost:5173` or `http://<your-machine-ip>:5173`.
+## LAN access
+
+Services bind on `0.0.0.0`. Use `localhost` on the same machine, or your LAN IP from another device (e.g. `http://192.168.1.14:3100`).
+
+`start-dashboard.sh` auto-detects your LAN IP and configures Next.js `allowedDevOrigins` so the dashboard works over the network in dev mode.
 
 ## Quick start
 
