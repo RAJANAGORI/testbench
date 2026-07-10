@@ -19,6 +19,9 @@ export VITE_CONTROL_PLANE_URL="${VITE_CONTROL_PLANE_URL:-http://${PUBLIC_HOST}:3
 if [[ ! -d node_modules ]]; then
   echo "Installing workspace dependencies…"
   npm install
+elif [[ ! -e node_modules/lucide-react ]] || [[ ! -e node_modules/tailwindcss ]]; then
+  echo "Updating workspace dependencies (new UI packages)…"
+  npm install
 fi
 
 cleanup() {
