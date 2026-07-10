@@ -1,4 +1,8 @@
 const DEFAULT_HOST = '0.0.0.0';
+const CP_PORT = process.env.NEXT_PUBLIC_CONTROL_PLANE_PORT ?? '3101';
+
+/** Browser → same-origin proxy prefix (see next.config rewrites). */
+export const CONTROL_PLANE_API_PREFIX = '/api/cp';
 
 export function clientHost(): string {
   if (typeof window !== 'undefined') return window.location.hostname;
@@ -7,26 +11,33 @@ export function clientHost(): string {
 
 /** SSR-safe host:port label — matches first paint before hydration. */
 export function controlPlaneDisplayHost(): string {
-  const port = process.env.NEXT_PUBLIC_CONTROL_PLANE_PORT ?? '3101';
-  return `${DEFAULT_HOST}:${port}`;
+  return `${DEFAULT_HOST}:${CP_PORT}`;
 }
 
-export function controlPlaneUrl(): string {
-  const port = process.env.NEXT_PUBLIC_CONTROL_PLANE_PORT ?? '3101';
-  const envUrl = process.env.NEXT_PUBLIC_CONTROL_PLANE_URL;
+/** REST base URL for control-plane API calls. */
+export function controlPlaneApiBase(): string {
+  if (typeof window !== 'undefined') return CONTROL_PLANE_API_PREFIX;
+  const port = process.env.CONTROL_PLANE_PORT ?? CP_PORT;
+  return `http://127.0.0.1:${port}/api`;
+}
+
+/** WebSocket URL for live logs (proxied through the dashboard in the browser). */
+export function controlPlaneWsUrl(): string {
   if (typeof window !== 'undefined') {
-    if (envUrl) {
-      try {
-        const u = new URL(envUrl);
-        u.hostname = window.location.hostname;
-        return u.origin;
-      } catch {
-        /* fall through */
-      }
-    }
-    return `http://${window.location.hostname}:${port}`;
+    const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    return `${proto}//${window.location.host}/ws/logs`;
   }
-  return envUrl ?? `http://${DEFAULT_HOST}:${port}`;
+  const port = process.env.CONTROL_PLANE_PORT ?? CP_PORT;
+  return `ws://127.0.0.1:${port}/ws/logs`;
+}
+
+/** @deprecated Use controlPlaneApiBase — kept for any external references. */
+export function controlPlaneUrl(): string {
+  if (typeof window !== 'undefined') {
+    return window.location.origin;
+  }
+  const port = process.env.CONTROL_PLANE_PORT ?? CP_PORT;
+  return `http://127.0.0.1:${port}`;
 }
 
 export function dashboardUrl(): string {

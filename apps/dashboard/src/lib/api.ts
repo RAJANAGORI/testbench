@@ -1,7 +1,7 @@
-import { controlPlaneUrl } from './hosts';
+import { controlPlaneApiBase, controlPlaneWsUrl } from './hosts';
 
 async function api<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${controlPlaneUrl()}/api${path}`, {
+  const res = await fetch(`${controlPlaneApiBase()}${path}`, {
     ...init,
     headers: { 'Content-Type': 'application/json', ...init?.headers },
     cache: 'no-store',
@@ -68,7 +68,7 @@ export const cp = {
   teardown: () => api('/platform/teardown', { method: 'POST' }),
   logs: (session?: string) => api<LogEntry[]>(session ? `/logs?session=${session}` : '/logs'),
   processes: () => api('/processes'),
-  wsUrl: () => controlPlaneUrl().replace(/^http/, 'ws') + '/ws/logs',
+  wsUrl: () => controlPlaneWsUrl(),
 };
 
-export { controlPlaneUrl } from './hosts';
+export { controlPlaneApiBase, controlPlaneWsUrl, controlPlaneUrl } from './hosts';

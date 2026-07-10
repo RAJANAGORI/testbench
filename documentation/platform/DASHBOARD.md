@@ -14,7 +14,9 @@ The CLI remains the canonical way to run labs. The dashboard is an optional cont
 
 Services bind on `0.0.0.0`. Use `localhost` on the same machine, or your LAN IP from another device (e.g. `http://192.168.1.14:3100`).
 
-`start-dashboard.sh` auto-detects your LAN IP and configures Next.js `allowedDevOrigins` so the dashboard works over the network in dev mode.
+The dashboard **proxies** all control-plane API and WebSocket traffic through port **3100** (`/api/cp/*`, `/ws/logs` → `127.0.0.1:3101`). You only need port **3100** reachable over LAN — port 3101 can stay loopback-only.
+
+`start-dashboard.sh` auto-detects your LAN IP and configures Next.js `allowedDevOrigins` for dev mode.
 
 ## Quick start
 
