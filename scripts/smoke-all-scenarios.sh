@@ -10,8 +10,10 @@ export TESTBENCH_MODE=enabled
 kill_on() {
   local p="$1"
   local pids
-  pids="$(lsof -ti ":${p}" 2>/dev/null || true)"
+  # LISTEN only — avoid killing control-plane clients connected to mock ports
+  pids="$(lsof -nP -iTCP:"${p}" -sTCP:LISTEN -t 2>/dev/null || true)"
   if [[ -n "${pids}" ]]; then
+    # shellcheck disable=SC2086
     kill -9 ${pids} 2>/dev/null || true
   fi
 }

@@ -19,18 +19,35 @@ if [[ -z "${PORT}" ]]; then
   exit 1
 fi
 
+# Never kill the Control Center stack (dashboard / control plane / landing).
+PROTECTED_PORTS=(3100 3101 5173)
+
+is_protected_port() {
+  local p="$1"
+  local x
+  for x in "${PROTECTED_PORTS[@]}"; do
+    [[ "${p}" == "${x}" ]] && return 0
+  done
+  return 1
+}
+
 kill_one_port() {
   local p="$1"
   local pids
   echo "Freeing port :${p} ..."
-  # -t outputs only PIDs; kill -9 is intentional for testbench cleanup.
-  pids="$(lsof -ti ":${p}" || true)"
+  if is_protected_port "${p}"; then
+    echo "Refusing to kill protected UI port :${p}"
+    return 0
+  fi
+  # LISTEN only — do not kill clients connected to this port (control plane, browsers).
+  pids="$(lsof -nP -iTCP:"${p}" -sTCP:LISTEN -t 2>/dev/null || true)"
   if [[ -z "${pids}" ]]; then
-    echo "No process found on port :${p}"
+    echo "No listener found on port :${p}"
     return 0
   fi
 
-  echo "Killing PIDs on port :${p}: ${pids}"
+  echo "Killing listeners on port :${p}: ${pids}"
+  # shellcheck disable=SC2086
   kill -9 ${pids} || true
   echo "Port :${p} freed."
 }

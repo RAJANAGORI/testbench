@@ -320,7 +320,14 @@ export function createApiRouter(): Router {
     return startPlatformScript(res, entry.label, entry.script, entry.args ?? []);
   });
 
-  router.post('/platform/teardown', async (_req, res) => {
+  router.post('/platform/teardown', (_req, res) => {
+    // Stop tracked lab children first so teardown does not need to kill our own PIDs.
+    for (const proc of processManager.list()) {
+      if (proc.status !== 'running') continue;
+      if (proc.scenarioId && proc.scenarioId !== 'platform') {
+        processManager.stopSession(proc.id);
+      }
+    }
     return startPlatformScript(res, 'Lab teardown', 'scripts/teardown.sh');
   });
 
