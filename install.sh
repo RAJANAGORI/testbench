@@ -392,6 +392,24 @@ fi
 detect_platform
 log "Platform: ${SCAS_OS}${SCAS_DISTRO:+ / ${SCAS_DISTRO}} · packages via: ${SCAS_PKG}"
 
+# Hint when Docker still lives on small SD / root while an external SCAS disk exists
+if command -v docker >/dev/null 2>&1; then
+  _docker_root="$(docker info -f '{{.DockerRootDir}}' 2>/dev/null || true)"
+  for _marker in /mnt/scas-data/scas/scas-storage.env "${HOME}/scas-storage.env"; do
+    if [ -f "$_marker" ]; then
+      # shellcheck disable=SC1090
+      source "$_marker" 2>/dev/null || true
+      break
+    fi
+  done
+  if [ -n "${SCAS_DOCKER_DATA_ROOT:-}" ] && [ -n "${_docker_root:-}" ] && [ "$_docker_root" != "$SCAS_DOCKER_DATA_ROOT" ]; then
+    warn "Docker Root Dir is ${_docker_root}"
+    warn "Expected external disk root: ${SCAS_DOCKER_DATA_ROOT}"
+    warn "Run: ./scripts/setup-external-storage.sh <disk-mount> --persist-mount"
+  fi
+  unset _docker_root _marker
+fi
+
 # ── 1. Prerequisites ─────────────────────────────────────────
 log "Checking prerequisites…"
 echo ""

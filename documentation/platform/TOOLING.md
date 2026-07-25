@@ -13,6 +13,7 @@ Every maintainer-facing script in [`scripts/`](../../scripts/), grouped by purpo
 | Script | Purpose |
 |--------|---------|
 | [`install.sh`](../../install.sh) | **One-shot full stack** — prereqs, TESTBENCH_MODE, npm workspaces, ES/Kibana, Floci; writes `.scas.env` |
+| [`scripts/setup-external-storage.sh`](../../scripts/setup-external-storage.sh) | Raspberry Pi / USB disk: Docker `data-root` + optional repo/npm cache on external HDD |
 | [`scripts/setup.sh`](../../scripts/setup.sh) | Repo-wide setup; creates `.testbench.env` |
 | [`scripts/teardown.sh`](../../scripts/teardown.sh) | Kill scenario ports, remove captures & `node_modules` |
 | [`scripts/kill-port.sh`](../../scripts/kill-port.sh) | Free one port, or `--all` ports from `ports.env` |
