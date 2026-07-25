@@ -5,7 +5,6 @@
 
 export const site = {
   brand: 'SCAS',
-  tagline: 'Supply Chain Attack Simulator',
   docsUrl: 'https://simulator.rajanagori.in',
   dashboardPort: '3100',
 

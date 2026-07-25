@@ -4,11 +4,6 @@ const CP_PORT = process.env.NEXT_PUBLIC_CONTROL_PLANE_PORT ?? '3101';
 /** Browser → same-origin proxy prefix (see next.config rewrites). */
 export const CONTROL_PLANE_API_PREFIX = '/api/cp';
 
-export function clientHost(): string {
-  if (typeof window !== 'undefined') return window.location.hostname;
-  return DEFAULT_HOST;
-}
-
 /** SSR-safe host:port label — matches first paint before hydration. */
 export function controlPlaneDisplayHost(): string {
   return `${DEFAULT_HOST}:${CP_PORT}`;
@@ -29,23 +24,6 @@ export function controlPlaneWsUrl(): string {
   }
   const port = process.env.CONTROL_PLANE_PORT ?? CP_PORT;
   return `ws://127.0.0.1:${port}/ws/logs`;
-}
-
-/** @deprecated Use controlPlaneApiBase — kept for any external references. */
-export function controlPlaneUrl(): string {
-  if (typeof window !== 'undefined') {
-    return window.location.origin;
-  }
-  const port = process.env.CONTROL_PLANE_PORT ?? CP_PORT;
-  return `http://127.0.0.1:${port}`;
-}
-
-export function dashboardUrl(): string {
-  const port = '3100';
-  if (typeof window !== 'undefined') {
-    return `http://${window.location.hostname}:${port}`;
-  }
-  return `http://${DEFAULT_HOST}:${port}`;
 }
 
 export function landingUrl(): string {

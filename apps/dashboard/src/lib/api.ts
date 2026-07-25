@@ -103,11 +103,8 @@ export const cp = {
   flociSetup: () => api<ActionResult>('/platform/floci/setup', { method: 'POST' }),
   flociUp: () => api<ActionResult>('/platform/floci/up', { method: 'POST' }),
   flociDown: () => api<ActionResult>('/platform/floci/down', { method: 'POST' }),
-  flociStatus: () => api('/platform/floci/status', { method: 'POST' }),
   teardown: () => api<ActionResult>('/platform/teardown', { method: 'POST' }),
   logs: (session?: string) => api<LogEntry[]>(session ? `/logs?session=${session}` : '/logs'),
   processes: () => api<ProcessRecord[]>('/processes'),
   wsUrl: () => controlPlaneWsUrl(),
 };
-
-export { controlPlaneApiBase, controlPlaneWsUrl, controlPlaneUrl } from './hosts';
