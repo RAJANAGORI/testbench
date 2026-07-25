@@ -124,7 +124,7 @@ export default function OverviewPage() {
         <div className="mt-4">
           <Alert variant="info">
             <span className="font-medium">{busy}</span> running in the background — first Floci/ES start can take several minutes.
-            Watch live logs on the <Link href="/output" className="underline">Output</Link> page.
+            Watch live logs on the <Link href="/console" className="underline">Output</Link> page.
           </Alert>
         </div>
       )}
