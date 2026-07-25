@@ -283,7 +283,8 @@ export function createApiRouter(): Router {
 
   router.post('/platform/floci/:action', async (req, res) => {
     const map: Record<string, { label: string; script: string; args?: string[] }> = {
-      setup: { label: 'Floci setup', script: 'scripts/floci-setup.sh', args: ['--image'] },
+      // --auto: published native image when CPU has ARM LSE; else JVM build (Pi 4 / Cortex-A72)
+      setup: { label: 'Floci setup', script: 'scripts/floci-setup.sh', args: ['--auto'] },
       up: { label: 'Floci up', script: 'scripts/floci-up.sh' },
       down: { label: 'Floci down', script: 'scripts/floci-down.sh' },
       status: { label: 'Floci status', script: 'scripts/floci-status.sh' },

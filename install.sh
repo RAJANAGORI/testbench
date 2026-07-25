@@ -586,10 +586,10 @@ if [ "$SKIP_FLOCI" = "1" ]; then
   warn "Skipping Floci (--skip-floci / --core-only)"
 else
   if [ "$FLOCI_IMAGE" = "1" ]; then
-    log "Setting up Floci (published image — recommended)…"
-    ./scripts/floci-setup.sh --image
+    log "Setting up Floci (--auto: native image if CPU supports LSE, else JVM build)…"
+    ./scripts/floci-setup.sh --auto
   else
-    log "Setting up Floci (source build — may take 5–15 minutes)…"
+    log "Setting up Floci (forced JVM source build — may take 5–15 minutes)…"
     ./scripts/floci-setup.sh
   fi
   ok "Floci configured (.floci.env)"

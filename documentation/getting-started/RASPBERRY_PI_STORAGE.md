@@ -68,6 +68,18 @@ This:
 - Full stack still needs enough **RAM** (ES + Kibana + Floci); the disk only fixes space/SD wear.
 - Do not put disk paths or host credentials in the repo.
 
+## Floci on Raspberry Pi 4 (Cortex-A72)
+
+Published `floci/floci:*` images are **GraalVM native** binaries that require **ARM LSE** (`atomics` in `/proc/cpuinfo`).
+
+| Board | LSE? | Floci path |
+|-------|------|------------|
+| Pi 4 (Cortex-A72) | No | JVM source build: `./scripts/floci-setup.sh --auto` then `./scripts/floci-up.sh` |
+| Pi 5 | Yes | Published image OK (`--image` / UI Setup) |
+| amd64 / Apple Silicon | Yes | Published image OK |
+
+UI **Setup** already uses `--auto`. If you previously ran Setup with `--image` on a Pi 4, re-run Setup (or `./scripts/floci-setup.sh --auto`) so `FLOCI_USE_IMAGE=0` and the JVM image is built — first build is slow.
+
 ## Related
 
 - [Full-stack setup](./FULL_STACK_SETUP.md) (generic `./install.sh`)

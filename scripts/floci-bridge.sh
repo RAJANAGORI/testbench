@@ -41,6 +41,36 @@ scas_floci_health() {
   esac
 }
 
+# Published floci/floci:* native images need ARM LSE (atomics). Cortex-A72 (Pi 4) lacks it.
+scas_floci_native_image_supported() {
+  case "$(uname -m)" in
+    x86_64|amd64) return 0 ;;
+    aarch64|arm64)
+      if grep -Eiq '(^|[[:space:]])(atomics|lse)([[:space:]]|$)' /proc/cpuinfo 2>/dev/null; then
+        return 0
+      fi
+      if lscpu 2>/dev/null | grep -Eiq '(^|[[:space:]])(Flags:).*(\batomics\b|\blse\b)'; then
+        return 0
+      fi
+      return 1
+      ;;
+    *) return 1 ;;
+  esac
+}
+
+scas_floci_prepare_data_dir() {
+  local dir="${1:?}"
+  mkdir -p "$dir"
+  # Container user is uid 1001 (floci). Prefer chown; fall back to world-writable.
+  if [ "$(id -u)" = "0" ]; then
+    chown -R 1001:1001 "$dir" 2>/dev/null || chmod -R a+rwx "$dir"
+  elif command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+    sudo chown -R 1001:1001 "$dir" 2>/dev/null || chmod -R a+rwx "$dir"
+  else
+    chmod -R a+rwx "$dir" 2>/dev/null || true
+  fi
+}
+
 scas_floci_init_ready() {
   local body
   body="$(curl -fsS "${SCAS_FLOCI_ENDPOINT}/_floci/init" 2>/dev/null)" || return 1

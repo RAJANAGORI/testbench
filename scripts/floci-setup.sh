@@ -2,8 +2,9 @@
 # Clone floci-io/floci (AWS emulator) and prepare Docker orchestration for SCAS cloud labs.
 #
 # Usage:
-#   ./scripts/floci-setup.sh           # clone vendor + build image (first run ~5–15 min)
-#   ./scripts/floci-setup.sh --image   # skip clone/build; use published floci/floci image
+#   ./scripts/floci-setup.sh           # clone vendor + JVM build (works on Pi 4 / no-LSE ARM)
+#   ./scripts/floci-setup.sh --image   # published native image (needs ARM LSE — Pi 5+, not Pi 4)
+#   ./scripts/floci-setup.sh --auto    # --image if CPU supports native image, else JVM build
 #   ./scripts/floci-setup.sh --pull    # refresh vendor clone only
 
 set -euo pipefail
@@ -15,20 +16,46 @@ VENDOR_DIR="${REPO_ROOT}/vendor/floci-aws"
 FLOCI_REPO="${FLOCI_REPO_URL:-https://github.com/floci-io/floci.git}"
 FLOCI_REF="${FLOCI_REF:-main}"
 USE_IMAGE=0
+AUTO_MODE=0
 PULL_ONLY=0
+
+# shellcheck source=floci-bridge.sh
+source "${SCRIPT_DIR}/floci-bridge.sh"
 
 for arg in "$@"; do
   case "$arg" in
     --image) USE_IMAGE=1 ;;
+    --auto)  AUTO_MODE=1 ;;
     --pull)  PULL_ONLY=1 ;;
     -h|--help)
-      echo "Usage: $0 [--image] [--pull]"
-      echo "  --image  Use published Docker image (fast, no Java build)"
+      echo "Usage: $0 [--auto|--image|--pull]"
+      echo "  --auto   Prefer published image when CPU supports it; else JVM build (recommended for UI)"
+      echo "  --image  Published floci/floci native image (fast; requires ARM LSE on aarch64)"
       echo "  --pull   git pull vendor/floci-aws only"
+      echo "  (default) JVM source build — slower first run, works on Raspberry Pi 4 / Cortex-A72"
       exit 0
       ;;
   esac
 done
+
+if [ "$AUTO_MODE" = "1" ]; then
+  if scas_floci_native_image_supported; then
+    USE_IMAGE=1
+    echo "ℹ️  CPU supports Floci native image — using --image"
+  else
+    USE_IMAGE=0
+    echo "⚠️  This CPU lacks ARM LSE/atomics (common on Raspberry Pi 4 / Cortex-A72)."
+    echo "   Published floci/floci:* native images will crash here."
+    echo "   Falling back to JVM source build (first build is slow)."
+  fi
+elif [ "$USE_IMAGE" = "1" ] && ! scas_floci_native_image_supported; then
+  echo "⚠️  --image requested but this CPU lacks ARM LSE/atomics."
+  echo "   Native image will fail with: required CPU features … LSE"
+  echo "   Switching to JVM source build. (Force native anyway: SCAS_FLOCI_FORCE_NATIVE=1)"
+  if [ "${SCAS_FLOCI_FORCE_NATIVE:-0}" != "1" ]; then
+    USE_IMAGE=0
+  fi
+fi
 
 echo "========================================================="
 echo "☁️  SCAS Floci setup (AWS emulator for scenarios 05–21)"
@@ -41,6 +68,7 @@ echo "✅ Docker: $(docker --version | head -1)"
 echo ""
 
 mkdir -p "${FLOCI_DIR}/data" "${FLOCI_DIR}/init/ready.d"
+scas_floci_prepare_data_dir "${FLOCI_DIR}/data"
 
 if [ ! -f "${FLOCI_DIR}/.env" ]; then
   cp "${FLOCI_DIR}/.env.example" "${FLOCI_DIR}/.env"

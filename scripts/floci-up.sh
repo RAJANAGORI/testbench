@@ -16,13 +16,24 @@ if [ -f "${REPO_ROOT}/.floci.env" ]; then
   source "${REPO_ROOT}/.floci.env"
 fi
 
+# Fix ./data mount for container uid 1001 (avoids "not writable by floci")
+scas_floci_prepare_data_dir "${FLOCI_DIR}/data"
+
 COMPOSE_FILE="${FLOCI_DIR}/docker-compose.yml"
 if [ "${FLOCI_USE_IMAGE:-0}" = "1" ]; then
   COMPOSE_FILE="${FLOCI_DIR}/docker-compose.image.yml"
+  if ! scas_floci_native_image_supported; then
+    echo "❌ Published Floci native image cannot run on this CPU (missing ARM LSE/atomics)."
+    echo "   Host looks like Raspberry Pi 4 / Cortex-A72."
+    echo "   Fix:  ./scripts/floci-setup.sh --auto     # JVM build fallback"
+    echo "   Then: ./scripts/floci-up.sh"
+    echo "   Or use a Pi 5 / amd64 host for the published --image path."
+    exit 1
+  fi
 fi
 
 if [ "${FLOCI_USE_IMAGE:-0}" != "1" ] && [ ! -d "${REPO_ROOT}/vendor/floci-aws/docker" ]; then
-  echo "❌ vendor/floci-aws missing. Run: ./scripts/floci-setup.sh"
+  echo "❌ vendor/floci-aws missing. Run: ./scripts/floci-setup.sh   (or --auto)"
   exit 1
 fi
 
