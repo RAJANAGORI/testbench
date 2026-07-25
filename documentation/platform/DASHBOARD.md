@@ -6,9 +6,11 @@ The CLI remains the canonical way to run labs. The dashboard is an optional cont
 
 | Service | URL | Role |
 |---------|-----|------|
-| Landing (Vite) | http://0.0.0.0:5173 | SCAS hero + **Start Dashboard** CTA |
+| Landing (Vite) | http://0.0.0.0:5173 | Multi-section motion marketing site + **Start Dashboard** CTA (editable copy in `apps/landing/src/content/site.ts`) |
 | Dashboard (Next.js) | http://0.0.0.0:3100 | Scenario catalog, service controls, live logs |
 | Control plane | http://0.0.0.0:3101 | Process supervisor, WebSocket logs, capture proxy |
+
+Landing and dashboard share the **public docs theme** (`apps/design-tokens/`) with a **light/dark toggle** (same `localStorage` key as docs: `scas-theme`). Control plane is API-only and has no UI chrome.
 
 ## LAN access
 
@@ -69,7 +71,8 @@ curl http://0.0.0.0:3101/api/health
 
 ```
 apps/
-├── landing/          # Vite + React (plain CSS hero)
-├── dashboard/        # Next.js + Tailwind
+├── design-tokens/    # Shared SCAS brand tokens (Realtime Colors palette)
+├── landing/          # Vite + React + Motion-Primitives-style motion site
+├── dashboard/        # Next.js + Tailwind (same brand tokens)
 └── control-plane/    # Express + WS + scenario registry
 ```

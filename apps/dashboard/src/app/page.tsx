@@ -24,7 +24,7 @@ function ServiceRow({ name, description, online, url, actions }: ServiceRowProps
         </div>
         <p className="mt-1 text-xs text-ink-muted">{description}</p>
         {url && (
-          <a href={url} target="_blank" rel="noreferrer" className="mt-1 inline-block text-xs text-gray-400 hover:text-gray-300 hover:underline">
+          <a href={url} target="_blank" rel="noreferrer" className="mt-1 inline-block text-xs text-brand hover:text-brand-light hover:underline">
             {url}
           </a>
         )}
@@ -170,9 +170,9 @@ export default function OverviewPage() {
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <Card title="Quick start" subtitle="Recommended flow for first-time users">
           <ol className="space-y-3 text-sm text-ink-secondary">
-            <li className="flex gap-3"><span className="liquid-glass flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white">1</span>Open a lab from the Labs page</li>
-            <li className="flex gap-3"><span className="liquid-glass flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white">2</span>Run <strong className="text-ink-primary">Prepare</strong> then <strong className="text-ink-primary">Execute</strong></li>
-            <li className="flex gap-3"><span className="liquid-glass flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white">3</span>Watch captures and terminal output</li>
+            <li className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">1</span>Open a lab from the Labs page</li>
+            <li className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">2</span>Run <strong className="text-ink-primary">Prepare</strong> then <strong className="text-ink-primary">Execute</strong></li>
+            <li className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">3</span>Watch captures and terminal output</li>
           </ol>
           <Link href="/scenarios" className="mt-5 inline-block">
             <Btn variant="secondary">Go to labs</Btn>

@@ -1,69 +1,74 @@
+@import '../../../design-tokens/scas-tokens.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
   html,
   body,
   #root {
-    @apply h-full overflow-hidden bg-black;
-    font-family: 'Inter', sans-serif;
+    @apply min-h-full;
+    background: var(--scas-bg);
+    color: var(--scas-text);
+    font-family: var(--scas-font-sans);
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--scas-secondary);
+    color: var(--scas-text);
   }
 }
 
-@keyframes blurFadeUp {
+@layer utilities {
+  .font-display {
+    font-family: var(--scas-font-display);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes marquee {
   from {
-    opacity: 0;
-    filter: blur(20px);
-    transform: translateY(40px);
+    transform: translateX(0);
   }
   to {
-    opacity: 1;
-    filter: blur(0);
-    transform: translateY(0);
+    transform: translateX(-50%);
   }
 }
 
-.animate-blur-fade-up {
-  animation: blurFadeUp 1s ease-out forwards;
-  opacity: 0;
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-.liquid-glass {
-  background: rgba(255, 255, 255, 0.01);
-  background-blend-mode: luminosity;
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
-  border: none;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
-  position: relative;
-  overflow: hidden;
+.animate-shimmer {
+  animation: shimmer 2.8s linear infinite;
 }
 
-.liquid-glass::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1.4px;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.45) 0%,
-    rgba(255, 255, 255, 0.15) 20%,
-    rgba(255, 255, 255, 0) 40%,
-    rgba(255, 255, 255, 0) 60%,
-    rgba(255, 255, 255, 0.15) 80%,
-    rgba(255, 255, 255, 0.45) 100%
-  );
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
+.animate-marquee {
+  animation: marquee var(--marquee-duration, 40s) linear infinite;
 }
 
-.bottom-blur-mask {
-  -webkit-mask-image: linear-gradient(to top, black 0%, transparent 45%);
-  mask-image: linear-gradient(to top, black 0%, transparent 45%);
+.animate-spin-slow {
+  animation: spin-slow 14s linear infinite;
 }

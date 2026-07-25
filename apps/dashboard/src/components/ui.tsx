@@ -12,13 +12,13 @@ export function StatusPill({
   const styles = {
     online: 'bg-state-ok/12 text-state-ok border-state-ok/25',
     offline: 'bg-canvas-hover text-ink-muted border-line',
-    busy: 'liquid-glass text-ink-secondary',
+    busy: 'bg-brand/10 text-brand border-brand/25',
     warn: 'bg-state-warn/12 text-state-warn border-state-warn/25',
   };
   const dots = {
     online: 'bg-state-ok',
     offline: 'bg-ink-faint',
-    busy: 'bg-white animate-pulse-soft',
+    busy: 'bg-brand animate-pulse-soft',
     warn: 'bg-state-warn',
   };
   return (
@@ -143,8 +143,8 @@ export function Btn({
     lg: 'px-5 py-2.5 text-sm',
   };
   const variants: Record<BtnVariant, string> = {
-    primary: 'bg-white text-black hover:bg-gray-200 border border-transparent',
-    secondary: 'liquid-glass text-ink-primary hover:text-white',
+    primary: 'bg-brand text-white hover:bg-brand-light border border-transparent shadow-glow',
+    secondary: 'liquid-glass text-ink-primary hover:bg-canvas-hover',
     ghost: 'text-ink-secondary hover:text-ink-primary hover:bg-canvas-hover border border-transparent',
     danger: 'bg-state-error/12 text-state-error border border-state-error/25 hover:bg-state-error/20',
     success: 'bg-state-ok/12 text-state-ok border border-state-ok/25 hover:bg-state-ok/20',
@@ -183,8 +183,8 @@ export function WorkflowTabs({
             onClick={() => onChange(step.id)}
             className={`focus-ring flex flex-1 min-w-[120px] flex-col items-start rounded-xl px-4 py-3 text-left transition ${
               isActive
-                ? 'bg-white/10 text-ink-primary'
-                : 'text-ink-muted hover:bg-white/5 hover:text-ink-secondary'
+                ? 'bg-brand text-white shadow-glow'
+                : 'text-ink-muted hover:bg-canvas-hover hover:text-ink-secondary'
             }`}
           >
             <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-faint">
@@ -213,7 +213,7 @@ export function StatTile({
   accent?: 'brand' | 'ok' | 'warn';
 }) {
   const accentBar = {
-    brand: 'from-white/50 to-white/10',
+    brand: 'from-brand to-brand-light',
     ok: 'from-state-ok to-emerald-300',
     warn: 'from-state-warn to-amber-300',
   };

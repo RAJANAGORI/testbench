@@ -1,10 +1,13 @@
+@import '../../../design-tokens/scas-tokens.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --font-inter: 'Inter', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  --font-sans: var(--scas-font-sans);
+  --font-display: var(--scas-font-display);
+  --font-mono: var(--scas-font-mono);
 }
 
 @layer base {
@@ -13,55 +16,34 @@
   }
 
   body {
-    @apply bg-black text-ink-primary antialiased;
-    font-family: 'Inter', sans-serif;
+    @apply bg-canvas text-ink-primary antialiased;
+    font-family: var(--font-sans);
+    transition: background-color 180ms ease, color 180ms ease;
   }
 
   ::selection {
-    @apply bg-white/20 text-ink-primary;
+    background: var(--scas-secondary);
+    color: var(--scas-text);
   }
 }
 
 @layer components {
-  .liquid-glass {
-    background: rgba(255, 255, 255, 0.01);
-    background-blend-mode: luminosity;
-    -webkit-backdrop-filter: blur(4px);
-    backdrop-filter: blur(4px);
-    border: none;
-    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .liquid-glass::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 1.4px;
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.45) 0%,
-      rgba(255, 255, 255, 0.15) 20%,
-      rgba(255, 255, 255, 0) 40%,
-      rgba(255, 255, 255, 0) 60%,
-      rgba(255, 255, 255, 0.15) 80%,
-      rgba(255, 255, 255, 0.45) 100%
-    );
-    -webkit-mask:
-      linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
+  .surface-panel {
+    @apply rounded-2xl border border-line bg-canvas-surface shadow-panel;
   }
 
   .glass-panel {
-    @apply liquid-glass rounded-2xl;
+    @apply surface-panel;
+  }
+
+  .liquid-glass {
+    @apply rounded-xl border border-line shadow-sm backdrop-blur;
+    background: color-mix(in srgb, var(--scas-canvas-surface) 82%, transparent);
   }
 
   .focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+    --tw-ring-color: color-mix(in srgb, var(--scas-brand) 40%, transparent);
+    --tw-ring-offset-color: var(--scas-canvas);
   }
 }

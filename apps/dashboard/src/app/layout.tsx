@@ -1,11 +1,19 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import { DM_Sans, JetBrains_Mono, Syne } from 'next/font/google';
 import { Sidebar } from '@/components/Sidebar';
+import { ThemeProvider } from '@/components/ThemeProvider';
+import { THEME_BOOTSTRAP_SCRIPT } from '@/lib/theme';
 
-const inter = Inter({
+const dmSans = DM_Sans({
   subsets: ['latin'],
-  variable: '--font-inter',
+  variable: '--font-sans',
+  display: 'swap',
+});
+
+const syne = Syne({
+  subsets: ['latin'],
+  variable: '--font-display',
   display: 'swap',
 });
 
@@ -22,12 +30,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrains.variable}`}>
+    <html lang="en" className={`${dmSans.variable} ${syne.variable} ${jetbrains.variable}`} suppressHydrationWarning>
+      <head>
+        <meta name="theme-color" content="#2f27ce" />
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP_SCRIPT }} />
+      </head>
       <body className="font-sans">
-        <Sidebar />
-        <div className="pl-60">
-          <main className="mx-auto max-w-6xl px-6 py-8 lg:px-10 lg:py-10">{children}</main>
-        </div>
+        <ThemeProvider>
+          <Sidebar />
+          <div className="pl-60">
+            <main className="mx-auto max-w-6xl px-6 py-8 lg:px-10 lg:py-10">{children}</main>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

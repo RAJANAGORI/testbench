@@ -2,13 +2,13 @@
   'use strict';
 
   var STORAGE_KEY = 'scas-theme';
-  var META_COLORS = { dark: '#0a0a0f', light: '#f8f9fc' };
+  var META_COLORS = { dark: '#050315', light: '#2f27ce' };
 
   function systemTheme() {
     if (global.matchMedia && global.matchMedia('(prefers-color-scheme: light)').matches) {
       return 'light';
     }
-    return 'dark';
+    return 'light';
   }
 
   function getStoredTheme() {
@@ -51,7 +51,7 @@
 
   global.SCASTheme = {
     get: function () {
-      return document.documentElement.getAttribute('data-theme') || 'dark';
+      return document.documentElement.getAttribute('data-theme') || 'light';
     },
     set: setTheme,
     toggle: toggleTheme,
