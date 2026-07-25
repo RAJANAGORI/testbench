@@ -228,42 +228,78 @@ export function createApiRouter(): Router {
   });
 
   router.get('/platform/status', async (_req, res) => {
+    // Lab/scenario ports only — do not flag ES/Kibana/Floci as "conflicts" when the stack owns them
+    const labPorts = [3000, 3001, 3002, 3003, 3015, 3016, 3017, 3018, 3019, 3020, 3021, 3022, 3023, 4873, 4874];
     const portConflicts: number[] = [];
-    for (const port of [3000, 4873, 4874, 4566, 9200, 5601]) {
+    for (const port of labPorts) {
       if (await checkPort(port)) portConflicts.push(port);
     }
+    const elasticsearchOk = await probe('http://127.0.0.1:9200');
+    const kibanaOk = await probe('http://127.0.0.1:5601/api/status');
+    const flociOk = await probe('http://127.0.0.1:4566/_floci/health');
     const status: PlatformStatus = {
       controlPlane: { ok: true, port: Number(process.env.CONTROL_PLANE_PORT ?? 3101) },
-      elasticsearch: { ok: await probe('http://127.0.0.1:9200'), url: 'http://127.0.0.1:9200' },
-      kibana: { ok: await probe('http://127.0.0.1:5601/api/status'), url: 'http://127.0.0.1:5601' },
-      floci: { ok: await probe('http://127.0.0.1:4566/_floci/health'), url: 'http://127.0.0.1:4566' },
+      elasticsearch: { ok: elasticsearchOk, url: 'http://127.0.0.1:9200' },
+      kibana: { ok: kibanaOk, url: 'http://127.0.0.1:5601' },
+      floci: { ok: flociOk, url: 'http://127.0.0.1:4566' },
       portConflicts,
     };
     res.json(status);
   });
 
+  async function startPlatformScript(
+    res: import('express').Response,
+    label: string,
+    scriptRel: string,
+    args: string[] = [],
+  ) {
+    const scriptPath = resolve(REPO, scriptRel);
+    const record = await processManager.startDetached({
+      label,
+      command: 'bash',
+      args: [scriptPath, ...args],
+      cwd: REPO,
+      scenarioId: 'platform',
+      serviceId: label,
+    });
+    res.json({
+      started: true,
+      async: true,
+      sessionId: record.id,
+      label: record.label,
+      message: `${label} started in the background. Watch Output for logs; status updates on this page.`,
+    });
+  }
+
   router.post('/platform/elasticsearch/:action', async (req, res) => {
-    const script = req.params.action === 'up' ? 'scripts/elasticsearch-up.sh' : 'scripts/elasticsearch-down.sh';
-    const result = await runScript(resolve(REPO, script));
-    res.json(result);
+    if (req.params.action === 'up') {
+      return startPlatformScript(res, 'Elasticsearch up', 'scripts/elasticsearch-up.sh');
+    }
+    if (req.params.action === 'down') {
+      return startPlatformScript(res, 'Elasticsearch down', 'scripts/elasticsearch-down.sh');
+    }
+    return res.status(400).json({ error: 'Unknown action' });
   });
 
   router.post('/platform/floci/:action', async (req, res) => {
-    const map: Record<string, string> = {
-      setup: 'scripts/floci-setup.sh',
-      up: 'scripts/floci-up.sh',
-      down: 'scripts/floci-down.sh',
-      status: 'scripts/floci-status.sh',
+    const map: Record<string, { label: string; script: string; args?: string[] }> = {
+      setup: { label: 'Floci setup', script: 'scripts/floci-setup.sh', args: ['--image'] },
+      up: { label: 'Floci up', script: 'scripts/floci-up.sh' },
+      down: { label: 'Floci down', script: 'scripts/floci-down.sh' },
+      status: { label: 'Floci status', script: 'scripts/floci-status.sh' },
     };
-    const script = map[req.params.action];
-    if (!script) return res.status(400).json({ error: 'Unknown action' });
-    const result = await runScript(resolve(REPO, script));
-    res.json(result);
+    const entry = map[req.params.action];
+    if (!entry) return res.status(400).json({ error: 'Unknown action' });
+    // status is quick — keep sync for a small JSON reply
+    if (req.params.action === 'status') {
+      const result = await runScript(resolve(REPO, entry.script), entry.args ?? []);
+      return res.json(result);
+    }
+    return startPlatformScript(res, entry.label, entry.script, entry.args ?? []);
   });
 
   router.post('/platform/teardown', async (_req, res) => {
-    const result = await runScript(resolve(REPO, 'scripts/teardown.sh'));
-    res.json(result);
+    return startPlatformScript(res, 'Lab teardown', 'scripts/teardown.sh');
   });
 
   router.get('/logs', (req, res) => {

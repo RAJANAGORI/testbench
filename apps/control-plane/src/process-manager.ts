@@ -100,21 +100,23 @@ export class ProcessManager extends EventEmitter {
     });
   }
 
-  async startLongRunning(opts: {
+  /**
+   * Fire-and-forget script/process — returns as soon as the child is spawned.
+   * Use for long platform jobs (Floci/ES up) so HTTP proxies do not time out.
+   */
+  async startDetached(opts: {
     label: string;
     command: string;
     args?: string[];
-    scenarioCwd: string;
-    serviceCwd?: string;
-    scenarioId: string;
-    serviceId: string;
-    port?: number;
+    cwd: string;
+    scenarioId?: string;
+    serviceId?: string;
+    env?: Record<string, string>;
   }): Promise<ProcessRecord> {
     const sessionId = randomUUID();
-    const cwd = resolveScenarioCwd(opts.scenarioCwd, opts.serviceCwd);
     const record: ProcessRecord = {
       id: sessionId,
-      scenarioId: opts.scenarioId,
+      scenarioId: opts.scenarioId ?? 'platform',
       serviceId: opts.serviceId,
       label: opts.label,
       status: 'running',
@@ -123,11 +125,12 @@ export class ProcessManager extends EventEmitter {
     };
 
     this.logs.set(sessionId, []);
-    this.appendLog(sessionId, 'system', `Starting ${opts.label} in ${cwd}`);
+    this.appendLog(sessionId, 'system', `Starting ${opts.label} in ${opts.cwd}`);
+    this.appendLog(sessionId, 'system', `$ ${opts.command} ${(opts.args ?? []).join(' ')}`.trim());
 
     const proc = spawn(opts.command, opts.args ?? [], {
-      cwd,
-      env: buildLabEnv(),
+      cwd: opts.cwd,
+      env: buildLabEnv(opts.env),
       detached: false,
     });
 
@@ -146,16 +149,44 @@ export class ProcessManager extends EventEmitter {
       }
     });
 
+    proc.on('error', (err) => {
+      record.status = 'failed';
+      record.endedAt = new Date().toISOString();
+      this.appendLog(sessionId, 'system', `Process error: ${err.message}`);
+      this.emit('process-end', record);
+    });
+
     proc.on('close', (code) => {
       record.status = code === 0 ? 'completed' : 'failed';
       record.exitCode = code;
       record.endedAt = new Date().toISOString();
-      this.appendLog(sessionId, 'system', `${opts.label} stopped (code ${code ?? 'null'})`);
+      this.appendLog(sessionId, 'system', `${opts.label} finished (code ${code ?? 'null'})`);
       this.emit('process-end', record);
     });
 
-    await new Promise((r) => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 300));
     return record;
+  }
+
+  async startLongRunning(opts: {
+    label: string;
+    command: string;
+    args?: string[];
+    scenarioCwd: string;
+    serviceCwd?: string;
+    scenarioId: string;
+    serviceId: string;
+    port?: number;
+  }): Promise<ProcessRecord> {
+    const cwd = resolveScenarioCwd(opts.scenarioCwd, opts.serviceCwd);
+    return this.startDetached({
+      label: opts.label,
+      command: opts.command,
+      args: opts.args,
+      cwd,
+      scenarioId: opts.scenarioId,
+      serviceId: opts.serviceId,
+    });
   }
 
   stopSession(sessionId: string): boolean {

@@ -62,13 +62,36 @@ export default function OverviewPage() {
     return () => clearInterval(t);
   }, [refresh]);
 
-  const run = async (label: string, fn: () => Promise<unknown>) => {
+  const run = async (
+    label: string,
+    fn: () => Promise<unknown>,
+    opts?: { waitUntil?: (s: PlatformStatus | null) => boolean; maxWaitMs?: number },
+  ) => {
     setBusy(label);
     try {
+      // Platform scripts (Floci/ES) return immediately and run in the background
       await fn();
       await refresh();
+      if (opts?.waitUntil) {
+        const deadline = Date.now() + (opts.maxWaitMs ?? 8 * 60 * 1000);
+        while (Date.now() < deadline) {
+          await new Promise((r) => setTimeout(r, 3000));
+          let latest: PlatformStatus | null = null;
+          try {
+            latest = await cp.platformStatus();
+            setStatus(latest);
+            setCpReachable(true);
+          } catch {
+            setCpReachable(false);
+          }
+          if (opts.waitUntil(latest)) break;
+        }
+      }
+    } catch (err) {
+      console.error(label, err);
     } finally {
       setBusy('');
+      await refresh();
     }
   };
 
@@ -97,10 +120,19 @@ export default function OverviewPage() {
         </Alert>
       )}
 
+      {busy && (
+        <div className="mt-4">
+          <Alert variant="info">
+            <span className="font-medium">{busy}</span> running in the background — first Floci/ES start can take several minutes.
+            Watch live logs on the <Link href="/output" className="underline">Output</Link> page.
+          </Alert>
+        </div>
+      )}
+
       {status?.portConflicts && status.portConflicts.length > 0 && (
         <div className="mt-4">
           <Alert variant="warn">
-            Ports in use: {status.portConflicts.join(', ')} — stop conflicting labs or run Reset.
+            Lab ports in use: {status.portConflicts.join(', ')} — stop conflicting labs or run Reset.
           </Alert>
         </div>
       )}
@@ -134,8 +166,22 @@ export default function OverviewPage() {
               url={status?.elasticsearch.url}
               actions={
                 <>
-                  <Btn size="sm" variant="success" disabled={!!busy} onClick={() => run('es-up', cp.esUp)}>Start</Btn>
-                  <Btn size="sm" variant="ghost" disabled={!!busy} onClick={() => run('es-down', cp.esDown)}>Stop</Btn>
+                  <Btn
+                    size="sm"
+                    variant="success"
+                    disabled={!!busy}
+                    onClick={() => run('es-up', cp.esUp, { waitUntil: (s) => !!s?.elasticsearch.ok })}
+                  >
+                    {busy === 'es-up' ? 'Starting…' : 'Start'}
+                  </Btn>
+                  <Btn
+                    size="sm"
+                    variant="ghost"
+                    disabled={!!busy}
+                    onClick={() => run('es-down', cp.esDown, { waitUntil: (s) => !s?.elasticsearch.ok, maxWaitMs: 120_000 })}
+                  >
+                    {busy === 'es-down' ? 'Stopping…' : 'Stop'}
+                  </Btn>
                 </>
               }
             />
@@ -157,9 +203,30 @@ export default function OverviewPage() {
               url={status?.floci.url}
               actions={
                 <>
-                  <Btn size="sm" variant="secondary" disabled={!!busy} onClick={() => run('floci-setup', cp.flociSetup)}>Setup</Btn>
-                  <Btn size="sm" variant="success" disabled={!!busy} onClick={() => run('floci-up', cp.flociUp)}>Start</Btn>
-                  <Btn size="sm" variant="ghost" disabled={!!busy} onClick={() => run('floci-down', cp.flociDown)}>Stop</Btn>
+                  <Btn
+                    size="sm"
+                    variant="secondary"
+                    disabled={!!busy}
+                    onClick={() => run('floci-setup', cp.flociSetup, { maxWaitMs: 60_000 })}
+                  >
+                    {busy === 'floci-setup' ? 'Setup…' : 'Setup'}
+                  </Btn>
+                  <Btn
+                    size="sm"
+                    variant="success"
+                    disabled={!!busy}
+                    onClick={() => run('floci-up', cp.flociUp, { waitUntil: (s) => !!s?.floci.ok })}
+                  >
+                    {busy === 'floci-up' ? 'Starting…' : 'Start'}
+                  </Btn>
+                  <Btn
+                    size="sm"
+                    variant="ghost"
+                    disabled={!!busy}
+                    onClick={() => run('floci-down', cp.flociDown, { waitUntil: (s) => !s?.floci.ok, maxWaitMs: 120_000 })}
+                  >
+                    {busy === 'floci-down' ? 'Stopping…' : 'Stop'}
+                  </Btn>
                 </>
               }
             />

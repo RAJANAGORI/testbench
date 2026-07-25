@@ -1,13 +1,32 @@
 import os from 'node:os';
 
-/** Collect LAN IPv4 addresses for Next.js dev cross-origin access. */
+/** Collect LAN IPv4 + mDNS hostnames for Next.js dev cross-origin access. */
 function devOrigins() {
   const origins = new Set(['localhost', '127.0.0.1', '0.0.0.0']);
 
+  // .local / custom hostnames (e.g. rajanagori.local via mDNS)
+  try {
+    const host = os.hostname().replace(/\.local$/i, '');
+    if (host) {
+      origins.add(host);
+      origins.add(`${host}.local`);
+      origins.add(`${host}:3100`);
+      origins.add(`${host}.local:3100`);
+    }
+  } catch {
+    /* ignore */
+  }
+
+  if (process.env.SCAS_PUBLIC_HOST) {
+    origins.add(process.env.SCAS_PUBLIC_HOST.trim());
+  }
   if (process.env.SCAS_LAN_IP) {
     for (const ip of process.env.SCAS_LAN_IP.split(/[\s,]+/)) {
       const trimmed = ip.trim();
-      if (trimmed) origins.add(trimmed);
+      if (trimmed) {
+        origins.add(trimmed);
+        origins.add(`${trimmed}:3100`);
+      }
     }
   }
 
