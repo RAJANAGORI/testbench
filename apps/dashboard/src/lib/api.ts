@@ -47,27 +47,66 @@ export interface LogEntry {
   line: string;
 }
 
+export interface ProcessRecord {
+  id: string;
+  scenarioId?: string;
+  label: string;
+  status: 'running' | 'stopped' | 'failed' | 'completed';
+  exitCode?: number | null;
+}
+
+export interface ActionResult {
+  async?: boolean;
+  started?: boolean;
+  sessionId?: string;
+  sessions?: string[];
+  record?: ProcessRecord;
+  startedProcesses?: ProcessRecord[];
+}
+
+async function sleep(ms: number) {
+  await new Promise((r) => setTimeout(r, ms));
+}
+
+/** Poll until a session leaves "running" (logs already stream over WebSocket). */
+export async function waitForSession(
+  sessionId: string,
+  opts?: { intervalMs?: number; maxWaitMs?: number },
+): Promise<ProcessRecord | undefined> {
+  const intervalMs = opts?.intervalMs ?? 400;
+  const deadline = Date.now() + (opts?.maxWaitMs ?? 30 * 60 * 1000);
+  while (Date.now() < deadline) {
+    const procs = await cp.processes();
+    const hit = procs.find((p) => p.id === sessionId);
+    if (!hit || hit.status !== 'running') return hit;
+    await sleep(intervalMs);
+  }
+  return undefined;
+}
+
 export const cp = {
   getScenarios: () => api<ScenarioSummary[]>('/scenarios'),
   getScenario: (id: string) => api<ScenarioDetail>(`/scenarios/${id}`),
-  setup: (id: string) => api(`/scenarios/${id}/setup`, { method: 'POST' }),
-  startServices: (id: string) => api(`/scenarios/${id}/services/start`, { method: 'POST' }),
+  setup: (id: string) => api<ActionResult>(`/scenarios/${id}/setup`, { method: 'POST' }),
+  startServices: (id: string) => api<ActionResult>(`/scenarios/${id}/services/start`, { method: 'POST' }),
   stopServices: (id: string) => api(`/scenarios/${id}/services/stop`, { method: 'POST' }),
-  runStep: (id: string, stepId: string) => api(`/scenarios/${id}/steps/${stepId}`, { method: 'POST' }),
-  runAll: (id: string) => api(`/scenarios/${id}/run`, { method: 'POST' }),
+  runStep: (id: string, stepId: string) =>
+    api<ActionResult>(`/scenarios/${id}/steps/${stepId}`, { method: 'POST' }),
+  runAll: (id: string) => api<ActionResult>(`/scenarios/${id}/run`, { method: 'POST' }),
   getCaptures: (id: string) => api<Record<string, unknown>>(`/scenarios/${id}/captures`),
   clearCaptures: (id: string) => api(`/scenarios/${id}/captures`, { method: 'DELETE' }),
-  floci: (id: string, action: 'seed' | 'verify') => api(`/scenarios/${id}/floci/${action}`, { method: 'POST' }),
+  floci: (id: string, action: 'seed' | 'verify') =>
+    api<ActionResult>(`/scenarios/${id}/floci/${action}`, { method: 'POST' }),
   platformStatus: () => api<PlatformStatus>('/platform/status'),
-  esUp: () => api('/platform/elasticsearch/up', { method: 'POST' }),
-  esDown: () => api('/platform/elasticsearch/down', { method: 'POST' }),
-  flociSetup: () => api('/platform/floci/setup', { method: 'POST' }),
-  flociUp: () => api('/platform/floci/up', { method: 'POST' }),
-  flociDown: () => api('/platform/floci/down', { method: 'POST' }),
+  esUp: () => api<ActionResult>('/platform/elasticsearch/up', { method: 'POST' }),
+  esDown: () => api<ActionResult>('/platform/elasticsearch/down', { method: 'POST' }),
+  flociSetup: () => api<ActionResult>('/platform/floci/setup', { method: 'POST' }),
+  flociUp: () => api<ActionResult>('/platform/floci/up', { method: 'POST' }),
+  flociDown: () => api<ActionResult>('/platform/floci/down', { method: 'POST' }),
   flociStatus: () => api('/platform/floci/status', { method: 'POST' }),
-  teardown: () => api('/platform/teardown', { method: 'POST' }),
+  teardown: () => api<ActionResult>('/platform/teardown', { method: 'POST' }),
   logs: (session?: string) => api<LogEntry[]>(session ? `/logs?session=${session}` : '/logs'),
-  processes: () => api('/processes'),
+  processes: () => api<ProcessRecord[]>('/processes'),
   wsUrl: () => controlPlaneWsUrl(),
 };
 

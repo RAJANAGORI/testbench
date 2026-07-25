@@ -5,7 +5,7 @@ import { createContext, useCallback, useContext, useMemo, useState, type ReactNo
 interface LabSessionContextValue {
   /** Active process session to highlight in the terminal (undefined = all sessions). */
   sessionId?: string;
-  setSessionId: (id: string | undefined) => void;
+  setSessionId: (id: string | undefined, opts?: { followAll?: boolean }) => void;
   /** Currently focused lab id (for dock label). */
   labId?: string;
   setLabId: (id: string | undefined) => void;
@@ -20,9 +20,11 @@ export function LabSessionProvider({ children }: { children: ReactNode }) {
   const [labId, setLabId] = useState<string | undefined>();
   const [followAll, setFollowAll] = useState(true);
 
-  const setSessionId = useCallback((id: string | undefined) => {
+  const setSessionId = useCallback((id: string | undefined, opts?: { followAll?: boolean }) => {
     setSessionIdState(id);
-    if (id) setFollowAll(false);
+    if (id) {
+      setFollowAll(opts?.followAll ?? false);
+    }
   }, []);
 
   const value = useMemo(

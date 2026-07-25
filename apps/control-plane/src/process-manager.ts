@@ -6,12 +6,30 @@ import { buildLabEnv, resolveScenarioCwd } from './env.js';
 
 const MAX_LOG_LINES = 5000;
 
+type SpawnOpts = {
+  label: string;
+  command: string;
+  args?: string[];
+  cwd: string;
+  scenarioId?: string;
+  serviceId?: string;
+  stepId?: string;
+  shell?: boolean;
+  env?: Record<string, string>;
+  /** Also append lines into this session (e.g. run-all job dock). */
+  mirrorTo?: string;
+};
+
 export class ProcessManager extends EventEmitter {
-  private processes = new Map<string, { proc: ChildProcess; record: ProcessRecord }>();
+  private processes = new Map<string, { proc: ChildProcess | null; record: ProcessRecord }>();
   private logs = new Map<string, LogEntry[]>();
 
   list(): ProcessRecord[] {
     return Array.from(this.processes.values()).map((p) => p.record);
+  }
+
+  get(sessionId: string): ProcessRecord | undefined {
+    return this.processes.get(sessionId)?.record;
   }
 
   getLogs(sessionId: string): LogEntry[] {
@@ -36,17 +54,11 @@ export class ProcessManager extends EventEmitter {
     this.emit('log', entry);
   }
 
-  async runCommand(opts: {
-    label: string;
-    command: string;
-    args?: string[];
-    cwd: string;
-    scenarioId?: string;
-    serviceId?: string;
-    stepId?: string;
-    shell?: boolean;
-    env?: Record<string, string>;
-  }): Promise<ProcessRecord> {
+  /**
+   * Spawn a process and return as soon as it is running.
+   * Logs stream over the EventEmitter while the HTTP handler can return immediately.
+   */
+  private spawnTracked(opts: SpawnOpts): ProcessRecord {
     const sessionId = randomUUID();
     const record: ProcessRecord = {
       id: sessionId,
@@ -59,100 +71,43 @@ export class ProcessManager extends EventEmitter {
     };
 
     this.logs.set(sessionId, []);
-    this.appendLog(sessionId, 'system', `$ ${opts.command} ${(opts.args ?? []).join(' ')}`.trim());
-
-    return new Promise((resolvePromise) => {
-      const proc = spawn(opts.command, opts.args ?? [], {
-        cwd: opts.cwd,
-        env: buildLabEnv(opts.env),
-        shell: opts.shell ?? false,
-      });
-
-      this.processes.set(sessionId, { proc, record });
-
-      proc.stdout?.on('data', (chunk: Buffer) => {
-        for (const line of chunk.toString().split(/\r?\n/)) {
-          if (line) this.appendLog(sessionId, 'stdout', line);
-        }
-      });
-
-      proc.stderr?.on('data', (chunk: Buffer) => {
-        for (const line of chunk.toString().split(/\r?\n/)) {
-          if (line) this.appendLog(sessionId, 'stderr', line);
-        }
-      });
-
-      proc.on('error', (err) => {
-        record.status = 'failed';
-        record.endedAt = new Date().toISOString();
-        this.appendLog(sessionId, 'system', `Process error: ${err.message}`);
-        resolvePromise(record);
-      });
-
-      proc.on('close', (code) => {
-        record.status = code === 0 ? 'completed' : 'failed';
-        record.exitCode = code;
-        record.endedAt = new Date().toISOString();
-        record.pid = proc.pid;
-        this.appendLog(sessionId, 'system', `Exited with code ${code ?? 'null'}`);
-        resolvePromise(record);
-      });
-    });
-  }
-
-  /**
-   * Fire-and-forget script/process — returns as soon as the child is spawned.
-   * Use for long platform jobs (Floci/ES up) so HTTP proxies do not time out.
-   */
-  async startDetached(opts: {
-    label: string;
-    command: string;
-    args?: string[];
-    cwd: string;
-    scenarioId?: string;
-    serviceId?: string;
-    env?: Record<string, string>;
-  }): Promise<ProcessRecord> {
-    const sessionId = randomUUID();
-    const record: ProcessRecord = {
-      id: sessionId,
-      scenarioId: opts.scenarioId ?? 'platform',
-      serviceId: opts.serviceId,
-      label: opts.label,
-      status: 'running',
-      startedAt: new Date().toISOString(),
-      pid: undefined,
-    };
-
-    this.logs.set(sessionId, []);
-    this.appendLog(sessionId, 'system', `Starting ${opts.label} in ${opts.cwd}`);
-    this.appendLog(sessionId, 'system', `$ ${opts.command} ${(opts.args ?? []).join(' ')}`.trim());
+    const cmdLine = `$ ${opts.command} ${(opts.args ?? []).join(' ')}`.trim();
+    this.appendLog(sessionId, 'system', cmdLine);
+    if (opts.mirrorTo) this.appendLog(opts.mirrorTo, 'system', cmdLine);
 
     const proc = spawn(opts.command, opts.args ?? [], {
       cwd: opts.cwd,
-      env: buildLabEnv(opts.env),
-      detached: false,
+      env: buildLabEnv({
+        PYTHONUNBUFFERED: '1',
+        ...opts.env,
+      }),
+      shell: opts.shell ?? false,
     });
 
     record.pid = proc.pid;
     this.processes.set(sessionId, { proc, record });
 
+    const write = (stream: LogEntry['stream'], line: string) => {
+      this.appendLog(sessionId, stream, line);
+      if (opts.mirrorTo) this.appendLog(opts.mirrorTo, stream, line);
+    };
+
     proc.stdout?.on('data', (chunk: Buffer) => {
       for (const line of chunk.toString().split(/\r?\n/)) {
-        if (line) this.appendLog(sessionId, 'stdout', line);
+        if (line) write('stdout', line);
       }
     });
 
     proc.stderr?.on('data', (chunk: Buffer) => {
       for (const line of chunk.toString().split(/\r?\n/)) {
-        if (line) this.appendLog(sessionId, 'stderr', line);
+        if (line) write('stderr', line);
       }
     });
 
     proc.on('error', (err) => {
       record.status = 'failed';
       record.endedAt = new Date().toISOString();
-      this.appendLog(sessionId, 'system', `Process error: ${err.message}`);
+      write('system', `Process error: ${err.message}`);
       this.emit('process-end', record);
     });
 
@@ -160,15 +115,97 @@ export class ProcessManager extends EventEmitter {
       record.status = code === 0 ? 'completed' : 'failed';
       record.exitCode = code;
       record.endedAt = new Date().toISOString();
-      this.appendLog(sessionId, 'system', `${opts.label} finished (code ${code ?? 'null'})`);
+      write('system', `Exited with code ${code ?? 'null'}`);
       this.emit('process-end', record);
     });
 
-    await new Promise((r) => setTimeout(r, 300));
     return record;
   }
 
-  async startLongRunning(opts: {
+  /** Fire-and-forget command (setup, attack steps, floci scripts). */
+  runCommand(opts: SpawnOpts): ProcessRecord {
+    return this.spawnTracked(opts);
+  }
+
+  /**
+   * Fire-and-forget script/process — returns as soon as the child is spawned.
+   * Use for long platform jobs (Floci/ES up) so HTTP proxies do not time out.
+   */
+  startDetached(opts: SpawnOpts): ProcessRecord {
+    return this.spawnTracked(opts);
+  }
+
+  /** Wait until a session leaves the running state (completed / failed / stopped). */
+  waitForSession(sessionId: string): Promise<ProcessRecord> {
+    const entry = this.processes.get(sessionId);
+    if (!entry) {
+      return Promise.reject(new Error(`Unknown session ${sessionId}`));
+    }
+    if (entry.record.status !== 'running') {
+      return Promise.resolve(entry.record);
+    }
+    return new Promise((resolve) => {
+      const onEnd = (r: ProcessRecord) => {
+        if (r.id === sessionId) {
+          this.off('process-end', onEnd);
+          resolve(r);
+        }
+      };
+      this.on('process-end', onEnd);
+    });
+  }
+
+  /**
+   * Background orchestration job with its own log session (e.g. run-all).
+   * Returns immediately; child process logs still emit under their own session ids.
+   */
+  startJob(opts: {
+    label: string;
+    scenarioId?: string;
+    run: (ctx: {
+      log: (stream: LogEntry['stream'], line: string) => void;
+      waitFor: (sessionId: string) => Promise<ProcessRecord>;
+    }) => Promise<void>;
+  }): ProcessRecord {
+    const sessionId = randomUUID();
+    const record: ProcessRecord = {
+      id: sessionId,
+      scenarioId: opts.scenarioId,
+      label: opts.label,
+      status: 'running',
+      startedAt: new Date().toISOString(),
+    };
+
+    this.logs.set(sessionId, []);
+    this.processes.set(sessionId, { proc: null, record });
+    this.appendLog(sessionId, 'system', `Job started: ${opts.label}`);
+
+    void (async () => {
+      try {
+        await opts.run({
+          log: (stream, line) => this.appendLog(sessionId, stream, line),
+          waitFor: (id) => this.waitForSession(id),
+        });
+        if (record.status === 'running') {
+          record.status = 'completed';
+          this.appendLog(sessionId, 'system', 'Job completed');
+        }
+      } catch (err) {
+        record.status = 'failed';
+        this.appendLog(
+          sessionId,
+          'system',
+          `Job failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+      record.endedAt = new Date().toISOString();
+      this.emit('process-end', record);
+    })();
+
+    return record;
+  }
+
+  startLongRunning(opts: {
     label: string;
     command: string;
     args?: string[];
@@ -177,7 +214,8 @@ export class ProcessManager extends EventEmitter {
     scenarioId: string;
     serviceId: string;
     port?: number;
-  }): Promise<ProcessRecord> {
+    mirrorTo?: string;
+  }): ProcessRecord {
     const cwd = resolveScenarioCwd(opts.scenarioCwd, opts.serviceCwd);
     return this.startDetached({
       label: opts.label,
@@ -186,6 +224,7 @@ export class ProcessManager extends EventEmitter {
       cwd,
       scenarioId: opts.scenarioId,
       serviceId: opts.serviceId,
+      mirrorTo: opts.mirrorTo,
     });
   }
 
@@ -193,15 +232,19 @@ export class ProcessManager extends EventEmitter {
     const entry = this.processes.get(sessionId);
     if (!entry) return false;
     const { proc, record } = entry;
-    if (proc.pid) {
+    if (proc?.pid) {
       try {
         process.kill(proc.pid, 'SIGTERM');
       } catch {
         /* already dead */
       }
     }
-    record.status = 'stopped';
-    record.endedAt = new Date().toISOString();
+    if (record.status === 'running') {
+      record.status = 'stopped';
+      record.endedAt = new Date().toISOString();
+      this.appendLog(sessionId, 'system', 'Stopped');
+      this.emit('process-end', record);
+    }
     return true;
   }
 

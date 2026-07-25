@@ -4,7 +4,7 @@ import { use, useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Alert, Btn, Card, LevelBadge, PageHeader, StatusPill, WorkflowTabs } from '@/components/ui';
 import { useLabSession } from '@/components/LabSessionContext';
-import { cp, type ScenarioDetail } from '@/lib/api';
+import { cp, waitForSession, type ActionResult, type ScenarioDetail } from '@/lib/api';
 
 const WORKFLOW = [
   { id: 'prepare', label: 'Prepare', hint: 'Setup & services' },
@@ -16,7 +16,7 @@ type Phase = (typeof WORKFLOW)[number]['id'];
 
 export default function ScenarioDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const { setSessionId, setLabId } = useLabSession();
+  const { setSessionId, setLabId, setFollowAll } = useLabSession();
   const [scenario, setScenario] = useState<ScenarioDetail | null>(null);
   const [captures, setCaptures] = useState<Record<string, unknown>>({});
   const [busy, setBusy] = useState('');
@@ -52,13 +52,31 @@ export default function ScenarioDetailPage({ params }: { params: Promise<{ id: s
     return () => clearInterval(t);
   }, [load, loadCaptures]);
 
-  const action = async (label: string, fn: () => Promise<unknown>, nextPhase?: Phase) => {
+  const action = async (
+    label: string,
+    fn: () => Promise<ActionResult | unknown>,
+    nextPhase?: Phase,
+    opts?: { followAll?: boolean; /** false for long-running mock servers */ wait?: boolean },
+  ) => {
+    // Instant UI feedback — API returns as soon as the process is spawned
     setBusy(label);
     setError('');
+    setFollowAll(true);
     try {
-      const res = (await fn()) as { sessionId?: string; sessions?: string[]; started?: boolean };
-      if (res.sessionId) setSessionId(res.sessionId);
-      if (res.sessions?.length) setSessionId(res.sessions[res.sessions.length - 1]);
+      const res = (await fn()) as ActionResult;
+      const sid = res.sessionId ?? res.sessions?.[0] ?? res.record?.id;
+      if (sid) setSessionId(sid, { followAll: opts?.followAll });
+
+      void load();
+
+      // Finite scripts: keep button busy until exit. Long-running services: release immediately.
+      if (sid && opts?.wait !== false) {
+        const finished = await waitForSession(sid);
+        if (finished?.status === 'failed') {
+          setError(`${label} failed${finished.exitCode != null ? ` (exit ${finished.exitCode})` : ''}`);
+        }
+      }
+
       await load();
       await loadCaptures();
       if (nextPhase) setPhase(nextPhase);
@@ -143,7 +161,11 @@ export default function ScenarioDetailPage({ params }: { params: Promise<{ id: s
               title="One-click full lab"
               subtitle="Runs setup → services → all attack steps — output streams in the dock"
             >
-              <Btn size="lg" disabled={!!busy} onClick={() => action('run-all', () => cp.runAll(id), 'observe')}>
+              <Btn
+                size="lg"
+                disabled={!!busy}
+                onClick={() => action('run-all', () => cp.runAll(id), 'observe', { followAll: true })}
+              >
                 {busy === 'run-all' ? 'Running…' : 'Run full lab'}
               </Btn>
             </Card>
@@ -159,11 +181,20 @@ export default function ScenarioDetailPage({ params }: { params: Promise<{ id: s
                   <Btn
                     variant="success"
                     disabled={!!busy}
-                    onClick={() => action('services', () => cp.startServices(id), 'execute')}
+                    onClick={() =>
+                      action('services', () => cp.startServices(id), 'execute', {
+                        wait: false,
+                        followAll: true,
+                      })
+                    }
                   >
                     Start services
                   </Btn>
-                  <Btn variant="danger" disabled={!!busy} onClick={() => action('stop', () => cp.stopServices(id))}>
+                  <Btn
+                    variant="danger"
+                    disabled={!!busy}
+                    onClick={() => action('stop', () => cp.stopServices(id), undefined, { wait: false })}
+                  >
                     Stop
                   </Btn>
                 </div>
