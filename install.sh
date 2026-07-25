@@ -76,15 +76,16 @@ ok()   { echo -e "${GREEN}✅${NC} $*"; }
 warn() { echo -e "${YELLOW}⚠️${NC}  $*"; }
 err()  { echo -e "${RED}❌${NC} $*"; }
 
-need_cmd() {
-  local name="$1"
-  local hint="${2:-}"
-  if ! command -v "$name" >/dev/null 2>&1; then
-    err "Missing required command: ${name}"
-    [ -n "$hint" ] && echo "   ${hint}"
-    return 1
+ask_yn() {
+  # ask_yn "Install curl now?"
+  local prompt="$1"
+  local reply
+  if [ "$YES" = "1" ]; then
+    echo "${prompt} (y/N): y  [auto --yes]"
+    return 0
   fi
-  return 0
+  read -r -p "${prompt} (y/N): " reply
+  [[ "${reply}" =~ ^[Yy]$ ]]
 }
 
 version_ge() {
@@ -99,6 +100,269 @@ version_ge() {
     if ((10#$x < 10#$y)); then return 1; fi
   done
   return 0
+}
+
+# OS / package manager detection for interactive installs
+SCAS_OS=unknown
+SCAS_DISTRO=
+SCAS_PKG=none
+
+detect_platform() {
+  case "$(uname -s)" in
+    Darwin)
+      SCAS_OS=macos
+      if command -v brew >/dev/null 2>&1; then
+        SCAS_PKG=brew
+      else
+        SCAS_PKG=none
+      fi
+      ;;
+    Linux)
+      SCAS_OS=linux
+      if [ -f /etc/os-release ]; then
+        # shellcheck disable=SC1091
+        . /etc/os-release
+        SCAS_DISTRO="${ID:-linux}"
+      fi
+      if command -v apt-get >/dev/null 2>&1; then
+        SCAS_PKG=apt
+      elif command -v dnf >/dev/null 2>&1; then
+        SCAS_PKG=dnf
+      elif command -v yum >/dev/null 2>&1; then
+        SCAS_PKG=yum
+      elif command -v pacman >/dev/null 2>&1; then
+        SCAS_PKG=pacman
+      elif command -v zypper >/dev/null 2>&1; then
+        SCAS_PKG=zypper
+      else
+        SCAS_PKG=none
+      fi
+      ;;
+    *)
+      SCAS_OS=unknown
+      SCAS_PKG=none
+      ;;
+  esac
+}
+
+pkg_label_for() {
+  # Map logical tool → package name(s) for the active pkg manager
+  local tool="$1"
+  case "${SCAS_PKG}:${tool}" in
+    brew:curl) echo "curl" ;;
+    brew:git) echo "git" ;;
+    brew:python3) echo "python3" ;;
+    brew:node) echo "node" ;;
+    brew:npm) echo "node" ;;
+    brew:docker) echo "docker" ;; # cask handled separately
+    apt:curl) echo "curl" ;;
+    apt:git) echo "git" ;;
+    apt:python3) echo "python3" ;;
+    apt:node|apt:npm) echo "nodejs npm" ;;
+    apt:docker) echo "docker.io docker-compose-v2" ;;
+    dnf:curl|yum:curl) echo "curl" ;;
+    dnf:git|yum:git) echo "git" ;;
+    dnf:python3|yum:python3) echo "python3" ;;
+    dnf:node|dnf:npm|yum:node|yum:npm) echo "nodejs npm" ;;
+    dnf:docker|yum:docker) echo "docker docker-compose" ;;
+    pacman:curl) echo "curl" ;;
+    pacman:git) echo "git" ;;
+    pacman:python3) echo "python" ;;
+    pacman:node|pacman:npm) echo "nodejs npm" ;;
+    pacman:docker) echo "docker docker-compose" ;;
+    zypper:curl) echo "curl" ;;
+    zypper:git) echo "git" ;;
+    zypper:python3) echo "python3" ;;
+    zypper:node|zypper:npm) echo "nodejs npm" ;;
+    zypper:docker) echo "docker docker-compose" ;;
+    *) echo "" ;;
+  esac
+}
+
+run_pkg_install() {
+  local packages="$1"
+  [ -n "$packages" ] || return 1
+  log "Installing via ${SCAS_PKG}: ${packages}"
+  case "$SCAS_PKG" in
+    brew)
+      # shellcheck disable=SC2086
+      brew install $packages
+      ;;
+    apt)
+      # shellcheck disable=SC2086
+      sudo apt-get update -y && sudo apt-get install -y $packages
+      ;;
+    dnf)
+      # shellcheck disable=SC2086
+      sudo dnf install -y $packages
+      ;;
+    yum)
+      # shellcheck disable=SC2086
+      sudo yum install -y $packages
+      ;;
+    pacman)
+      # shellcheck disable=SC2086
+      sudo pacman -Sy --noconfirm $packages
+      ;;
+    zypper)
+      # shellcheck disable=SC2086
+      sudo zypper install -y $packages
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+install_docker_package() {
+  case "$SCAS_PKG" in
+    brew)
+      if brew list --cask docker >/dev/null 2>&1 || [ -d /Applications/Docker.app ]; then
+        ok "Docker Desktop already present"
+        return 0
+      fi
+      brew install --cask docker
+      ;;
+    apt|dnf|yum|pacman|zypper)
+      run_pkg_install "$(pkg_label_for docker)"
+      if command -v systemctl >/dev/null 2>&1; then
+        sudo systemctl enable --now docker 2>/dev/null || sudo systemctl start docker 2>/dev/null || true
+        # Allow current user to talk to the daemon without root (may need re-login)
+        if getent group docker >/dev/null 2>&1; then
+          sudo usermod -aG docker "${USER}" 2>/dev/null || true
+          warn "Added ${USER} to the docker group — you may need to log out/in (or: newgrp docker)"
+        fi
+      fi
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+offer_install_tool() {
+  # offer_install_tool <cmd> <human-name>
+  local cmd="$1"
+  local label="${2:-$1}"
+  if command -v "$cmd" >/dev/null 2>&1; then
+    return 0
+  fi
+  err "Missing required command: ${cmd}"
+  local pkgs
+  pkgs="$(pkg_label_for "$cmd")"
+  if [ "$SCAS_PKG" = "none" ] || [ -z "$pkgs" ]; then
+    warn "No automatic installer for ${label} on this OS."
+    case "$SCAS_OS" in
+      macos)
+        echo "   Install Homebrew: https://brew.sh  then: brew install ${cmd}"
+        if [ "$cmd" = "docker" ]; then
+          echo "   Or install Docker Desktop: https://www.docker.com/products/docker-desktop/"
+        fi
+        if [ "$cmd" = "node" ] || [ "$cmd" = "npm" ]; then
+          echo "   Or use nvm: https://github.com/nvm-sh/nvm  (repo pins .nvmrc)"
+        fi
+        ;;
+      linux)
+        echo "   Install manually, e.g.: sudo apt install ${cmd}"
+        if [ "$cmd" = "docker" ]; then
+          echo "   Docker Engine docs: https://docs.docker.com/engine/install/"
+        fi
+        ;;
+      *)
+        echo "   See documentation/getting-started/FULL_STACK_SETUP.md"
+        ;;
+    esac
+    if ask_yn "Open/show install hint and continue after you install ${label} yourself?"; then
+      warn "Re-run ./install.sh after installing ${label}"
+    fi
+    return 1
+  fi
+
+  echo "   Detected OS: ${SCAS_OS}${SCAS_DISTRO:+ (${SCAS_DISTRO})} · package manager: ${SCAS_PKG}"
+  if [ "$cmd" = "docker" ] && [ "$SCAS_PKG" = "brew" ]; then
+    echo "   Suggested: brew install --cask docker"
+  else
+    echo "   Suggested: ${SCAS_PKG} install ${pkgs}"
+  fi
+
+  if ! ask_yn "Install ${label} now?"; then
+    warn "Skipped installing ${label}"
+    return 1
+  fi
+
+  if [ "$cmd" = "docker" ]; then
+    install_docker_package || return 1
+  else
+    run_pkg_install "$pkgs" || return 1
+  fi
+
+  hash -r 2>/dev/null || true
+  if command -v "$cmd" >/dev/null 2>&1; then
+    ok "${label} installed"
+    return 0
+  fi
+  # node/npm: apt may provide nodejs but not `node` symlink
+  if [ "$cmd" = "node" ] && command -v nodejs >/dev/null 2>&1; then
+    warn "nodejs is installed but 'node' is missing — creating user alias hint"
+    echo "   Try: sudo update-alternatives --install /usr/bin/node node /usr/bin/nodejs 1"
+  fi
+  err "${label} still not on PATH after install"
+  return 1
+}
+
+start_docker_daemon() {
+  if docker info >/dev/null 2>&1; then
+    return 0
+  fi
+  err "Docker daemon is not running"
+  echo "   OS: ${SCAS_OS}${SCAS_DISTRO:+ (${SCAS_DISTRO})}"
+  case "$SCAS_OS" in
+    macos)
+      echo "   Will try: open -a Docker  (Docker Desktop)"
+      ;;
+    linux)
+      echo "   Will try: sudo systemctl start docker"
+      ;;
+    *)
+      echo "   Start Docker Desktop / the docker service, then re-run."
+      ;;
+  esac
+
+  if ! ask_yn "Start Docker now?"; then
+    warn "Skipped starting Docker"
+    return 1
+  fi
+
+  case "$SCAS_OS" in
+    macos)
+      open -a Docker 2>/dev/null || open -a "Docker Desktop" 2>/dev/null || true
+      log "Waiting for Docker Desktop to become ready (up to ~90s)…"
+      ;;
+    linux)
+      if command -v systemctl >/dev/null 2>&1; then
+        sudo systemctl start docker || true
+        sudo systemctl enable docker 2>/dev/null || true
+      else
+        sudo service docker start 2>/dev/null || true
+      fi
+      log "Waiting for Docker daemon (up to ~60s)…"
+      ;;
+  esac
+
+  local tries=45
+  while [ "$tries" -gt 0 ]; do
+    if docker info >/dev/null 2>&1; then
+      ok "Docker daemon is running"
+      return 0
+    fi
+    tries=$((tries - 1))
+    sleep 2
+  done
+  err "Docker still not reachable"
+  if [ "$SCAS_OS" = "linux" ] && ! groups | grep -qw docker; then
+    warn "Your user may need the docker group: sudo usermod -aG docker \$USER && newgrp docker"
+  fi
+  return 1
 }
 
 echo ""
@@ -124,13 +388,21 @@ if [ "$YES" != "1" ]; then
   fi
 fi
 
+detect_platform
+log "Platform: ${SCAS_OS}${SCAS_DISTRO:+ / ${SCAS_DISTRO}} · packages via: ${SCAS_PKG}"
+
 # ── 1. Prerequisites ─────────────────────────────────────────
 log "Checking prerequisites…"
 echo ""
 
 MISSING=0
+NEED_DOCKER=0
+if [ "$SKIP_ES" != "1" ] || [ "$SKIP_FLOCI" != "1" ]; then
+  NEED_DOCKER=1
+fi
 
-if need_cmd node "Install Node.js 20+ (https://nodejs.org) — repo pins .nvmrc 20.19.0"; then
+# --- Node ---
+if command -v node >/dev/null 2>&1; then
   NODE_RAW="$(node --version | sed 's/^v//')"
   ok "Node.js v${NODE_RAW}"
   if ! version_ge "${NODE_RAW}" "16.0.0"; then
@@ -140,68 +412,120 @@ if need_cmd node "Install Node.js 20+ (https://nodejs.org) — repo pins .nvmrc 
     warn "Node ${NODE_RAW} works for labs; UI stack is validated on Node 20 (.nvmrc)"
   fi
 else
-  MISSING=1
+  offer_install_tool node "Node.js" || MISSING=1
+  if command -v node >/dev/null 2>&1; then
+    NODE_RAW="$(node --version | sed 's/^v//')"
+    ok "Node.js v${NODE_RAW}"
+  fi
 fi
 
-if need_cmd npm "Comes with Node.js"; then
+# --- npm ---
+if command -v npm >/dev/null 2>&1; then
   ok "npm $(npm --version)"
 else
-  MISSING=1
+  offer_install_tool npm "npm" || MISSING=1
+  if command -v npm >/dev/null 2>&1; then
+    ok "npm $(npm --version)"
+  fi
 fi
 
-if need_cmd python3 "Install Python 3.8+ (3.11 recommended — see .python-version)"; then
+# --- Python ---
+if command -v python3 >/dev/null 2>&1; then
   ok "Python $(python3 --version | awk '{print $2}')"
 else
-  MISSING=1
+  offer_install_tool python3 "Python 3" || MISSING=1
+  if command -v python3 >/dev/null 2>&1; then
+    ok "Python $(python3 --version | awk '{print $2}')"
+  fi
 fi
 
-if need_cmd git "Install Git"; then
+# --- Git ---
+if command -v git >/dev/null 2>&1; then
   ok "Git $(git --version | awk '{print $3}')"
 else
-  MISSING=1
+  offer_install_tool git "Git" || MISSING=1
+  if command -v git >/dev/null 2>&1; then
+    ok "Git $(git --version | awk '{print $3}')"
+  fi
 fi
 
-if need_cmd curl "Install curl"; then
+# --- curl ---
+if command -v curl >/dev/null 2>&1; then
   ok "curl available"
 else
-  MISSING=1
+  offer_install_tool curl "curl" || MISSING=1
+  if command -v curl >/dev/null 2>&1; then
+    ok "curl available"
+  fi
 fi
 
-NEED_DOCKER=0
-if [ "$SKIP_ES" != "1" ] || [ "$SKIP_FLOCI" != "1" ]; then
-  NEED_DOCKER=1
-fi
-
+# --- Docker (+ Compose + daemon) ---
 if [ "$NEED_DOCKER" = "1" ]; then
-  if need_cmd docker "Install Docker Desktop / Docker Engine — required for ES, Kibana, Floci"; then
+  if command -v docker >/dev/null 2>&1; then
     ok "Docker $(docker --version | head -1)"
   else
-    MISSING=1
+    offer_install_tool docker "Docker" || MISSING=1
+    if command -v docker >/dev/null 2>&1; then
+      ok "Docker $(docker --version | head -1)"
+    fi
   fi
-  if ! docker compose version >/dev/null 2>&1; then
-    err "Docker Compose v2 required (docker compose …)"
-    MISSING=1
-  else
-    ok "Docker Compose $(docker compose version --short 2>/dev/null || echo v2)"
-  fi
-  if ! docker info >/dev/null 2>&1; then
-    err "Docker daemon is not running — start Docker Desktop and retry"
-    MISSING=1
-  else
-    ok "Docker daemon is running"
+
+  if command -v docker >/dev/null 2>&1; then
+    if docker compose version >/dev/null 2>&1; then
+      ok "Docker Compose $(docker compose version --short 2>/dev/null || echo v2)"
+    else
+      err "Docker Compose v2 required (docker compose …)"
+      COMPOSE_OK=0
+      if [ "$SCAS_PKG" = "apt" ]; then
+        if ask_yn "Install docker-compose-v2 now?"; then
+          run_pkg_install "docker-compose-v2" || true
+        fi
+      elif [ "$SCAS_PKG" = "dnf" ] || [ "$SCAS_PKG" = "yum" ]; then
+        if ask_yn "Install docker-compose now?"; then
+          run_pkg_install "docker-compose" || true
+        fi
+      fi
+      hash -r 2>/dev/null || true
+      if docker compose version >/dev/null 2>&1; then
+        ok "Docker Compose $(docker compose version --short 2>/dev/null || echo v2)"
+        COMPOSE_OK=1
+      fi
+      if [ "$COMPOSE_OK" != "1" ]; then
+        MISSING=1
+      fi
+    fi
+
+    if docker info >/dev/null 2>&1; then
+      ok "Docker daemon is running"
+    else
+      start_docker_daemon || MISSING=1
+    fi
   fi
 fi
 
 echo ""
 if [ "$MISSING" = "1" ]; then
-  err "Fix missing prerequisites and re-run ./install.sh"
+  err "Prerequisites still missing — fix them and re-run ./install.sh"
   echo ""
-  echo "Quick tips:"
-  echo "  macOS:  brew install node python git curl && brew install --cask docker"
-  echo "  Ubuntu: sudo apt install nodejs npm python3 git curl docker.io docker-compose-v2"
-  echo "  nvm:    nvm install && nvm use   # uses .nvmrc"
+  echo "Manual tips for your OS (${SCAS_OS}${SCAS_DISTRO:+ / ${SCAS_DISTRO}}):"
+  case "$SCAS_OS" in
+    macos)
+      echo "  brew install node python git curl && brew install --cask docker"
+      echo "  Then open Docker Desktop and wait until it is running"
+      ;;
+    linux)
+      echo "  sudo apt update && sudo apt install -y curl git python3 nodejs npm docker.io docker-compose-v2"
+      echo "  sudo systemctl start docker && sudo usermod -aG docker \$USER"
+      echo "  newgrp docker   # or log out/in"
+      ;;
+    *)
+      echo "  See documentation/getting-started/FULL_STACK_SETUP.md"
+      ;;
+  esac
   exit 1
 fi
+ok "All prerequisites satisfied"
+echo ""
 
 # ── 2. Permissions + TESTBENCH_MODE ──────────────────────────
 log "Configuring TESTBENCH_MODE and script permissions…"
