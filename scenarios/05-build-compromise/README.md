@@ -110,9 +110,7 @@ cd legitimate-build
 npm run build
 cd ../compromised-build
 export TESTBENCH_MODE=enabled
-export AWS_ACCESS_KEY_ID=test-key-12345
-export AWS_SECRET_ACCESS_KEY=test-secret-67890
-export DATABASE_PASSWORD=super-secret-password
+set -a && source .env.lab 2>/dev/null || source ../../_shared/lookalike-secrets.env; set +a
 npm run build
 ```
 
@@ -211,9 +209,7 @@ cat ../templates/build-compromise-template.js
 ```bash
 cd compromised-build
 export TESTBENCH_MODE=enabled
-export AWS_ACCESS_KEY_ID=test-key-12345
-export AWS_SECRET_ACCESS_KEY=test-secret-67890
-export DATABASE_PASSWORD=super-secret-password
+set -a && source .env.lab 2>/dev/null || source ../../_shared/lookalike-secrets.env; set +a
 
 # Run the build
 npm run build

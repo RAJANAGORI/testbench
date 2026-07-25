@@ -125,11 +125,11 @@ curl -s http://127.0.0.1:3023/captured-data | node -e "
 "
 ```
 
-### Optionally set fake CI secrets to make the harvest more realistic
+### Optionally set lookalike CI secrets to make the harvest more realistic
 
 ```bash
-export GITHUB_TOKEN=ghp_FAKE_TOKEN_FOR_LAB_ONLY
-export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+# After ./setup.sh — planted .env.ci-lab (same values as scenarios/_shared/lookalike-secrets.env)
+set -a && source .env.ci-lab && set +a
 export GITHUB_REPOSITORY=acme-corp/payments-api
 cd victim-ci && node run-pipeline.js
 ```

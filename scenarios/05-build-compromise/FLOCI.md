@@ -29,9 +29,8 @@ Creates bucket `scas-sc05-artifacts` with a legitimate `releases/legitimate/mani
 ```bash
 node infrastructure/mock-server.js &
 cd compromised-build
-export AWS_ACCESS_KEY_ID=ci-key-leaked
-export AWS_SECRET_ACCESS_KEY=ci-secret-leaked
-export DATABASE_PASSWORD=super-secret-password
+# Lookalike CI secrets (LAB ONLY) — same values seeded into Floci SM/SSM
+set -a && source .env.lab 2>/dev/null || source ../../_shared/lookalike-secrets.env; set +a
 npm run build
 ```
 
@@ -106,9 +105,8 @@ You must see `[TESTBENCH] Simulating build-time data exfiltration...` during `np
 ```bash
 source /path/to/supply-chain-attack-simulator/.testbench.env
 source /path/to/supply-chain-attack-simulator/.floci.env
-export AWS_ACCESS_KEY_ID=ci-key-leaked      # fake leaked CI creds (JSON payload only)
-export AWS_SECRET_ACCESS_KEY=ci-secret-leaked
-export DATABASE_PASSWORD=super-secret-password
+# Lookalike CI secrets for JSON harvest only — do not overwrite Floci emulator keys after this
+set -a && source .env.lab 2>/dev/null || source ../../_shared/lookalike-secrets.env; set +a
 npm run build
 ```
 

@@ -12,7 +12,9 @@ Pick **one** path; everything else links out so you are not stuck in a long READ
 
 | You are… | Do this |
 |----------|---------|
-| **New to the project** | [Full-stack setup](documentation/getting-started/FULL_STACK_SETUP.md) (SCAS + ES + Floci) or `./START_HERE.sh` |
+| **New to the project** | `./install.sh -y` (SCAS + ES + Floci) · [Full-stack setup](documentation/getting-started/FULL_STACK_SETUP.md) · or `./START_HERE.sh` |
+| **Pi / USB HDD host** | Optional: [`install-external.sh`](install-external.sh) then same stack — [Pi storage](documentation/getting-started/RASPBERRY_PI_STORAGE.md) |
+| **Prefer a browser UI** | [Dashboard](documentation/platform/DASHBOARD.md) — `./scripts/start-dashboard.sh` (localhost only) |
 | **Planning teaching or a curriculum** | Use the [Scenario learning path](documentation/learning-path/SCENARIO_LEARNING_PATH.md) (beginner → intermediate → advanced) |
 | **Comfortable with npm, shells, and isolated VMs** | [Quick Start](#quick-start-experienced-users) below, then open the README inside each scenario folder |
 
@@ -20,7 +22,7 @@ Pick **one** path; everything else links out so you are not stuck in a long READ
 
 ## Overview
 
-This test bench provides hands-on scenarios for supply chain attacks—among the most critical risks in modern software development. Learners set up intentionally vulnerable environments, walk through attacks, practice detection, and implement defenses. The runtime is **CLI-only** (no web dashboard required).
+This test bench provides hands-on scenarios for supply chain attacks—among the most critical risks in modern software development. Learners set up intentionally vulnerable environments, walk through attacks, practice detection, and implement defenses. The default runtime is **CLI-only**; an optional [localhost dashboard](documentation/platform/DASHBOARD.md) is available.
 
 **At a glance**
 
@@ -75,11 +77,21 @@ cd supply-chain-attack-simulator
 
 Use your own fork or mirror URL if you did not clone from GitHub.
 
-### 2. Run the setup script
+### 2. Run the installer
+
+**Full stack** (SCAS + Elasticsearch/Kibana + Floci — Docker required):
 
 ```bash
-chmod +x scripts/setup.sh
-./scripts/setup.sh
+chmod +x install.sh
+./install.sh -y
+source .scas.env
+```
+
+**Core only** (labs without Docker services):
+
+```bash
+./install.sh -y --core-only
+# or: chmod +x scripts/setup.sh && ./scripts/setup.sh
 ```
 
 ### 3. Run Scenario 1 (example CLI flow)

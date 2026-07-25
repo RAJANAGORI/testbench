@@ -1,5 +1,5 @@
 /* ============================================================
-   SCAS — "Aurora Obsidian" design system
+   SCAS — Realtime Colors brand design system
    SCAS-FP-RN-8d4f2c9a1e7b3065
    Supply Chain Attack Simulator © Raja Nagori
    ============================================================ */
@@ -17,25 +17,32 @@
 }
 
 :root {
-  /* surfaces */
-  --bg-primary: #04040a;
-  --bg-secondary: #080812;
-  --bg-tertiary: #0e0e1c;
-  --bg-card: rgba(16, 16, 32, 0.55);
-  --bg-card-hover: rgba(24, 24, 46, 0.75);
-  --bg-glass: rgba(14, 14, 28, 0.55);
+  /* SCAS brand tokens — Realtime Colors 050315-fbfbfe-2f27ce-dedcff-433bff */
+  --scas-text: #050315;
+  --scas-bg: #fbfbfe;
+  --scas-primary: #2f27ce;
+  --scas-secondary: #dedcff;
+  --scas-accent: #433bff;
+
+  /* surfaces (light brand default) */
+  --bg-primary: #fbfbfe;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #dedcff;
+  --bg-card: rgba(255, 255, 255, 0.88);
+  --bg-card-hover: rgba(222, 220, 255, 0.95);
+  --bg-glass: rgba(255, 255, 255, 0.72);
 
   /* type */
-  --text-primary: #f2f2fa;
-  --text-secondary: #a7a8c0;
-  --text-muted: #696a82;
+  --text-primary: #050315;
+  --text-secondary: rgba(5, 3, 21, 0.72);
+  --text-muted: rgba(5, 3, 21, 0.5);
 
   /* accent spectrum */
-  --accent-primary: #7c5cff;
-  --accent-secondary: #22d3ee;
-  --accent-tertiary: #f472b6;
-  --accent-glow: rgba(124, 92, 255, 0.16);
-  --accent-glow-strong: rgba(124, 92, 255, 0.34);
+  --accent-primary: #2f27ce;
+  --accent-secondary: #433bff;
+  --accent-tertiary: #433bff;
+  --accent-glow: rgba(67, 59, 255, 0.14);
+  --accent-glow-strong: rgba(47, 39, 206, 0.28);
 
   --red: #ff4d5e;
   --red-glow: rgba(255, 77, 94, 0.14);
@@ -46,14 +53,14 @@
   --cyan: #22d3ee;
   --cyan-glow: rgba(34, 211, 238, 0.14);
 
-  --border-subtle: rgba(167, 168, 192, 0.1);
-  --border-accent: rgba(124, 92, 255, 0.32);
+  --border-subtle: rgba(5, 3, 21, 0.1);
+  --border-accent: rgba(47, 39, 206, 0.28);
 
-  --nav-bg: rgba(4, 4, 10, 0.6);
-  --nav-bg-solid: rgba(4, 4, 10, 0.96);
-  --toolbar-bg: rgba(4, 4, 10, 0.92);
-  --grid-line: rgba(124, 92, 255, 0.05);
-  --glow-opacity: 0.5;
+  --nav-bg: rgba(251, 251, 254, 0.72);
+  --nav-bg-solid: rgba(251, 251, 254, 0.97);
+  --toolbar-bg: rgba(255, 255, 255, 0.94);
+  --grid-line: rgba(47, 39, 206, 0.07);
+  --glow-opacity: 0.28;
 
   --radius-sm: 10px;
   --radius-md: 16px;
@@ -61,12 +68,13 @@
   --radius-xl: 30px;
   --radius-full: 9999px;
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6);
+  --shadow-sm: 0 1px 2px rgba(20, 20, 60, 0.06);
+  --shadow-md: 0 8px 24px rgba(47, 39, 206, 0.08);
+  --shadow-lg: 0 20px 60px rgba(47, 39, 206, 0.12);
   --shadow-glow: 0 0 60px var(--accent-glow);
 
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Syne', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
 
   /* motion */
@@ -77,26 +85,26 @@
   --transition-slow: 600ms var(--ease-out);
 
   /* aurora gradient used everywhere */
-  --aurora: linear-gradient(115deg, #7c5cff 0%, #22d3ee 38%, #f472b6 72%, #7c5cff 100%);
+  --aurora: linear-gradient(115deg, #2f27ce 0%, #433bff 42%, #dedcff 78%, #2f27ce 100%);
 }
 
 [data-theme="light"] {
-  --bg-primary: #fafaff;
+  --bg-primary: #fbfbfe;
   --bg-secondary: #ffffff;
-  --bg-tertiary: #eef0fa;
-  --bg-card: rgba(255, 255, 255, 0.8);
-  --bg-card-hover: rgba(244, 245, 255, 0.95);
-  --bg-glass: rgba(255, 255, 255, 0.7);
+  --bg-tertiary: #dedcff;
+  --bg-card: rgba(255, 255, 255, 0.88);
+  --bg-card-hover: rgba(222, 220, 255, 0.95);
+  --bg-glass: rgba(255, 255, 255, 0.72);
 
-  --text-primary: #101120;
-  --text-secondary: #4a4b66;
-  --text-muted: #6e6f88;
+  --text-primary: #050315;
+  --text-secondary: rgba(5, 3, 21, 0.72);
+  --text-muted: rgba(5, 3, 21, 0.5);
 
-  --accent-primary: #6246ea;
-  --accent-secondary: #0891b2;
-  --accent-tertiary: #db2777;
-  --accent-glow: rgba(98, 70, 234, 0.1);
-  --accent-glow-strong: rgba(98, 70, 234, 0.22);
+  --accent-primary: #2f27ce;
+  --accent-secondary: #433bff;
+  --accent-tertiary: #433bff;
+  --accent-glow: rgba(67, 59, 255, 0.14);
+  --accent-glow-strong: rgba(47, 39, 206, 0.28);
 
   --red: #e11d48;
   --red-glow: rgba(225, 29, 72, 0.1);
@@ -120,7 +128,40 @@
   --shadow-md: 0 8px 24px rgba(20, 20, 60, 0.08);
   --shadow-lg: 0 20px 60px rgba(20, 20, 60, 0.12);
 
-  --aurora: linear-gradient(115deg, #6246ea 0%, #0891b2 38%, #db2777 72%, #6246ea 100%);
+  --aurora: linear-gradient(115deg, #2f27ce 0%, #433bff 42%, #dedcff 78%, #2f27ce 100%);
+}
+
+
+[data-theme="dark"] {
+  --scas-text: #fbfbfe;
+  --scas-bg: #050315;
+  --scas-primary: #433bff;
+  --scas-secondary: #16142a;
+  --scas-accent: #dedcff;
+  --bg-primary: #050315;
+  --bg-secondary: #0c0b14;
+  --bg-tertiary: #16142a;
+  --bg-card: rgba(22, 20, 42, 0.72);
+  --bg-card-hover: rgba(34, 30, 64, 0.88);
+  --bg-glass: rgba(12, 11, 20, 0.7);
+  --text-primary: #fbfbfe;
+  --text-secondary: rgba(251, 251, 254, 0.72);
+  --text-muted: rgba(251, 251, 254, 0.48);
+  --accent-primary: #433bff;
+  --accent-secondary: #dedcff;
+  --accent-tertiary: #2f27ce;
+  --accent-glow: rgba(67, 59, 255, 0.22);
+  --accent-glow-strong: rgba(67, 59, 255, 0.4);
+  --border-subtle: rgba(251, 251, 254, 0.1);
+  --border-accent: rgba(67, 59, 255, 0.4);
+  --nav-bg: rgba(5, 3, 21, 0.72);
+  --nav-bg-solid: rgba(5, 3, 21, 0.96);
+  --toolbar-bg: rgba(5, 3, 21, 0.92);
+  --grid-line: rgba(67, 59, 255, 0.08);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6);
+  --aurora: linear-gradient(115deg, #2f27ce 0%, #433bff 42%, #dedcff 78%, #2f27ce 100%);
 }
 
 /* ============ Reset & base ============ */

@@ -36,6 +36,10 @@ cd ..
 echo "✅ Victim CI dependencies installed"
 echo ""
 
+bash "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../_shared/plant-lookalike-secrets.sh" 23
+echo "✅ Lookalike CI secrets planted (.env.ci-lab)"
+echo ""
+
 echo "================================================"
 echo "✅ Setup complete!"
 echo "================================================"
@@ -47,6 +51,7 @@ echo "   node infrastructure/mock-c2-server.js"
 echo ""
 echo "2. Terminal B — Run the victim CI pipeline:"
 echo "   export TESTBENCH_MODE=enabled"
+echo "   set -a && source .env.ci-lab && set +a"
 echo "   cd victim-ci && node run-pipeline.js"
 echo ""
 echo "3. Verify exfiltration:"

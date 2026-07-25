@@ -1,0 +1,49 @@
+@import '../../../design-tokens/scas-tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: var(--scas-font-sans);
+  --font-display: var(--scas-font-display);
+  --font-mono: var(--scas-font-mono);
+}
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-canvas text-ink-primary antialiased;
+    font-family: var(--font-sans);
+    transition: background-color 180ms ease, color 180ms ease;
+  }
+
+  ::selection {
+    background: var(--scas-secondary);
+    color: var(--scas-text);
+  }
+}
+
+@layer components {
+  .surface-panel {
+    @apply rounded-2xl border border-line bg-canvas-surface shadow-panel;
+  }
+
+  .glass-panel {
+    @apply surface-panel;
+  }
+
+  .liquid-glass {
+    @apply rounded-xl border border-line shadow-sm backdrop-blur;
+    background: color-mix(in srgb, var(--scas-canvas-surface) 82%, transparent);
+  }
+
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+    --tw-ring-color: color-mix(in srgb, var(--scas-brand) 40%, transparent);
+    --tw-ring-offset-color: var(--scas-canvas);
+  }
+}

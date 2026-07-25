@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Detect unexpected Secrets Manager reads for SCAS scenarios (06, 10, 15).
+# Detect Secrets Manager decoys for SCAS harvest labs (06, 21; also 05/23 lookalikes).
 set -euo pipefail
 
 SECRET_NAME="${1:?usage: secrets-check.sh <secret-name> e.g. scas/sc06/decoy-npm-token}"

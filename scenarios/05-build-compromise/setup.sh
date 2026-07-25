@@ -110,6 +110,10 @@ chmod +x infrastructure/mock-server.js
 echo "✅ Mock server created"
 echo ""
 
+bash "${SCENARIO_DIR}/../_shared/plant-lookalike-secrets.sh" 05
+echo "✅ Lookalike CI secrets planted (compromised-build/.env.lab)"
+echo ""
+
 echo "================================================"
 echo "✅ Setup Complete!"
 echo "================================================"
@@ -132,9 +136,7 @@ echo ""
 echo "5. Run the compromised build:"
 echo "   cd compromised-build"
 echo "   export TESTBENCH_MODE=enabled"
-echo "   export AWS_ACCESS_KEY_ID=test-key-12345"
-echo "   export AWS_SECRET_ACCESS_KEY=test-secret-67890"
-echo "   export DATABASE_PASSWORD=super-secret-password"
+echo "   set -a && source ../.env.lab 2>/dev/null || source ../../_shared/lookalike-secrets.env; set +a"
 echo "   npm run build"
 echo ""
 echo "6. Check captured data:"

@@ -1,0 +1,768 @@
+#!/usr/bin/env bash
+# SCAS-FP-RN-8d4f2c9a1e7b3065 © Raja Nagori — Supply Chain Attack Simulator
+#
+# One-shot installer / orchestrator for the full SCAS workshop stack:
+#   - prerequisites (Node, npm, Python, Git, Docker, curl)
+#   - TESTBENCH_MODE + repo permissions
+#   - npm workspaces (landing / dashboard / control-plane) + detection-tools
+#   - Elasticsearch + Kibana (observability)
+#   - Floci local-AWS emulator (cloud track)
+#   - Lookalike lab secrets (victim fixtures + Floci SM/SSM when Floci is up)
+#
+# Usage:
+#   ./install.sh                 # interactive full stack
+#   ./install.sh -y              # non-interactive full stack
+#   ./install.sh -y --core-only  # SCAS core + npm only (no Docker services)
+#   ./install.sh -y --skip-es    # skip Elasticsearch/Kibana
+#   ./install.sh -y --skip-floci # skip Floci
+#   ./install.sh -y --no-start   # install/configure but do not start containers
+#   ./install.sh -y --floci-build  # build Floci from vendor source (slow)
+#   ./install.sh -y --with-ui    # exec ./scripts/start-dashboard.sh at the end
+#
+# After install, every session:
+#   source .scas.env
+#   ./scripts/start-dashboard.sh   # optional UI
+
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "${REPO_ROOT}"
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+YES=0
+CORE_ONLY=0
+SKIP_ES=0
+SKIP_FLOCI=0
+SKIP_FLOCI_SEED=0
+NO_START=0
+FLOCI_IMAGE=1
+START_UI=0
+
+usage() {
+  awk 'NR==1{next} /^#/{sub(/^# ?/,""); print; next} {exit}' "$0"
+  exit 0
+}
+
+for arg in "$@"; do
+  case "$arg" in
+    -y|--yes) YES=1 ;;
+    --core-only) CORE_ONLY=1 ;;
+    --skip-es) SKIP_ES=1 ;;
+    --skip-floci) SKIP_FLOCI=1 ;;
+    --no-start) NO_START=1 ;;
+    --floci-build) FLOCI_IMAGE=0 ;;
+    --with-ui) START_UI=1 ;;
+    -h|--help) usage ;;
+    *)
+      echo -e "${RED}Unknown option: ${arg}${NC}"
+      awk 'NR==1{next} /^#/{sub(/^# ?/,""); print; next} {exit}' "$0"
+      exit 1
+      ;;
+  esac
+done
+
+if [ "$CORE_ONLY" = "1" ]; then
+  SKIP_ES=1
+  SKIP_FLOCI=1
+fi
+
+log()  { echo -e "${BLUE}▶${NC} $*"; }
+ok()   { echo -e "${GREEN}✅${NC} $*"; }
+warn() { echo -e "${YELLOW}⚠️${NC}  $*"; }
+err()  { echo -e "${RED}❌${NC} $*"; }
+
+ask_yn() {
+  # ask_yn "Install curl now?"
+  local prompt="$1"
+  local reply
+  if [ "$YES" = "1" ]; then
+    echo "${prompt} (y/N): y  [auto --yes]"
+    return 0
+  fi
+  read -r -p "${prompt} (y/N): " reply
+  [[ "${reply}" =~ ^[Yy]$ ]]
+}
+
+version_ge() {
+  # version_ge 20.0.0 16.0.0 → true if $1 >= $2 (simple dotted compare)
+  local IFS=.
+  # shellcheck disable=SC2206
+  local a=($1) b=($2)
+  local i
+  for i in 0 1 2; do
+    local x="${a[$i]:-0}" y="${b[$i]:-0}"
+    if ((10#$x > 10#$y)); then return 0; fi
+    if ((10#$x < 10#$y)); then return 1; fi
+  done
+  return 0
+}
+
+# OS / package manager detection for interactive installs
+SCAS_OS=unknown
+SCAS_DISTRO=
+SCAS_PKG=none
+
+detect_platform() {
+  case "$(uname -s)" in
+    Darwin)
+      SCAS_OS=macos
+      if command -v brew >/dev/null 2>&1; then
+        SCAS_PKG=brew
+      else
+        SCAS_PKG=none
+      fi
+      ;;
+    Linux)
+      SCAS_OS=linux
+      if [ -f /etc/os-release ]; then
+        # shellcheck disable=SC1091
+        . /etc/os-release
+        SCAS_DISTRO="${ID:-linux}"
+      fi
+      if command -v apt-get >/dev/null 2>&1; then
+        SCAS_PKG=apt
+      elif command -v dnf >/dev/null 2>&1; then
+        SCAS_PKG=dnf
+      elif command -v yum >/dev/null 2>&1; then
+        SCAS_PKG=yum
+      elif command -v pacman >/dev/null 2>&1; then
+        SCAS_PKG=pacman
+      elif command -v zypper >/dev/null 2>&1; then
+        SCAS_PKG=zypper
+      else
+        SCAS_PKG=none
+      fi
+      ;;
+    *)
+      SCAS_OS=unknown
+      SCAS_PKG=none
+      ;;
+  esac
+}
+
+pkg_label_for() {
+  # Map logical tool → package name(s) for the active pkg manager
+  local tool="$1"
+  case "${SCAS_PKG}:${tool}" in
+    brew:curl) echo "curl" ;;
+    brew:git) echo "git" ;;
+    brew:python3) echo "python3" ;;
+    brew:node) echo "node" ;;
+    brew:npm) echo "node" ;;
+    brew:docker) echo "docker" ;; # cask handled separately
+    apt:curl) echo "curl" ;;
+    apt:git) echo "git" ;;
+    apt:python3) echo "python3" ;;
+    apt:node|apt:npm) echo "nodejs npm" ;;
+    apt:docker) echo "docker.io docker-compose-v2" ;;
+    dnf:curl|yum:curl) echo "curl" ;;
+    dnf:git|yum:git) echo "git" ;;
+    dnf:python3|yum:python3) echo "python3" ;;
+    dnf:node|dnf:npm|yum:node|yum:npm) echo "nodejs npm" ;;
+    dnf:docker|yum:docker) echo "docker docker-compose" ;;
+    pacman:curl) echo "curl" ;;
+    pacman:git) echo "git" ;;
+    pacman:python3) echo "python" ;;
+    pacman:node|pacman:npm) echo "nodejs npm" ;;
+    pacman:docker) echo "docker docker-compose" ;;
+    zypper:curl) echo "curl" ;;
+    zypper:git) echo "git" ;;
+    zypper:python3) echo "python3" ;;
+    zypper:node|zypper:npm) echo "nodejs npm" ;;
+    zypper:docker) echo "docker docker-compose" ;;
+    *) echo "" ;;
+  esac
+}
+
+run_pkg_install() {
+  local packages="$1"
+  [ -n "$packages" ] || return 1
+  log "Installing via ${SCAS_PKG}: ${packages}"
+  case "$SCAS_PKG" in
+    brew)
+      # shellcheck disable=SC2086
+      brew install $packages
+      ;;
+    apt)
+      # shellcheck disable=SC2086
+      sudo apt-get update -y && sudo apt-get install -y $packages
+      ;;
+    dnf)
+      # shellcheck disable=SC2086
+      sudo dnf install -y $packages
+      ;;
+    yum)
+      # shellcheck disable=SC2086
+      sudo yum install -y $packages
+      ;;
+    pacman)
+      # shellcheck disable=SC2086
+      sudo pacman -Sy --noconfirm $packages
+      ;;
+    zypper)
+      # shellcheck disable=SC2086
+      sudo zypper install -y $packages
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+install_docker_package() {
+  case "$SCAS_PKG" in
+    brew)
+      if brew list --cask docker >/dev/null 2>&1 || [ -d /Applications/Docker.app ]; then
+        ok "Docker Desktop already present"
+        return 0
+      fi
+      brew install --cask docker
+      ;;
+    apt|dnf|yum|pacman|zypper)
+      run_pkg_install "$(pkg_label_for docker)"
+      if command -v systemctl >/dev/null 2>&1; then
+        sudo systemctl enable --now docker 2>/dev/null || sudo systemctl start docker 2>/dev/null || true
+        # Allow current user to talk to the daemon without root (may need re-login)
+        if getent group docker >/dev/null 2>&1; then
+          sudo usermod -aG docker "${USER}" 2>/dev/null || true
+          warn "Added ${USER} to the docker group — you may need to log out/in (or: newgrp docker)"
+        fi
+      fi
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+offer_install_tool() {
+  # offer_install_tool <cmd> <human-name>
+  local cmd="$1"
+  local label="${2:-$1}"
+  if command -v "$cmd" >/dev/null 2>&1; then
+    return 0
+  fi
+  err "Missing required command: ${cmd}"
+  local pkgs
+  pkgs="$(pkg_label_for "$cmd")"
+  if [ "$SCAS_PKG" = "none" ] || [ -z "$pkgs" ]; then
+    warn "No automatic installer for ${label} on this OS."
+    case "$SCAS_OS" in
+      macos)
+        echo "   Install Homebrew: https://brew.sh  then: brew install ${cmd}"
+        if [ "$cmd" = "docker" ]; then
+          echo "   Or install Docker Desktop: https://www.docker.com/products/docker-desktop/"
+        fi
+        if [ "$cmd" = "node" ] || [ "$cmd" = "npm" ]; then
+          echo "   Or use nvm: https://github.com/nvm-sh/nvm  (repo pins .nvmrc)"
+        fi
+        ;;
+      linux)
+        echo "   Install manually, e.g.: sudo apt install ${cmd}"
+        if [ "$cmd" = "docker" ]; then
+          echo "   Docker Engine docs: https://docs.docker.com/engine/install/"
+        fi
+        ;;
+      *)
+        echo "   See documentation/getting-started/FULL_STACK_SETUP.md"
+        ;;
+    esac
+    if ask_yn "Open/show install hint and continue after you install ${label} yourself?"; then
+      warn "Re-run ./install.sh after installing ${label}"
+    fi
+    return 1
+  fi
+
+  echo "   Detected OS: ${SCAS_OS}${SCAS_DISTRO:+ (${SCAS_DISTRO})} · package manager: ${SCAS_PKG}"
+  if [ "$cmd" = "docker" ] && [ "$SCAS_PKG" = "brew" ]; then
+    echo "   Suggested: brew install --cask docker"
+  else
+    echo "   Suggested: ${SCAS_PKG} install ${pkgs}"
+  fi
+
+  if ! ask_yn "Install ${label} now?"; then
+    warn "Skipped installing ${label}"
+    return 1
+  fi
+
+  if [ "$cmd" = "docker" ]; then
+    install_docker_package || return 1
+  else
+    run_pkg_install "$pkgs" || return 1
+  fi
+
+  hash -r 2>/dev/null || true
+  if command -v "$cmd" >/dev/null 2>&1; then
+    ok "${label} installed"
+    return 0
+  fi
+  # node/npm: apt may provide nodejs but not `node` symlink
+  if [ "$cmd" = "node" ] && command -v nodejs >/dev/null 2>&1; then
+    warn "nodejs is installed but 'node' is missing — creating user alias hint"
+    echo "   Try: sudo update-alternatives --install /usr/bin/node node /usr/bin/nodejs 1"
+  fi
+  err "${label} still not on PATH after install"
+  return 1
+}
+
+start_docker_daemon() {
+  if docker info >/dev/null 2>&1; then
+    return 0
+  fi
+  err "Docker daemon is not running"
+  echo "   OS: ${SCAS_OS}${SCAS_DISTRO:+ (${SCAS_DISTRO})}"
+  case "$SCAS_OS" in
+    macos)
+      echo "   Will try: open -a Docker  (Docker Desktop)"
+      ;;
+    linux)
+      echo "   Will try: sudo systemctl start docker"
+      ;;
+    *)
+      echo "   Start Docker Desktop / the docker service, then re-run."
+      ;;
+  esac
+
+  if ! ask_yn "Start Docker now?"; then
+    warn "Skipped starting Docker"
+    return 1
+  fi
+
+  case "$SCAS_OS" in
+    macos)
+      open -a Docker 2>/dev/null || open -a "Docker Desktop" 2>/dev/null || true
+      log "Waiting for Docker Desktop to become ready (up to ~90s)…"
+      ;;
+    linux)
+      if command -v systemctl >/dev/null 2>&1; then
+        sudo systemctl start docker || true
+        sudo systemctl enable docker 2>/dev/null || true
+      else
+        sudo service docker start 2>/dev/null || true
+      fi
+      log "Waiting for Docker daemon (up to ~60s)…"
+      ;;
+  esac
+
+  local tries=45
+  while [ "$tries" -gt 0 ]; do
+    if docker info >/dev/null 2>&1; then
+      ok "Docker daemon is running"
+      return 0
+    fi
+    tries=$((tries - 1))
+    sleep 2
+  done
+  err "Docker still not reachable"
+  if [ "$SCAS_OS" = "linux" ] && ! groups | grep -qw docker; then
+    warn "Your user may need the docker group: sudo usermod -aG docker \$USER && newgrp docker"
+  fi
+  return 1
+}
+
+echo ""
+echo -e "${CYAN}=========================================================${NC}"
+echo -e "${CYAN}  SCAS — Full stack installer${NC}"
+echo -e "${CYAN}  Supply Chain Attack Simulator${NC}"
+echo -e "${CYAN}=========================================================${NC}"
+echo ""
+echo "Repo: ${REPO_ROOT}"
+echo ""
+
+# ── Safety notice ────────────────────────────────────────────
+echo -e "${YELLOW}Educational use only. Isolated environments. Localhost exfil only.${NC}"
+echo -e "${YELLOW}Payloads require TESTBENCH_MODE=enabled.${NC}"
+echo ""
+
+if [ "$YES" != "1" ]; then
+  read -r -p "Continue with full SCAS install? (y/N): " reply
+  echo ""
+  if [[ ! "${reply}" =~ ^[Yy]$ ]]; then
+    echo "Install cancelled."
+    exit 0
+  fi
+fi
+
+detect_platform
+log "Platform: ${SCAS_OS}${SCAS_DISTRO:+ / ${SCAS_DISTRO}} · packages via: ${SCAS_PKG}"
+
+# ── 1. Prerequisites ─────────────────────────────────────────
+log "Checking prerequisites…"
+echo ""
+
+MISSING=0
+NEED_DOCKER=0
+if [ "$SKIP_ES" != "1" ] || [ "$SKIP_FLOCI" != "1" ]; then
+  NEED_DOCKER=1
+fi
+
+# --- Node ---
+if command -v node >/dev/null 2>&1; then
+  NODE_RAW="$(node --version | sed 's/^v//')"
+  ok "Node.js v${NODE_RAW}"
+  if ! version_ge "${NODE_RAW}" "16.0.0"; then
+    err "Node.js 16+ required (found ${NODE_RAW})"
+    MISSING=1
+  elif ! version_ge "${NODE_RAW}" "20.0.0"; then
+    warn "Node ${NODE_RAW} works for labs; UI stack is validated on Node 20 (.nvmrc)"
+  fi
+else
+  offer_install_tool node "Node.js" || MISSING=1
+  if command -v node >/dev/null 2>&1; then
+    NODE_RAW="$(node --version | sed 's/^v//')"
+    ok "Node.js v${NODE_RAW}"
+  fi
+fi
+
+# --- npm ---
+if command -v npm >/dev/null 2>&1; then
+  ok "npm $(npm --version)"
+else
+  offer_install_tool npm "npm" || MISSING=1
+  if command -v npm >/dev/null 2>&1; then
+    ok "npm $(npm --version)"
+  fi
+fi
+
+# --- Python ---
+if command -v python3 >/dev/null 2>&1; then
+  ok "Python $(python3 --version | awk '{print $2}')"
+else
+  offer_install_tool python3 "Python 3" || MISSING=1
+  if command -v python3 >/dev/null 2>&1; then
+    ok "Python $(python3 --version | awk '{print $2}')"
+  fi
+fi
+
+# --- Git ---
+if command -v git >/dev/null 2>&1; then
+  ok "Git $(git --version | awk '{print $3}')"
+else
+  offer_install_tool git "Git" || MISSING=1
+  if command -v git >/dev/null 2>&1; then
+    ok "Git $(git --version | awk '{print $3}')"
+  fi
+fi
+
+# --- curl ---
+if command -v curl >/dev/null 2>&1; then
+  ok "curl available"
+else
+  offer_install_tool curl "curl" || MISSING=1
+  if command -v curl >/dev/null 2>&1; then
+    ok "curl available"
+  fi
+fi
+
+# --- Docker (+ Compose + daemon) ---
+if [ "$NEED_DOCKER" = "1" ]; then
+  if command -v docker >/dev/null 2>&1; then
+    ok "Docker $(docker --version | head -1)"
+  else
+    offer_install_tool docker "Docker" || MISSING=1
+    if command -v docker >/dev/null 2>&1; then
+      ok "Docker $(docker --version | head -1)"
+    fi
+  fi
+
+  if command -v docker >/dev/null 2>&1; then
+    if docker compose version >/dev/null 2>&1; then
+      ok "Docker Compose $(docker compose version --short 2>/dev/null || echo v2)"
+    else
+      err "Docker Compose v2 required (docker compose …)"
+      COMPOSE_OK=0
+      if [ "$SCAS_PKG" = "apt" ]; then
+        if ask_yn "Install docker-compose-v2 now?"; then
+          run_pkg_install "docker-compose-v2" || true
+        fi
+      elif [ "$SCAS_PKG" = "dnf" ] || [ "$SCAS_PKG" = "yum" ]; then
+        if ask_yn "Install docker-compose now?"; then
+          run_pkg_install "docker-compose" || true
+        fi
+      fi
+      hash -r 2>/dev/null || true
+      if docker compose version >/dev/null 2>&1; then
+        ok "Docker Compose $(docker compose version --short 2>/dev/null || echo v2)"
+        COMPOSE_OK=1
+      fi
+      if [ "$COMPOSE_OK" != "1" ]; then
+        MISSING=1
+      fi
+    fi
+
+    if docker info >/dev/null 2>&1; then
+      ok "Docker daemon is running"
+    else
+      start_docker_daemon || MISSING=1
+    fi
+  fi
+fi
+
+echo ""
+if [ "$MISSING" = "1" ]; then
+  err "Prerequisites still missing — fix them and re-run ./install.sh"
+  echo ""
+  echo "Manual tips for your OS (${SCAS_OS}${SCAS_DISTRO:+ / ${SCAS_DISTRO}}):"
+  case "$SCAS_OS" in
+    macos)
+      echo "  brew install node python git curl && brew install --cask docker"
+      echo "  Then open Docker Desktop and wait until it is running"
+      ;;
+    linux)
+      echo "  sudo apt update && sudo apt install -y curl git python3 nodejs npm docker.io docker-compose-v2"
+      echo "  sudo systemctl start docker && sudo usermod -aG docker \$USER"
+      echo "  newgrp docker   # or log out/in"
+      ;;
+    *)
+      echo "  See documentation/getting-started/FULL_STACK_SETUP.md"
+      ;;
+  esac
+  exit 1
+fi
+ok "All prerequisites satisfied"
+echo ""
+
+# ── 2. Permissions + TESTBENCH_MODE ──────────────────────────
+log "Configuring TESTBENCH_MODE and script permissions…"
+
+chmod +x \
+  install.sh \
+  START_HERE.sh \
+  scripts/*.sh \
+  scenarios/_shared/plant-lookalike-secrets.sh \
+  scenarios/_shared/ensure-lookalike-secrets.sh \
+  scenarios/_shared/generate-lookalike-secrets.py \
+  2>/dev/null || true
+find scenarios -name 'setup.sh' -type f -exec chmod +x {} \; 2>/dev/null || true
+find scenarios -name 'clean.sh' -type f -exec chmod +x {} \; 2>/dev/null || true
+
+TESTBENCH_ENV_FILE="${REPO_ROOT}/.testbench.env"
+export TESTBENCH_MODE=enabled
+if [ ! -f "${TESTBENCH_ENV_FILE}" ] || ! grep -q '^export TESTBENCH_MODE=enabled$' "${TESTBENCH_ENV_FILE}"; then
+  cat > "${TESTBENCH_ENV_FILE}" << 'EOF'
+# Generated by install.sh / scripts/setup.sh
+export TESTBENCH_MODE=enabled
+EOF
+fi
+ok "TESTBENCH_MODE → ${TESTBENCH_ENV_FILE}"
+
+mkdir -p logs detection-tools
+ok "logs/ and detection-tools/ ready"
+
+# ── 3. npm workspaces + detection-tools ──────────────────────
+log "Installing npm workspaces (landing, dashboard, control-plane)…"
+npm install --no-fund --no-audit
+ok "Root workspaces installed"
+
+log "Installing detection-tools dependencies…"
+npm install --prefix detection-tools --no-fund --no-audit
+ok "detection-tools ready"
+
+# ── 4. Observability (Elasticsearch + Kibana) ────────────────
+if [ "$SKIP_ES" = "1" ]; then
+  warn "Skipping Elasticsearch / Kibana (--skip-es / --core-only)"
+else
+  if [ "$NO_START" = "1" ]; then
+    log "Preparing observability env (not starting containers)…"
+    if [ ! -f observability/.env ] && [ -f observability/.env.example ]; then
+      cp observability/.env.example observability/.env
+      ok "Created observability/.env"
+    fi
+  else
+    log "Starting Elasticsearch + Kibana (first pull may take a few minutes)…"
+    ./scripts/elasticsearch-up.sh
+    ok "Elasticsearch :9200 · Kibana :5601"
+  fi
+fi
+
+# ── 5. Floci (local AWS) ─────────────────────────────────────
+if [ "$SKIP_FLOCI" = "1" ]; then
+  warn "Skipping Floci (--skip-floci / --core-only)"
+else
+  if [ "$FLOCI_IMAGE" = "1" ]; then
+    log "Setting up Floci (--auto: native image if CPU supports LSE, else JVM build)…"
+    ./scripts/floci-setup.sh --auto
+  else
+    log "Setting up Floci (forced JVM source build — may take 5–15 minutes)…"
+    ./scripts/floci-setup.sh
+  fi
+  ok "Floci configured (.floci.env)"
+
+  if [ "$NO_START" != "1" ]; then
+    log "Starting Floci emulator on :4566 (first boot can take several minutes)…"
+    FLOCI_UP_OK=0
+    # Extra-long wait when launched from install.sh (ES/Kibana already consuming RAM/CPU)
+    export FLOCI_HEALTH_TRIES="${FLOCI_HEALTH_TRIES:-150}"
+    export FLOCI_HEALTH_SLEEP="${FLOCI_HEALTH_SLEEP:-3}"
+    if ./scripts/floci-up.sh; then
+      FLOCI_UP_OK=1
+    else
+      warn "Floci did not become healthy on first attempt"
+      if ask_yn "Retry Floci start now?"; then
+        if ./scripts/floci-up.sh; then
+          FLOCI_UP_OK=1
+        fi
+      fi
+    fi
+    if [ "$FLOCI_UP_OK" = "1" ]; then
+      ok "Floci healthy"
+    else
+      warn "Continuing install without a healthy Floci (labs still work on mock localhost)"
+      echo "   Later:  docker logs scas-floci --tail 80"
+      echo "           ./scripts/floci-up.sh"
+      echo "   Or skip: ./install.sh -y --skip-floci"
+      # Keep going — do not abort ES/npm/lookalike setup
+      SKIP_FLOCI_SEED=1
+    fi
+  else
+    warn "Floci installed but not started (--no-start). Later: ./scripts/floci-up.sh"
+  fi
+fi
+
+# ── 6. Lookalike harvest secrets (LAB ONLY, generated locally) ─
+log "Generating lookalike secrets (gitignored — avoids secret-scan push blocks)…"
+# shellcheck disable=SC1091
+source "${REPO_ROOT}/scenarios/_shared/ensure-lookalike-secrets.sh"
+ok "Generated scenarios/_shared/lookalike-secrets.{env,json}"
+
+log "Planting lookalike secrets for Floci harvest labs (05, 06, 21, 23)…"
+PLANT="${REPO_ROOT}/scenarios/_shared/plant-lookalike-secrets.sh"
+if [ -f "${PLANT}" ]; then
+  for sid in 05 06 21 23; do
+    bash "${PLANT}" "${sid}" || warn "plant-lookalike-secrets ${sid} skipped"
+  done
+  ok "Victim fixtures planted (.env.lab / .npmrc / .env.ci-lab)"
+else
+  warn "Missing ${PLANT}"
+fi
+
+if [ "$SKIP_FLOCI" != "1" ] && [ "$NO_START" != "1" ] && [ "${SKIP_FLOCI_SEED:-0}" != "1" ]; then
+  log "Seeding lookalike secrets into Floci Secrets Manager / SSM…"
+  # shellcheck disable=SC1091
+  source "${REPO_ROOT}/scripts/floci-bridge.sh"
+  if scas_floci_require 2>/dev/null; then
+    for sid in 05 06 21 23; do
+      scas_floci_seed_lookalike_secrets "${sid}" || warn "Floci lookalike seed ${sid} skipped"
+    done
+    ok "Floci SM/SSM lookalikes seeded (re-run scenario seed.sh for full S3/ECR baseline)"
+  else
+    warn "Floci not healthy — SM/SSM lookalikes not seeded. Later: ./scripts/floci-up.sh then re-run seed"
+  fi
+elif [ "$SKIP_FLOCI" != "1" ] && { [ "$NO_START" = "1" ] || [ "${SKIP_FLOCI_SEED:-0}" = "1" ]; }; then
+  warn "Floci SM/SSM lookalikes deferred. After Floci is up: ./scripts/floci-up.sh && scenario infrastructure/floci/seed.sh"
+fi
+
+# ── 7. Unified session env ───────────────────────────────────
+log "Writing .scas.env (source this every session)…"
+
+SCAS_ENV_FILE="${REPO_ROOT}/.scas.env"
+{
+  cat << 'EOF'
+# SCAS session environment — generated by ./install.sh
+# Usage:  source .scas.env
+# SCAS-FP-RN-8d4f2c9a1e7b3065
+
+_SCAS_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+
+# Safety gate (required for malicious lab paths)
+if [ -f "${_SCAS_ROOT}/.testbench.env" ]; then
+  # shellcheck disable=SC1091
+  source "${_SCAS_ROOT}/.testbench.env"
+fi
+export TESTBENCH_MODE="${TESTBENCH_MODE:-enabled}"
+
+EOF
+
+  if [ "$SKIP_ES" != "1" ]; then
+    cat << 'EOF'
+# Live capture → Elasticsearch (mock servers forward when set)
+export SCAS_ES_URL="${SCAS_ES_URL:-http://localhost:9200}"
+export KIBANA_URL="${KIBANA_URL:-http://localhost:5601}"
+
+EOF
+  fi
+
+  if [ "$SKIP_FLOCI" != "1" ]; then
+    cat << 'EOF'
+# Floci local-AWS track
+if [ -f "${_SCAS_ROOT}/.floci.env" ]; then
+  # shellcheck disable=SC1091
+  source "${_SCAS_ROOT}/.floci.env"
+fi
+
+EOF
+  fi
+
+  cat << 'EOF'
+# Lookalike harvest secrets — OPT-IN only (would overwrite Floci emulator AWS_* if sourced here).
+# Before a credential-harvest lab (05/06/21/23):
+#   set -a && source "${_SCAS_ROOT}/scenarios/_shared/lookalike-secrets.env" && set +a
+# Then restore emulator auth if you need Floci CLI again: source .floci.env
+
+unset _SCAS_ROOT
+EOF
+} > "${SCAS_ENV_FILE}"
+
+ok "Wrote ${SCAS_ENV_FILE}"
+
+# ── 8. Optional UI ───────────────────────────────────────────
+if [ "$START_UI" = "1" ]; then
+  if [ "$NO_START" = "1" ]; then
+    warn "--with-ui ignored because --no-start was set"
+  else
+    log "Starting Control Center UI (./scripts/start-dashboard.sh)…"
+    echo "   (run in a separate terminal if you prefer — this script will exec the UI starter)"
+    exec ./scripts/start-dashboard.sh
+  fi
+fi
+
+# ── Summary ──────────────────────────────────────────────────
+echo ""
+echo -e "${CYAN}=========================================================${NC}"
+echo -e "${GREEN}  SCAS install complete${NC}"
+echo -e "${CYAN}=========================================================${NC}"
+echo ""
+echo "Every session (repo root):"
+echo -e "  ${GREEN}source .scas.env${NC}"
+echo ""
+
+if [ "$SKIP_ES" != "1" ] && [ "$NO_START" != "1" ]; then
+  echo "Observability:"
+  echo "  Elasticsearch  http://localhost:9200"
+  echo "  Kibana         http://localhost:5601"
+  echo ""
+fi
+
+if [ "$SKIP_FLOCI" != "1" ] && [ "$NO_START" != "1" ]; then
+  echo "Floci:"
+  echo "  Emulator       http://127.0.0.1:4566"
+  echo "  Status         ./scripts/floci-status.sh"
+  echo ""
+fi
+
+echo "Lookalike secrets (LAB ONLY, generated locally — not in git):"
+echo "  Regenerate: python3 scenarios/_shared/generate-lookalike-secrets.py"
+echo "  Harvest:    set -a && source scenarios/_shared/lookalike-secrets.env && set +a"
+echo "  Docs:       scenarios/_shared/LOOKALIKE_SECRETS.md"
+echo ""
+echo "Next steps:"
+echo "  1. source .scas.env"
+echo "  2. Optional UI:     ./scripts/start-dashboard.sh"
+echo "     Landing          http://localhost:5173"
+echo "     Dashboard        http://localhost:3100"
+echo "  3. First lab:       cd scenarios/01-typosquatting && ./setup.sh"
+echo "  4. Docs:            documentation/getting-started/FULL_STACK_SETUP.md"
+echo ""
+echo "Shutdown:"
+echo "  ./scripts/floci-down.sh"
+echo "  ./scripts/elasticsearch-down.sh"
+echo "  ./scripts/teardown.sh"
+echo ""
+echo -e "${YELLOW}Remember: education only · isolated environments · never publish lab malware${NC}"
+echo ""

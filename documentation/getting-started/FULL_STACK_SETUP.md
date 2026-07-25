@@ -6,6 +6,36 @@
 
 **Shorter paths:** [Quick start](./QUICK_START.md) (SCAS only, ~5 min) · [Complete setup](./SETUP.md) (SCAS install detail) · [Floci integration](../guides/FLOCI_INTEGRATION.md) (cloud track only)
 
+### One-shot installer (recommended)
+
+After cloning, Docker running, from the **repo root**:
+
+```bash
+chmod +x install.sh
+./install.sh -y
+```
+
+This is the **generic** workshop installer: prerequisites, `TESTBENCH_MODE`, npm workspaces + `detection-tools`, **Elasticsearch/Kibana**, **Floci**, lookalike harvest secrets (generated locally — see `scenarios/_shared/LOOKALIKE_SECRETS.md`), and **`.scas.env`**.
+
+**External USB HDD / Raspberry Pi only:** use [`install-external.sh`](../../install-external.sh) so Docker data lands on the disk first — see [Raspberry Pi storage](./RASPBERRY_PI_STORAGE.md). Everyone else should stick to `./install.sh`.
+
+```bash
+source .scas.env                 # every session
+./scripts/start-dashboard.sh    # optional UI
+```
+
+| Flag | Effect |
+|------|--------|
+| `-y` / `--yes` | Non-interactive |
+| `--core-only` | SCAS + npm only (no ES, no Floci) |
+| `--skip-es` | Skip Elasticsearch/Kibana |
+| `--skip-floci` | Skip Floci |
+| `--no-start` | Configure / pull images but do not start containers |
+| `--floci-build` | Build Floci from vendor source instead of `--image` |
+| `--with-ui` | Exec `./scripts/start-dashboard.sh` at the end |
+
+Manual step-by-step remains below if you prefer to install piece by piece.
+
 ---
 
 ## Before you start
@@ -314,9 +344,7 @@ chmod +x infrastructure/floci/*.sh
 
 ```bash
 cd scenarios/05-build-compromise/compromised-build
-export AWS_ACCESS_KEY_ID=ci-key-leaked
-export AWS_SECRET_ACCESS_KEY=ci-secret-leaked
-export DATABASE_PASSWORD=super-secret-password
+set -a && source .env.lab 2>/dev/null || source ../../_shared/lookalike-secrets.env; set +a
 npm run build
 ```
 
@@ -388,16 +416,17 @@ Full matrix: [Operations runbook](../platform/OPERATIONS.md#port-matrix)
 # === ONE-TIME ===
 git clone https://github.com/RAJANAGORI/supply-chain-attack-simulator.git
 cd supply-chain-attack-simulator
-./scripts/setup.sh
-./scripts/floci-setup.sh --image
-./scripts/elasticsearch-up.sh
+./install.sh -y                 # preferred: core + ES + Floci + .scas.env
+# or piece-by-piece:
+# ./scripts/setup.sh
+# ./scripts/floci-setup.sh --image
+# ./scripts/elasticsearch-up.sh
 
 # === EVERY SESSION (repo root) ===
-source .testbench.env
-source .floci.env
-export SCAS_ES_URL=http://localhost:9200
+source .scas.env                # TESTBENCH_MODE + SCAS_ES_URL + .floci.env
+# (equivalent: source .testbench.env && source .floci.env && export SCAS_ES_URL=http://localhost:9200)
 
-./scripts/floci-up.sh          # cloud labs only
+./scripts/floci-up.sh          # if you used --no-start, or after floci-down
 # start scenario mock server(s) in scenario folder
 
 # === EACH SCENARIO ===
