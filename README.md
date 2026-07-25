@@ -13,6 +13,7 @@ Pick **one** path; everything else links out so you are not stuck in a long READ
 | You are… | Do this |
 |----------|---------|
 | **New to the project** | `./install.sh -y` (SCAS + ES + Floci) · [Full-stack setup](documentation/getting-started/FULL_STACK_SETUP.md) · or `./START_HERE.sh` |
+| **Pi / USB HDD host** | Optional: [`install-external.sh`](install-external.sh) then same stack — [Pi storage](documentation/getting-started/RASPBERRY_PI_STORAGE.md) |
 | **Prefer a browser UI** | [Dashboard](documentation/platform/DASHBOARD.md) — `./scripts/start-dashboard.sh` (localhost only) |
 | **Planning teaching or a curriculum** | Use the [Scenario learning path](documentation/learning-path/SCENARIO_LEARNING_PATH.md) (beginner → intermediate → advanced) |
 | **Comfortable with npm, shells, and isolated VMs** | [Quick Start](#quick-start-experienced-users) below, then open the README inside each scenario folder |

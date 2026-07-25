@@ -8,7 +8,7 @@ Onboarding guides for new learners and first-time lab setup.
 | [ZERO_TO_HERO.md](./ZERO_TO_HERO.md) | Short path from zero to your first scenario — safety controls and lab flow |
 | [QUICK_START.md](./QUICK_START.md) | Fast setup for experienced developers who want to run a scenario quickly |
 | [SETUP.md](./SETUP.md) | SCAS-only installation, environment configuration, and prerequisites |
-| [RASPBERRY_PI_STORAGE.md](./RASPBERRY_PI_STORAGE.md) | Pi + USB HDD/SSD — move Docker data-root, repo, and npm cache off the SD card |
+| [RASPBERRY_PI_STORAGE.md](./RASPBERRY_PI_STORAGE.md) | **Optional** — Pi/USB HDD via `install-external.sh` (generic users: `install.sh` only) |
 
 **Next steps:** [Scenario 01 walkthrough](../scenario-guides/zero-to-hero/ZERO_TO_HERO_SCENARIO_01.md) · [Full catalog](../scenario-guides/CATALOG.md)
 

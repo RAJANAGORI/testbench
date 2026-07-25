@@ -15,7 +15,9 @@ chmod +x install.sh
 ./install.sh -y
 ```
 
-This runs prerequisites checks, enables `TESTBENCH_MODE`, installs npm workspaces + `detection-tools`, starts **Elasticsearch/Kibana**, sets up and starts **Floci** (published image), **generates** lookalike harvest secrets locally (gitignored — see `scenarios/_shared/LOOKALIKE_SECRETS.md`), plants 05/06/21/23 fixtures (+ Floci SM/SSM when Floci is up), and writes **`.scas.env`**.
+This is the **generic** workshop installer: prerequisites, `TESTBENCH_MODE`, npm workspaces + `detection-tools`, **Elasticsearch/Kibana**, **Floci**, lookalike harvest secrets (generated locally — see `scenarios/_shared/LOOKALIKE_SECRETS.md`), and **`.scas.env`**.
+
+**External USB HDD / Raspberry Pi only:** use [`install-external.sh`](../../install-external.sh) so Docker data lands on the disk first — see [Raspberry Pi storage](./RASPBERRY_PI_STORAGE.md). Everyone else should stick to `./install.sh`.
 
 ```bash
 source .scas.env                 # every session
