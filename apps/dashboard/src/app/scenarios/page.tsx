@@ -2,12 +2,14 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Alert, Btn, LevelBadge, PageHeader, StatusPill } from '@/components/ui';
 import { cp, type ScenarioSummary } from '@/lib/api';
 
 const levels = ['All', 'Beginner', 'Intermediate', 'Advanced'] as const;
 
 export default function ScenariosPage() {
+  const router = useRouter();
   const [scenarios, setScenarios] = useState<ScenarioSummary[]>([]);
   const [error, setError] = useState('');
   const [query, setQuery] = useState('');
@@ -15,9 +17,15 @@ export default function ScenariosPage() {
 
   useEffect(() => {
     cp.getScenarios()
-      .then(setScenarios)
+      .then((list) => {
+        setScenarios(list);
+        // Prefetch detail entries — [id] page is one shared compile for every lab.
+        for (const s of list) {
+          router.prefetch(`/scenarios/${s.id}`);
+        }
+      })
       .catch((e) => setError(e instanceof Error ? e.message : 'Failed to load'));
-  }, []);
+  }, [router]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -84,6 +92,7 @@ export default function ScenariosPage() {
           <Link
             key={s.id}
             href={`/scenarios/${s.id}`}
+            prefetch
             className="group glass-panel block p-5 transition hover:shadow-glow"
           >
             <div className="flex items-start justify-between gap-2">

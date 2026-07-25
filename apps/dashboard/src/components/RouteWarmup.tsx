@@ -3,8 +3,11 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-/** Primary workspace routes — warm so first click is not a multi-second compile. */
-const WARM_ROUTES = ['/scenarios', '/teardown'] as const;
+/**
+ * Primary workspace routes — warm so first click is not a multi-second compile.
+ * `/scenarios/01` compiles the shared `scenarios/[id]` page for every lab id.
+ */
+const WARM_ROUTES = ['/scenarios', '/scenarios/01', '/teardown'] as const;
 
 /**
  * Prefetch + soft-fetch key App Router pages after the shell mounts.
