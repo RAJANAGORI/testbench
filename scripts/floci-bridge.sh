@@ -23,7 +23,22 @@ scas_floci_env() {
 }
 
 scas_floci_health() {
-  curl -fsS "${SCAS_FLOCI_ENDPOINT}/_floci/health" >/dev/null 2>&1
+  # Prefer configured endpoint; also try localhost if 127.0.0.1 fails (some hosts differ).
+  local ep="${SCAS_FLOCI_ENDPOINT:-http://127.0.0.1:4566}"
+  if curl -fsS --connect-timeout 2 --max-time 5 "${ep}/_floci/health" >/dev/null 2>&1; then
+    return 0
+  fi
+  case "$ep" in
+    *127.0.0.1*)
+      curl -fsS --connect-timeout 2 --max-time 5 "http://localhost:4566/_floci/health" >/dev/null 2>&1
+      ;;
+    *localhost*)
+      curl -fsS --connect-timeout 2 --max-time 5 "http://127.0.0.1:4566/_floci/health" >/dev/null 2>&1
+      ;;
+    *)
+      return 1
+      ;;
+  esac
 }
 
 scas_floci_init_ready() {

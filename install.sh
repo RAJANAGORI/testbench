@@ -39,6 +39,7 @@ YES=0
 CORE_ONLY=0
 SKIP_ES=0
 SKIP_FLOCI=0
+SKIP_FLOCI_SEED=0
 NO_START=0
 FLOCI_IMAGE=1
 START_UI=0
@@ -594,9 +595,31 @@ else
   ok "Floci configured (.floci.env)"
 
   if [ "$NO_START" != "1" ]; then
-    log "Starting Floci emulator on :4566…"
-    ./scripts/floci-up.sh
-    ok "Floci healthy"
+    log "Starting Floci emulator on :4566 (first boot can take several minutes)…"
+    FLOCI_UP_OK=0
+    # Extra-long wait when launched from install.sh (ES/Kibana already consuming RAM/CPU)
+    export FLOCI_HEALTH_TRIES="${FLOCI_HEALTH_TRIES:-150}"
+    export FLOCI_HEALTH_SLEEP="${FLOCI_HEALTH_SLEEP:-3}"
+    if ./scripts/floci-up.sh; then
+      FLOCI_UP_OK=1
+    else
+      warn "Floci did not become healthy on first attempt"
+      if ask_yn "Retry Floci start now?"; then
+        if ./scripts/floci-up.sh; then
+          FLOCI_UP_OK=1
+        fi
+      fi
+    fi
+    if [ "$FLOCI_UP_OK" = "1" ]; then
+      ok "Floci healthy"
+    else
+      warn "Continuing install without a healthy Floci (labs still work on mock localhost)"
+      echo "   Later:  docker logs scas-floci --tail 80"
+      echo "           ./scripts/floci-up.sh"
+      echo "   Or skip: ./install.sh -y --skip-floci"
+      # Keep going — do not abort ES/npm/lookalike setup
+      SKIP_FLOCI_SEED=1
+    fi
   else
     warn "Floci installed but not started (--no-start). Later: ./scripts/floci-up.sh"
   fi
@@ -619,7 +642,7 @@ else
   warn "Missing ${PLANT}"
 fi
 
-if [ "$SKIP_FLOCI" != "1" ] && [ "$NO_START" != "1" ]; then
+if [ "$SKIP_FLOCI" != "1" ] && [ "$NO_START" != "1" ] && [ "${SKIP_FLOCI_SEED:-0}" != "1" ]; then
   log "Seeding lookalike secrets into Floci Secrets Manager / SSM…"
   # shellcheck disable=SC1091
   source "${REPO_ROOT}/scripts/floci-bridge.sh"
@@ -631,8 +654,8 @@ if [ "$SKIP_FLOCI" != "1" ] && [ "$NO_START" != "1" ]; then
   else
     warn "Floci not healthy — SM/SSM lookalikes not seeded. Later: ./scripts/floci-up.sh then re-run seed"
   fi
-elif [ "$SKIP_FLOCI" != "1" ] && [ "$NO_START" = "1" ]; then
-  warn "Floci SM/SSM lookalikes deferred (--no-start). After floci-up, seed via scenario infrastructure/floci/seed.sh"
+elif [ "$SKIP_FLOCI" != "1" ] && { [ "$NO_START" = "1" ] || [ "${SKIP_FLOCI_SEED:-0}" = "1" ]; }; then
+  warn "Floci SM/SSM lookalikes deferred. After Floci is up: ./scripts/floci-up.sh && scenario infrastructure/floci/seed.sh"
 fi
 
 # ── 7. Unified session env ───────────────────────────────────
