@@ -124,7 +124,8 @@ export default function OverviewPage() {
         <div className="mt-4">
           <Alert variant="info">
             <span className="font-medium">{busy}</span> running in the background — first Floci/ES start can take several minutes.
-            Watch live logs on the <Link href="/console" className="underline">Output</Link> page.
+            Watch live logs in the <Link href="/scenarios" className="underline">Labs</Link> terminal dock
+            while a scenario runs.
           </Alert>
         </div>
       )}
@@ -239,7 +240,7 @@ export default function OverviewPage() {
           <ol className="space-y-3 text-sm text-ink-secondary">
             <li className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">1</span>Open a lab from the Labs page</li>
             <li className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">2</span>Run <strong className="text-ink-primary">Prepare</strong> then <strong className="text-ink-primary">Execute</strong></li>
-            <li className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">3</span>Watch captures and terminal output</li>
+            <li className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">3</span>Watch the live terminal dock under Labs</li>
           </ol>
           <Link href="/scenarios" className="mt-5 inline-block">
             <Btn variant="secondary">Go to labs</Btn>

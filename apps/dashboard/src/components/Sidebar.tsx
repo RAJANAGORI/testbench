@@ -9,7 +9,6 @@ import { landingUrl } from '@/lib/hosts';
 const mainNav = [
   { href: '/', label: 'Overview', icon: '◈' },
   { href: '/scenarios', label: 'Labs', icon: '⬡' },
-  { href: '/console', label: 'Output', icon: '▤' },
 ];
 
 const utilityNav = [

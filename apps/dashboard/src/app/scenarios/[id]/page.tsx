@@ -3,25 +3,30 @@
 import { use, useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Alert, Btn, Card, LevelBadge, PageHeader, StatusPill, WorkflowTabs } from '@/components/ui';
-import { LogConsole } from '@/components/LogConsole';
+import { useLabSession } from '@/components/LabSessionContext';
 import { cp, type ScenarioDetail } from '@/lib/api';
 
 const WORKFLOW = [
   { id: 'prepare', label: 'Prepare', hint: 'Setup & services' },
   { id: 'execute', label: 'Execute', hint: 'Attack steps' },
-  { id: 'observe', label: 'Observe', hint: 'Captures & logs' },
+  { id: 'observe', label: 'Observe', hint: 'Captures' },
 ] as const;
 
 type Phase = (typeof WORKFLOW)[number]['id'];
 
 export default function ScenarioDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const { setSessionId, setLabId } = useLabSession();
   const [scenario, setScenario] = useState<ScenarioDetail | null>(null);
   const [captures, setCaptures] = useState<Record<string, unknown>>({});
-  const [sessionId, setSessionId] = useState<string>();
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');
   const [phase, setPhase] = useState<Phase>('prepare');
+
+  useEffect(() => {
+    setLabId(id);
+    return () => setLabId(undefined);
+  }, [id, setLabId]);
 
   const load = useCallback(async () => {
     try {
@@ -51,7 +56,7 @@ export default function ScenarioDetailPage({ params }: { params: Promise<{ id: s
     setBusy(label);
     setError('');
     try {
-      const res = (await fn()) as { sessionId?: string; sessions?: string[] };
+      const res = (await fn()) as { sessionId?: string; sessions?: string[]; started?: boolean };
       if (res.sessionId) setSessionId(res.sessionId);
       if (res.sessions?.length) setSessionId(res.sessions[res.sessions.length - 1]);
       await load();
@@ -76,7 +81,9 @@ export default function ScenarioDetailPage({ params }: { params: Promise<{ id: s
     return (
       <div className="animate-fade-in">
         <Alert variant="error">{error}</Alert>
-        <Link href="/scenarios" className="mt-4 inline-block"><Btn variant="secondary">← Back to labs</Btn></Link>
+        <Link href="/scenarios" className="mt-4 inline-block">
+          <Btn variant="secondary">← Back to labs</Btn>
+        </Link>
       </div>
     );
   }
@@ -85,7 +92,12 @@ export default function ScenarioDetailPage({ params }: { params: Promise<{ id: s
 
   const activeCount = scenario.processes?.filter((p) => p.status === 'running').length ?? 0;
   const hasCaptures = Object.values(captures).some(
-    (v) => v && typeof v === 'object' && 'captures' in (v as object) && Array.isArray((v as { captures: unknown[] }).captures) && (v as { captures: unknown[] }).captures.length > 0,
+    (v) =>
+      v &&
+      typeof v === 'object' &&
+      'captures' in (v as object) &&
+      Array.isArray((v as { captures: unknown[] }).captures) &&
+      (v as { captures: unknown[] }).captures.length > 0,
   );
 
   return (
@@ -97,41 +109,48 @@ export default function ScenarioDetailPage({ params }: { params: Promise<{ id: s
       <PageHeader
         eyebrow={`Lab ${scenario.id}`}
         title={scenario.title}
-        description={`${scenario.level} · ports ${scenario.ports.join(', ')}`}
+        description={`${scenario.level} · ports ${scenario.ports.join(', ')} · live output docks below`}
         action={
           <div className="flex flex-wrap gap-2">
+            {busy ? <StatusPill status="busy" label={busy} /> : null}
             {activeCount > 0 && <StatusPill status="busy" label={`${activeCount} running`} />}
             <LevelBadge level={scenario.level} />
           </div>
         }
       />
 
-      {error && <div className="mb-4"><Alert variant="error">{error}</Alert></div>}
+      {error && (
+        <div className="mb-4">
+          <Alert variant="error">{error}</Alert>
+        </div>
+      )}
 
-      <WorkflowTabs steps={[...WORKFLOW]} active={phase} onChange={(id) => setPhase(id as Phase)} />
+      {busy && (
+        <div className="mb-4">
+          <Alert variant="info">
+            <span className="font-medium">{busy}</span> in progress — watch the live terminal below for
+            backend stdout/stderr.
+          </Alert>
+        </div>
+      )}
+
+      <WorkflowTabs steps={[...WORKFLOW]} active={phase} onChange={(tabId) => setPhase(tabId as Phase)} />
 
       <div className="mt-6">
         {phase === 'prepare' && (
           <div className="space-y-4">
             <Card
               title="One-click full lab"
-              subtitle="Runs setup → services → all attack steps automatically"
+              subtitle="Runs setup → services → all attack steps — output streams in the dock"
             >
-              <Btn
-                size="lg"
-                disabled={!!busy}
-                onClick={() => action('run-all', () => cp.runAll(id), 'observe')}
-              >
+              <Btn size="lg" disabled={!!busy} onClick={() => action('run-all', () => cp.runAll(id), 'observe')}>
                 {busy === 'run-all' ? 'Running…' : 'Run full lab'}
               </Btn>
             </Card>
 
             <div className="grid gap-4 lg:grid-cols-2">
               <Card title="Step 1 — Setup" subtitle="Creates packages, victim app, and mock infrastructure">
-                <Btn
-                  disabled={!!busy}
-                  onClick={() => action('setup', () => cp.setup(id))}
-                >
+                <Btn disabled={!!busy} onClick={() => action('setup', () => cp.setup(id))}>
                   {busy === 'setup' ? 'Setting up…' : 'Run setup'}
                 </Btn>
               </Card>
@@ -144,11 +163,7 @@ export default function ScenarioDetailPage({ params }: { params: Promise<{ id: s
                   >
                     Start services
                   </Btn>
-                  <Btn
-                    variant="danger"
-                    disabled={!!busy}
-                    onClick={() => action('stop', () => cp.stopServices(id))}
-                  >
+                  <Btn variant="danger" disabled={!!busy} onClick={() => action('stop', () => cp.stopServices(id))}>
                     Stop
                   </Btn>
                 </div>
@@ -166,8 +181,20 @@ export default function ScenarioDetailPage({ params }: { params: Promise<{ id: s
             {scenario.floci && (
               <Card title="Floci (optional)" subtitle="Cloud-track seed and verification">
                 <div className="flex gap-2">
-                  <Btn variant="secondary" disabled={!!busy} onClick={() => action('floci-seed', () => cp.floci(id, 'seed'))}>Seed</Btn>
-                  <Btn variant="secondary" disabled={!!busy} onClick={() => action('floci-verify', () => cp.floci(id, 'verify'))}>Verify</Btn>
+                  <Btn
+                    variant="secondary"
+                    disabled={!!busy}
+                    onClick={() => action('floci-seed', () => cp.floci(id, 'seed'))}
+                  >
+                    Seed
+                  </Btn>
+                  <Btn
+                    variant="secondary"
+                    disabled={!!busy}
+                    onClick={() => action('floci-verify', () => cp.floci(id, 'verify'))}
+                  >
+                    Verify
+                  </Btn>
                 </div>
               </Card>
             )}
@@ -175,10 +202,13 @@ export default function ScenarioDetailPage({ params }: { params: Promise<{ id: s
         )}
 
         {phase === 'execute' && (
-          <Card title="Attack steps" subtitle="Run each step after services are started">
+          <Card title="Attack steps" subtitle="Each Run streams to the live terminal below">
             <ul className="divide-y divide-line">
               {scenario.steps.map((step, i) => (
-                <li key={step.id} className="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0">
+                <li
+                  key={step.id}
+                  className="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0"
+                >
                   <div className="flex items-start gap-3">
                     <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-canvas-hover text-xs font-semibold text-ink-muted">
                       {i + 1}
@@ -203,22 +233,23 @@ export default function ScenarioDetailPage({ params }: { params: Promise<{ id: s
         )}
 
         {phase === 'observe' && (
-          <div className="space-y-4">
-            <Card
-              title="Exfiltration captures"
-              subtitle={hasCaptures ? 'Data received by mock collector' : 'No captures yet — run attack steps first'}
-              action={
-                <Btn variant="ghost" size="sm" disabled={!!busy} onClick={() => action('clear', () => cp.clearCaptures(id))}>
-                  Clear
-                </Btn>
-              }
-            >
-              <pre className="max-h-72 overflow-auto rounded-xl border border-line bg-[#0c0b14] p-4 font-mono text-[11px] leading-relaxed text-white/70">
-                {JSON.stringify(captures, null, 2)}
-              </pre>
-            </Card>
-            <LogConsole sessionId={sessionId} tall />
-          </div>
+          <Card
+            title="Exfiltration captures"
+            subtitle={
+              hasCaptures
+                ? 'Data received by mock collector — process logs stay in the dock below'
+                : 'No captures yet — run attack steps first'
+            }
+            action={
+              <Btn variant="ghost" size="sm" disabled={!!busy} onClick={() => action('clear', () => cp.clearCaptures(id))}>
+                Clear
+              </Btn>
+            }
+          >
+            <pre className="max-h-72 overflow-auto rounded-xl border border-line bg-[#0c0b14] p-4 font-mono text-[11px] leading-relaxed text-white/70">
+              {JSON.stringify(captures, null, 2)}
+            </pre>
+          </Card>
         )}
       </div>
 

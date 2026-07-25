@@ -45,8 +45,8 @@ export default function ScenariosPage() {
     <div className="animate-fade-in">
       <PageHeader
         eyebrow="Labs"
-        title="23 attack scenarios"
-        description="Pick a lab, follow the guided workflow, and practice detection on localhost."
+        title="Run labs with live output"
+        description="Open a scenario, run Prepare / Execute — the terminal dock below streams backend logs the whole time."
       />
 
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -75,7 +75,9 @@ export default function ScenariosPage() {
         </div>
       </div>
 
-      <p className="mb-4 text-xs text-ink-muted">{filtered.length} lab{filtered.length !== 1 ? 's' : ''}</p>
+      <p className="mb-4 text-xs text-ink-muted">
+        {filtered.length} lab{filtered.length !== 1 ? 's' : ''} · live terminal pinned below
+      </p>
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {filtered.map((s) => (
@@ -106,7 +108,14 @@ export default function ScenariosPage() {
       {filtered.length === 0 && scenarios.length > 0 && (
         <div className="mt-8 text-center">
           <p className="text-sm text-ink-muted">No labs match your filters.</p>
-          <Btn variant="ghost" className="mt-3" onClick={() => { setQuery(''); setLevel('All'); }}>
+          <Btn
+            variant="ghost"
+            className="mt-3"
+            onClick={() => {
+              setQuery('');
+              setLevel('All');
+            }}
+          >
             Clear filters
           </Btn>
         </div>

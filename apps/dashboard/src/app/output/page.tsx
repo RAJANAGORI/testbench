@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
-/** Legacy / bookmark alias — real page lives at /console */
+/** Legacy alias — live output lives on Labs. */
 export default function OutputAliasPage() {
-  redirect('/console');
+  redirect('/scenarios');
 }
