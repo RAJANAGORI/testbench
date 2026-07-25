@@ -50,6 +50,7 @@ export function Sidebar() {
           <Link
             key={item.href}
             href={item.href}
+            prefetch
             className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
               isActive(item.href)
                 ? 'bg-brand text-white shadow-glow'
@@ -70,6 +71,7 @@ export function Sidebar() {
           <Link
             key={item.href}
             href={item.href}
+            prefetch
             className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
               isActive(item.href)
                 ? 'bg-state-error/12 text-state-error ring-1 ring-state-error/20'

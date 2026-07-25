@@ -50,6 +50,11 @@ const controlPlaneTarget = `http://127.0.0.1:${controlPlanePort}`;
 const nextConfig = {
   reactStrictMode: true,
   allowedDevOrigins: devOrigins(),
+  // Keep warmed workspace routes in memory longer during `next dev`
+  onDemandEntries: {
+    maxInactiveAge: 60 * 60 * 1000,
+    pagesBufferLength: 8,
+  },
   async rewrites() {
     return [
       {

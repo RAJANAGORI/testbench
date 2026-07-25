@@ -71,6 +71,21 @@ wait_for "http://127.0.0.1:3100" "Dashboard"
 
 echo "Starting landing on ${BIND_HOST}:5173…"
 npm run dev:landing &
+
+# Overlap landing boot with Next.js route compile — first Labs/Reset click stays fast.
+warm_dashboard_routes() {
+  echo "Precompiling dashboard routes…"
+  local path
+  for path in / /scenarios /teardown; do
+    if curl -sf --max-time 120 "http://127.0.0.1:3100${path}" >/dev/null; then
+      echo "  ✓ ${path}"
+    else
+      echo "  ✗ ${path} (will compile on first visit)" >&2
+    fi
+  done
+}
+warm_dashboard_routes
+
 wait_for "http://127.0.0.1:5173" "Landing"
 
 echo ""
