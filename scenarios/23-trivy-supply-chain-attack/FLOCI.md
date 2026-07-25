@@ -8,6 +8,8 @@ export TESTBENCH_MODE=enabled SCAS_FLOCI_ENABLED=1
 cd scenarios/23-trivy-supply-chain-attack
 ./infrastructure/floci/seed.sh
 node infrastructure/mock-c2-server.js &
+# lookalike CI env for harvest (same shapes as scenarios/_shared/lookalike-secrets.env)
+set -a && source .env.ci-lab && set +a
 # run lab per README — malicious trivy-action-like.js harvests CI env
 ./infrastructure/floci/push-compromised.sh
 ./infrastructure/floci/verify.sh
@@ -16,3 +18,5 @@ node infrastructure/mock-c2-server.js &
 ```
 
 Dual-write: mock C2 `:3023` + `s3://scas-sc23-artifacts/exfil/trivy-exfil-*.json`
+
+Seeded decoys: SSM `/scas/sc23/github-pat` (`ghp_…SCAS`), Secrets Manager `scas/sc23/ci-aws` + `ci-docker`.

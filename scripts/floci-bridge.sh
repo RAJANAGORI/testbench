@@ -345,3 +345,84 @@ scas_floci_ssm_put_parameter() {
   local value="${2:?parameter value}"
   scas_floci_aws ssm put-parameter --name "$name" --value "$value" --type String --overwrite >/dev/null 2>&1 || true
 }
+
+# --- Lookalike lab secrets (never overwrite SCAS_FLOCI_AWS_* / emulator auth) ---
+
+scas_floci_lookalike_root() {
+  local here
+  here="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+  printf '%s' "${here}/scenarios/_shared"
+}
+
+scas_floci_ensure_lookalike() {
+  # shellcheck disable=SC1091
+  source "$(scas_floci_lookalike_root)/ensure-lookalike-secrets.sh"
+}
+
+scas_floci_lookalike_get() {
+  local key="${1:?}"
+  local file
+  scas_floci_ensure_lookalike
+  file="$(scas_floci_lookalike_root)/lookalike-secrets.env"
+  local line
+  line="$(grep -E "^export ${key}=" "$file" | head -1 || true)"
+  [ -n "$line" ] || { printf ''; return 0; }
+  printf '%s' "${line#export ${key}=}"
+}
+
+scas_floci_lookalike_json() {
+  # Print a JSON object from lookalike-secrets.json by top-level key (e.g. npm, aws_ci).
+  local key="${1:?}"
+  local file
+  scas_floci_ensure_lookalike
+  file="$(scas_floci_lookalike_root)/lookalike-secrets.json"
+  python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); print(json.dumps(d[sys.argv[2]]))' "$file" "$key"
+}
+
+# Seed Secrets Manager / SSM with realistic lookalike values for harvest labs.
+# Does not export AWS_* into this shell (emulator auth stays SCAS_FLOCI_*).
+scas_floci_seed_lookalike_secrets() {
+  local id="${1:?scenario id e.g. 05}"
+  # normalize 5 → 05
+  if [[ "$id" =~ ^[0-9]$ ]]; then
+    id="0${id}"
+  fi
+
+  local npm_json aws_json github_token db_url
+  npm_json="$(scas_floci_lookalike_json npm)"
+  aws_json="$(scas_floci_lookalike_json aws_ci)"
+  github_token="$(scas_floci_lookalike_get GITHUB_TOKEN)"
+  db_url="$(scas_floci_lookalike_get DATABASE_URL)"
+
+  case "$id" in
+    05)
+      scas_floci_ssm_put_parameter "/scas/sc05/ci-database-url" "$db_url"
+      scas_floci_secret_put "scas/sc05/ci-aws" "$aws_json"
+      scas_floci_secret_put "scas/sc05/ci-database" "$(scas_floci_lookalike_json database)"
+      ;;
+    06)
+      scas_floci_secret_put "scas/sc06/decoy-npm-token" "$npm_json"
+      scas_floci_secret_put "scas/sc06/decoy-github-pat" "$(scas_floci_lookalike_json github)"
+      scas_floci_secret_put "scas/sc06/decoy-aws" "$aws_json"
+      ;;
+    21)
+      scas_floci_secret_put "scas/sc21/ci-aws-role" "$aws_json"
+      scas_floci_secret_put "scas/sc21/decoy-npm-token" "$npm_json"
+      ;;
+    23)
+      scas_floci_ssm_put_parameter "/scas/sc23/github-pat" "$github_token"
+      scas_floci_secret_put "scas/sc23/ci-aws" "$aws_json"
+      scas_floci_secret_put "scas/sc23/ci-docker" "$(scas_floci_lookalike_json docker)"
+      ;;
+    *)
+      echo "   (no Floci lookalike SM/SSM map for scenario ${id})" >&2
+      return 0
+      ;;
+  esac
+
+  local plant
+  plant="$(scas_floci_lookalike_root)/plant-lookalike-secrets.sh"
+  if [ -x "$plant" ] || [ -f "$plant" ]; then
+    bash "$plant" "$id" || true
+  fi
+}

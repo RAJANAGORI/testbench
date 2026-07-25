@@ -45,7 +45,11 @@ cd scenarios/NN-slug
 
 | Path | Purpose |
 |------|---------|
-| `scripts/floci-bridge.sh` | AWS emulator helpers (see file for full list) |
+| `scripts/floci-bridge.sh` | AWS emulator helpers + `scas_floci_seed_lookalike_secrets` |
+| `scenarios/_shared/generate-lookalike-secrets.py` | Generates LAB-ONLY lookalike tokens locally (gitignored outputs) |
+| `scenarios/_shared/ensure-lookalike-secrets.sh` | Create `lookalike-secrets.{env,json}` if missing |
+| `scenarios/_shared/plant-lookalike-secrets.sh` | Plant victim `.npmrc` / `.env` fixtures (05, 06, 21, 23) |
+| `scenarios/_shared/LOOKALIKE_SECRETS.md` | How generated lookalikes work |
 | `scripts/floci-upload-json.sh` | JSON → `s3://scas-scNN-artifacts/exfil/` |
 | `detection-tools/floci/floci-exfil.js` | Node `uploadJson()` |
 | `detection-tools/floci/floci_exfil.py` | Python `upload_json()` (scenario 22) |

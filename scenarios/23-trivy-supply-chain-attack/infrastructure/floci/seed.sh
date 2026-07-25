@@ -13,9 +13,11 @@ scas_floci_iam_create_role "scas-sc23-ci-role"
 scas_floci_s3_put_string "$BUCKET" "baseline/trivy-tags.txt" <<< "Legitimate trivy-action tags before force-push"
 scas_floci_s3_put_string "$BUCKET" "source.zip" <<< "pipeline-source-placeholder"
 scas_floci_codepipeline_create "$PIPELINE" "$BUCKET"
-scas_floci_ssm_put_parameter "/scas/sc23/github-pat" "decoy-pat-for-lab-only"
+scas_floci_seed_lookalike_secrets 23
 
 echo "✅ Floci seeded for scenario 23 (capstone cloud track)"
 echo "   S3: s3://${BUCKET}"
 echo "   ECR: $(scas_floci_ecr_uri "$REPO")"
 echo "   Pipeline: ${PIPELINE}"
+echo "   Secrets: SSM /scas/sc23/github-pat + SM ci-aws/ci-docker (lookalike)"
+echo "   Load for harvest: set -a && source .env.ci-lab && set +a"

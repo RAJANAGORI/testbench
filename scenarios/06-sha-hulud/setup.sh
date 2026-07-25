@@ -682,6 +682,10 @@ else
 fi
 echo ""
 
+bash "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../_shared/plant-lookalike-secrets.sh" 06
+echo "✅ Lookalike secrets planted (victim-app/.npmrc + .env)"
+echo ""
+
 echo "================================================"
 echo "✅ Setup Complete!"
 echo "================================================"
@@ -702,6 +706,8 @@ echo "   cat compromised-package/data-processor/package.json"
 echo ""
 echo "4. Install the compromised package (simulate attack):"
 echo "   cd victim-app"
+echo "   # .npmrc / .env already contain lookalike tokens for harvest"
+echo "   set -a && source ../_shared/lookalike-secrets.env && set +a   # optional: env harvest too"
 echo "   npm install ../compromised-package/data-processor"
 echo ""
 echo "5. Check captured credentials:"
