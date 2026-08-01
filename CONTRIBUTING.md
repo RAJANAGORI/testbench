@@ -105,11 +105,14 @@ Run these locally before opening a PR:
 # Catches lab-count / index / public-doc drift (fast; also runs in CI)
 node scripts/check-info-consistency.js
 
+# Catches Excalidraw/SVG diagram contract drift (nodes, edges, embeds, XML &)
+node scripts/check-diagram-assets.js
+
 chmod +x scripts/*.sh
 ./scripts/smoke-all-scenarios.sh
 ```
 
-If your change only affects one scenario, you should still run that scenario fully and confirm capture output appears as expected. When you **add or remove a scenario**, update every public surface that states the lab count or lists `01–NN`, then re-run `check-info-consistency.js`.
+If your change only affects one scenario, you should still run that scenario fully and confirm capture output appears as expected. When you **add or remove a scenario**, update every public surface that states the lab count or lists `01–NN`, then re-run `check-info-consistency.js`. When you **edit diagrams**, update `scripts/lib/diagram-specs.js` if the story changed, keep `.excalidraw`+`.svg` pairs, then re-run `check-diagram-assets.js`.
 
 ## Pull request checklist
 

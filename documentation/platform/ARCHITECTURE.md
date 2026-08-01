@@ -75,33 +75,9 @@ Forwarding runs only when `SCAS_ES_URL` is set (see [DETECTION_AND_OBSERVABILITY
 
 ## End-to-end lab flow
 
-```mermaid
-flowchart LR
-    subgraph Setup
-        A[./scripts/setup.sh]
-        B[scenarios/NN/setup.sh]
-    end
-    subgraph Attack
-        C[Terminal A: mock server]
-        D[Terminal B: victim app]
-    end
-    subgraph Evidence
-        E[captured-data.json]
-        F[scas-detections index]
-    end
-    subgraph Defense
-        G[DETECT.md runbook]
-        H[detection-tools/]
-        I[Kibana Discover]
-    end
-    A --> B --> C
-    C --> D
-    D --> E
-    D --> F
-    G --> I
-    E --> I
-    H --> I
-```
+![SCAS end-to-end lab flow: setup.sh → scenario setup → mock → victim → captured-data.json & scas-detections; DETECT.md + detection-tools + evidence → Kibana Discover](../assets/diagrams/scas-e2e-lab-flow.svg)
+
+*Editable source: [`scas-e2e-lab-flow.excalidraw`](../assets/diagrams/scas-e2e-lab-flow.excalidraw).*
 
 ## CI and quality
 

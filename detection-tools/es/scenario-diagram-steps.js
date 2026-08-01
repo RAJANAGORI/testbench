@@ -1,6 +1,9 @@
 /**
- * Learner-facing sequence diagram content for zero-to-hero observability sections.
+ * Learner-facing observability Phase-2 steps for zero-to-hero guides.
  * Keep messages aligned with each scenario README "Run the lab" flow.
+ *
+ * Unique diagrams: documentation/assets/diagrams/scas-observability-scenario-NN.{excalidraw,svg}
+ * plus Mermaid sequenceDiagram in zero-to-hero guides via generate-observability-section.js.
  */
 
 const SCENARIO_DIAGRAMS = {
@@ -205,10 +208,9 @@ const SCENARIO_DIAGRAMS = {
   '23': {
     intro: 'Trivy Supply Chain Attack (CVE-2026-33634): force-pushed trivy-action tag harvests CI secrets before the legitimate scan runs.',
     attack_steps: [
-      { from: 'Learner', to: 'C2', message: 'node infrastructure/mock-c2-server.js (port 3023)' },
       { from: 'Learner', to: 'Victim', message: 'cd victim-ci && node run-pipeline.js (TESTBENCH_MODE=enabled)' },
       { from: 'Victim', to: 'MalPkg', message: 'require("trivy-action-like") triggers harvestAndExfiltrate()' },
-      { from: 'MalPkg', to: 'C2', message: 'POST http://127.0.0.1:3023/collect — CI env vars harvested' },
+      { from: 'MalPkg', to: 'Mock', message: 'POST http://127.0.0.1:3023/collect — CI env vars harvested' },
       { from: 'MalPkg', to: 'Victim', message: 'scanTarget() runs — pipeline output appears normal' }
     ]
   }

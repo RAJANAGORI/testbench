@@ -70,14 +70,9 @@ Stage 3 — Replication / Persistence
 
 ### Visual Example: Stage Dependencies
 
-```mermaid
-flowchart LR
-    S1[Stage 1: stage1-access-lib] -->|writes .stolen/token.json| S2[Stage 2: stage2-compromised-lib]
-    S2 -->|reads token| S3[Stage 3: replication spread.json]
-    S1 -->|capture stage1| M[Mock server :3017]
-    S2 -->|capture stage2| M
-    S3 -->|capture stage3| M
-```
+![Scenario 17 stage dependencies: stage1-access-lib writes .stolen/token.json to stage2-compromised-lib, which reads the token into replication spread.json; each stage captures to mock server :3017](../../assets/diagrams/scas-scenario-17-stage-chain.svg)
+
+*Editable source: [`scas-scenario-17-stage-chain.excalidraw`](../../assets/diagrams/scas-scenario-17-stage-chain.excalidraw).*
 
 ### How Multi-Stage Attacks Work
 
@@ -601,8 +596,6 @@ node detection-tools/multi-stage-correlator.js .
 
 ---
 
----
-
 ## Mitigation Playbook
 
 Canonical prevention and mitigation controls (aligned with the [scenario README](../../../scenarios/17-multi-stage-attack-chain/README.md)). Lab walkthroughs above expand each control with hands-on steps.
@@ -631,7 +624,7 @@ Multi-stage chain: stage1-access-lib enables stage2-compromised-lib exfil at run
 | Phase | What you should look for |
 |-------|--------------------------|
 | **1 — Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
-| **2 — Lab execution** | Terminal B runs the scenario README steps. Numbered arrows follow the attack path in order. |
+| **2 — Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
 | **3 — Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
 | **4 — Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
 | **5 — Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
@@ -639,6 +632,14 @@ Multi-stage chain: stage1-access-lib enables stage2-compromised-lib exfil at run
 > **Safety:** All network calls stay on `127.0.0.1`. Malicious logic runs only when `TESTBENCH_MODE=enabled`.
 
 ### End-to-end flow
+
+![Scenario 17 observability flow: Phase 1 collectors → Phase 2 lab steps → Phase 3 localhost exfil → optional Elasticsearch → Kibana Detections and Rules](../../assets/diagrams/scas-observability-scenario-17.svg)
+
+*Swimlane diagram for Scenario 17. Editable source: [`scas-observability-scenario-17.excalidraw`](../../assets/diagrams/scas-observability-scenario-17.excalidraw). Regenerate with `node scripts/generate-scenario-observability-diagrams.js`.*
+
+### Sequence diagram (Phase 1–5)
+
+Same flow as a participant sequence (expandable in the docs hub).
 
 ```mermaid
 sequenceDiagram
@@ -687,6 +688,17 @@ sequenceDiagram
     ES-->>Kibana: Return IOCs, Sigma, YARA from DETECT.md
     Learner->>Learner: Correlate capture detail with runbook IOCs
 ```
+
+### Scenario-specific attack steps (Phase 2)
+
+Same Phase-2 path as the diagrams above (for skimming / accessibility).
+
+| # | From | To | Action |
+|---|------|----|--------|
+| 1 | Learner | Victim | npm install stage1-access-lib + stage2-compromised-lib |
+| 2 | Learner | Victim | npm start |
+| 3 | Victim | MalPkg | Stage 1 loads → triggers stage 2 payload |
+| 4 | MalPkg | MalPkg | Chained exfil completes (stage 3 simulated in logs) |
 
 ### Prerequisites
 

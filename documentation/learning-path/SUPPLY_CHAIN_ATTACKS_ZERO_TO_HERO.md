@@ -92,21 +92,9 @@ Use the same teaching rhythm in every module:
 
 ## Visual Learning Flow
 
-```mermaid
-flowchart LR
-  foundations[Foundations]
-  entryAttacks[EntryAttacks]
-  integrityAttacks[IntegrityAndResolution]
-  pipelineAttacks[PipelineAndInfra]
-  advancedChains[AdvancedAttackChains]
-  capstone[DefenseInDepthCapstone]
+![SCAS curriculum path: Stage 0 Foundations through Stage 5 Capstone Defense-in-Depth](../assets/diagrams/scas-curriculum-stages.svg)
 
-  foundations --> entryAttacks
-  entryAttacks --> integrityAttacks
-  integrityAttacks --> pipelineAttacks
-  pipelineAttacks --> advancedChains
-  advancedChains --> capstone
-```
+*Editable source: [`scas-curriculum-stages.excalidraw`](../assets/diagrams/scas-curriculum-stages.excalidraw).*
 
 ## Reference
 

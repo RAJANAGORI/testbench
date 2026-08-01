@@ -20,6 +20,9 @@ Every maintainer-facing script in [`scripts/`](../../scripts/), grouped by purpo
 | [`scripts/kill-port.sh`](../../scripts/kill-port.sh) | Free one port, or `--all` ports from `ports.env` |
 | [`scripts/smoke-all-scenarios.sh`](../../scripts/smoke-all-scenarios.sh) | End-to-end smoke test across all 23 scenarios |
 | [`scripts/check-info-consistency.js`](../../scripts/check-info-consistency.js) | **CI harness** — fail if public lab counts / indexes / ranges drift from on-disk `scenarios/NN-*` |
+| [`scripts/check-diagram-assets.js`](../../scripts/check-diagram-assets.js) | **CI harness** — Excalidraw/SVG drawing contract (`scripts/lib/diagram-specs.js`); also in [Smoke](../../.github/workflows/smoke.yml) + path-filtered [Diagrams](../../.github/workflows/diagrams.yml) |
+| [`scripts/lib/diagram-specs.js`](../../scripts/lib/diagram-specs.js) | Canonical nodes/edges/labels for diagrams — edit before redrawing |
+| [`scripts/generate-scenario-observability-diagrams.js`](../../scripts/generate-scenario-observability-diagrams.js) | Generate unique `scas-observability-scenario-NN.{excalidraw,svg}` for all 23 labs (CI regenerates and fails on drift) |
 | [`scripts/ports.env`](../../scripts/ports.env) | Source-of-truth port allow-list (see [Operations → port matrix](./OPERATIONS.md#port-matrix)) |
 
 ### Observability (Elasticsearch + Kibana)
@@ -65,7 +68,7 @@ Keeps scenario docs, table-of-contents blocks, and mitigation playbooks consiste
 
 | Script | Purpose |
 |--------|---------|
-| [`scripts/generate-substack-posts.js`](../../scripts/generate-substack-posts.js) | Generate per-scenario long-form posts into `subsstack/` from observability metadata |
+| [`scripts/generate-substack-posts.js`](../../scripts/generate-substack-posts.js) | Generate per-scenario long-form posts into `subsstack/` from observability metadata (shared Excalidraw SVG + attack-steps table; no Mermaid) |
 | [`scripts/substack-scenario-copy.js`](../../scripts/substack-scenario-copy.js) | Editorial copy data consumed by the generator |
 
 ### Provenance & integrity
@@ -106,7 +109,16 @@ node scripts/inject-markdown-toc.js all
 #    “N runbooks” / “2N saved searches”, playbooks, control-plane registry —
 #    then verify:
 node scripts/check-info-consistency.js
+
+# 6. After editing diagrams under documentation/assets/diagrams/:
+#    update scripts/lib/diagram-specs.js if nodes/edges changed, keep .excalidraw+.svg
+#    pairs, escape & in SVG text, no Mermaid in contracted docs.
+#    For observability, regenerate unique per-scenario assets first:
+node scripts/generate-scenario-observability-diagrams.js
+node scripts/check-diagram-assets.js
 ```
+
+**Diagrams:** specs in [`scripts/lib/diagram-specs.js`](../../scripts/lib/diagram-specs.js); assets in [`documentation/assets/diagrams/`](../assets/diagrams/README.md). Markdown embeds SVG only. Zero-to-hero uses unique `scas-observability-scenario-NN` diagrams.
 
 **What goes where:**
 
@@ -117,7 +129,7 @@ node scripts/check-info-consistency.js
 If you change DETECT.md structure or observability flow, also re-run the ES helpers:
 
 ```bash
-node detection-tools/es/generate-observability-section.js   # if diagram metadata changed
+node detection-tools/es/generate-observability-section.js   # embeds unique scas-observability-scenario-NN.svg + Phase-2 table (no Mermaid)
 node detection-tools/es/load-runbooks.js                    # reload DETECT.md into scas-rules
 ```
 

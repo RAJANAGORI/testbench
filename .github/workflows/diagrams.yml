@@ -1,0 +1,72 @@
+name: Diagrams
+
+# Runs when diagram sources / embeds change. Regenerates unique scenario
+# observability assets and fails if the working tree drifts (committed SVG
+# must match the generator). Also re-runs the drawing-contract harness.
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'documentation/assets/diagrams/**'
+      - 'scripts/lib/diagram-specs.js'
+      - 'scripts/check-diagram-assets.js'
+      - 'scripts/generate-scenario-observability-diagrams.js'
+      - 'detection-tools/es/scenario-diagram-steps.js'
+      - 'detection-tools/es/scenario-observability.json'
+      - 'detection-tools/es/generate-observability-section.js'
+      - 'documentation/scenario-guides/zero-to-hero/**'
+      - 'documentation/platform/ARCHITECTURE.md'
+      - 'documentation/product/LAB_FLOW.md'
+      - 'documentation/product/SECURITY_THREAT_MODEL.md'
+      - 'documentation/learning-path/SUPPLY_CHAIN_ATTACKS_ZERO_TO_HERO.md'
+      - '.github/workflows/diagrams.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'documentation/assets/diagrams/**'
+      - 'scripts/lib/diagram-specs.js'
+      - 'scripts/check-diagram-assets.js'
+      - 'scripts/generate-scenario-observability-diagrams.js'
+      - 'detection-tools/es/scenario-diagram-steps.js'
+      - 'detection-tools/es/scenario-observability.json'
+      - 'detection-tools/es/generate-observability-section.js'
+      - 'documentation/scenario-guides/zero-to-hero/**'
+      - 'documentation/platform/ARCHITECTURE.md'
+      - 'documentation/product/LAB_FLOW.md'
+      - 'documentation/product/SECURITY_THREAT_MODEL.md'
+      - 'documentation/learning-path/SUPPLY_CHAIN_ATTACKS_ZERO_TO_HERO.md'
+      - '.github/workflows/diagrams.yml'
+
+jobs:
+  diagrams:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.19.0
+
+      - name: Regenerate unique scenario observability diagrams
+        run: node scripts/generate-scenario-observability-diagrams.js
+
+      - name: Fail if generated diagram assets drifted
+        run: |
+          if ! git diff --quiet -- documentation/assets/diagrams/scas-observability-scenario-*.excalidraw \
+                                 documentation/assets/diagrams/scas-observability-scenario-*.svg; then
+            echo "::error::Generated diagram assets differ from the commit. Re-run locally:"
+            echo "  node scripts/generate-scenario-observability-diagrams.js"
+            echo "  node detection-tools/es/generate-observability-section.js"
+            echo "  node scripts/check-diagram-assets.js"
+            git --no-pager diff --stat -- documentation/assets/diagrams/scas-observability-scenario-*
+            exit 1
+          fi
+
+      - name: Check diagram drawing contract
+        run: node scripts/check-diagram-assets.js

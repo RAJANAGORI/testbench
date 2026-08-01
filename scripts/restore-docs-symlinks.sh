@@ -37,5 +37,15 @@ done
 link_file index.md
 link_file DOCUMENTATION_INDEX.md
 
+# Local preview: guide.html image embeds resolve to /assets/diagrams/*
+mkdir -p "$DOCS/assets"
+if [[ -L "$DOCS/assets/diagrams" ]]; then
+  echo "skip (already symlink): docs/assets/diagrams"
+else
+  rm -rf "$DOCS/assets/diagrams"
+  ln -s "../../documentation/assets/diagrams" "$DOCS/assets/diagrams"
+  echo "symlink: docs/assets/diagrams -> documentation/assets/diagrams"
+fi
+
 rm -rf "$DOCS/_sources"
 echo "Done. docs/ symlinks restored; removed docs/_sources/ if present."

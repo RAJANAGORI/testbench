@@ -31,6 +31,7 @@ alwaysApply: true
 Shared-pattern edits: implement in **01** (or exception), `grep` `scenarios/` + `documentation/scenario-guides/`, apply the same diff — do not open all 23 folders.
 
 **Public-count drift:** after adding/removing a lab, run `node scripts/check-info-consistency.js` (CI-enforced in `smoke.yml`).
+**Diagrams:** what to draw lives in `scripts/lib/diagram-specs.js`; validate with `node scripts/check-diagram-assets.js`.
 
 ## Exploration
 

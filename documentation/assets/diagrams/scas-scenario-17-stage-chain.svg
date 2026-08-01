@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="360" viewBox="0 0 980 360" role="img" aria-label="Scenario 17 multi-stage chain dependencies">
+<style>
+  .box { stroke-width: 2; stroke-linejoin: round; }
+  .title { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 700; fill: #0f172a; }
+  .label { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; fill: #0f172a; }
+  .caption { font-family: 'Segoe UI', system-ui, sans-serif; fill: #64748b; font-size: 12px; }
+  .edge-label { font-family: 'Segoe UI', system-ui, sans-serif; fill: #475569; font-size: 11px; font-weight: 600; }
+  .arrow { stroke: #334155; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+</style>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#334155"/></marker>
+    <filter id="soft" x="-5%" y="-5%" width="110%" height="110%"><feDropShadow dx="0" dy="1" stdDeviation="1.2" flood-opacity="0.08"/></filter>
+  </defs>
+
+<rect width="980" height="360" fill="#ffffff"/>
+<text class="title" x="24" y="32" font-size="18">Scenario 17 — stage dependencies</text>
+<text class="caption" x="24" y="52">stage1-access-lib → stage2-compromised-lib → replication; each stage captures to mock :3017</text>
+
+<!-- Stage chain -->
+<rect class="box" x="40" y="100" width="200" height="70" rx="10" fill="#dbeafe" stroke="#2563eb" filter="url(#soft)"/>
+<text class="label" x="140.0" y="127.0" text-anchor="middle" dominant-baseline="middle" font-size="12">Stage 1:</text>
+<text class="label" x="140.0" y="143.0" text-anchor="middle" dominant-baseline="middle" font-size="12">stage1-access-lib</text>
+<rect class="box" x="320" y="100" width="220" height="70" rx="10" fill="#ffedd5" stroke="#ea580c" filter="url(#soft)"/>
+<text class="label" x="430.0" y="127.0" text-anchor="middle" dominant-baseline="middle" font-size="12">Stage 2:</text>
+<text class="label" x="430.0" y="143.0" text-anchor="middle" dominant-baseline="middle" font-size="12">stage2-compromised-lib</text>
+<rect class="box" x="620" y="100" width="220" height="70" rx="10" fill="#fce7f3" stroke="#db2777" filter="url(#soft)"/>
+<text class="label" x="730.0" y="127.0" text-anchor="middle" dominant-baseline="middle" font-size="12">Stage 3:</text>
+<text class="label" x="730.0" y="143.0" text-anchor="middle" dominant-baseline="middle" font-size="12">replication spread.json</text>
+
+<!-- Mock sink -->
+<rect class="box" x="360" y="250" width="220" height="60" rx="10" fill="#fef3c7" stroke="#d97706" filter="url(#soft)"/>
+<text class="label" x="470.0" y="280.0" text-anchor="middle" dominant-baseline="middle" font-size="13">Mock server :3017</text>
+
+<!-- S1 → S2 -->
+<path class="arrow" d="M240 135 L320 135"/>
+<text class="edge-label" x="245" y="120">writes .stolen/token.json</text>
+<!-- S2 → S3 -->
+<path class="arrow" d="M540 135 L620 135"/>
+<text class="edge-label" x="555" y="120">reads token</text>
+
+<!-- captures to mock -->
+<path class="arrow" d="M140 170 L450 250"/>
+<text class="edge-label" x="160" y="210">capture stage1</text>
+<path class="arrow" d="M430 170 L470 250"/>
+<text class="edge-label" x="440" y="200">capture stage2</text>
+<path class="arrow" d="M730 170 L520 250"/>
+<text class="edge-label" x="640" y="210">capture stage3</text>
+
+<text class="caption" x="24" y="340">Localhost-only captures · correlator ties stage1 → stage2 → stage3 into one incident (see scenario 17 README / DETECT)</text>
+</svg>

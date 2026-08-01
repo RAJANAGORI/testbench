@@ -576,8 +576,6 @@ node detection-tools/axios-compromise-detector.js victim-app
 
 ---
 
----
-
 ## Mitigation Playbook
 
 Canonical prevention and mitigation controls (aligned with the [scenario README](../../../scenarios/21-axios-compromised-release-attack/README.md)). Lab walkthroughs above expand each control with hands-on steps.
@@ -606,7 +604,7 @@ Axios-style release: axios-like@1.14.1 bundles a transitive with postinstall; be
 | Phase | What you should look for |
 |-------|--------------------------|
 | **1 — Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
-| **2 — Lab execution** | Terminal B runs the scenario README steps. Numbered arrows follow the attack path in order. |
+| **2 — Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
 | **3 — Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
 | **4 — Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
 | **5 — Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
@@ -614,6 +612,14 @@ Axios-style release: axios-like@1.14.1 bundles a transitive with postinstall; be
 > **Safety:** All network calls stay on `127.0.0.1`. Malicious logic runs only when `TESTBENCH_MODE=enabled`.
 
 ### End-to-end flow
+
+![Scenario 21 observability flow: Phase 1 collectors → Phase 2 lab steps → Phase 3 localhost exfil → optional Elasticsearch → Kibana Detections and Rules](../../assets/diagrams/scas-observability-scenario-21.svg)
+
+*Swimlane diagram for Scenario 21. Editable source: [`scas-observability-scenario-21.excalidraw`](../../assets/diagrams/scas-observability-scenario-21.excalidraw). Regenerate with `node scripts/generate-scenario-observability-diagrams.js`.*
+
+### Sequence diagram (Phase 1–5)
+
+Same flow as a participant sequence (expandable in the docs hub).
 
 ```mermaid
 sequenceDiagram
@@ -642,7 +648,7 @@ sequenceDiagram
     Note over MalPkg,Mock: Phase 3 — Simulated exfiltration (127.0.0.1 only)
     Note over MalPkg: Malicious path gated by TESTBENCH_MODE=enabled
     MalPkg->>Mock: POST /beacon JSON payload
-    Mock->>Mock: Append to infrastructure/captured-data.json
+    Mock->>Mock: Append to infrastructure/captured beacon JSON
     Mock-->>Learner: 200 OK (capture accepted)
 
     Note over Mock,Kibana: Phase 4 — Optional Elasticsearch indexing
@@ -662,6 +668,17 @@ sequenceDiagram
     ES-->>Kibana: Return IOCs, Sigma, YARA from DETECT.md
     Learner->>Learner: Correlate capture detail with runbook IOCs
 ```
+
+### Scenario-specific attack steps (Phase 2)
+
+Same Phase-2 path as the diagrams above (for skimming / accessibility).
+
+| # | From | To | Action |
+|---|------|----|--------|
+| 1 | Learner | Victim | npm install axios-like@file:../packages/axios-like-1.14.1.tgz |
+| 2 | Victim | MalPkg | Transitive plain-crypto-js-like postinstall runs |
+| 3 | Learner | Victim | npm start (parent never imports transitive directly) |
+| 4 | MalPkg | MalPkg | Write .testbench-axios-ioc.json + beacon payload |
 
 ### Prerequisites
 

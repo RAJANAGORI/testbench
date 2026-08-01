@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="440" viewBox="0 0 900 440" role="img" aria-label="SCAS trust boundaries">
+<style>
+  .box { stroke-width: 2; stroke-linejoin: round; }
+  .title { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 700; fill: #0f172a; }
+  .label { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; fill: #0f172a; }
+  .caption { font-family: 'Segoe UI', system-ui, sans-serif; fill: #64748b; font-size: 12px; }
+  .edge-label { font-family: 'Segoe UI', system-ui, sans-serif; fill: #475569; font-size: 11px; font-weight: 600; }
+  .arrow { stroke: #334155; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+  .arrow-dash { stroke: #b91c1c; stroke-width: 2; fill: none; stroke-dasharray: 6 4; marker-end: url(#arrowhead-red); }
+  .arrow-opt { stroke: #64748b; stroke-width: 2; fill: none; stroke-dasharray: 6 4; marker-end: url(#arrowhead-muted); }
+  .group { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.5; }
+  .group-label { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 11px; font-weight: 700; fill: #64748b; letter-spacing: 0.05em; text-transform: uppercase; }
+</style>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#334155"/></marker>
+    <marker id="arrowhead-muted" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/></marker>
+    <marker id="arrowhead-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#b91c1c"/></marker>
+    <filter id="soft" x="-5%" y="-5%" width="110%" height="110%"><feDropShadow dx="0" dy="1" stdDeviation="1.2" flood-opacity="0.08"/></filter>
+  </defs>
+
+<rect width="900" height="440" fill="#ffffff"/>
+<text class="title" x="24" y="32" font-size="18">Trust boundaries</text>
+<text class="caption" x="24" y="52">Trusted (operator controls) → simulated untrusted → forbidden external paths</text>
+
+<!-- Trusted -->
+<rect class="group" x="40" y="80" width="220" height="220" rx="12" style="stroke:#16a34a;stroke-width:2"/>
+<text class="group-label" x="56" y="102" style="fill:#15803d">Trusted — operator controls</text>
+<rect class="box" x="60" y="120" width="180" height="50" rx="10" fill="#dcfce7" stroke="#16a34a" filter="url(#soft)"/>
+<text class="label" x="150.0" y="137.0" text-anchor="middle" dominant-baseline="middle" font-size="12">Learner VM /</text>
+<text class="label" x="150.0" y="153.0" text-anchor="middle" dominant-baseline="middle" font-size="12">lab machine</text>
+<rect class="box" x="60" y="200" width="180" height="55" rx="10" fill="#dcfce7" stroke="#16a34a" filter="url(#soft)"/>
+<text class="label" x="150.0" y="219.5" text-anchor="middle" dominant-baseline="middle" font-size="12">SCAS repo +</text>
+<text class="label" x="150.0" y="235.5" text-anchor="middle" dominant-baseline="middle" font-size="12">TESTBENCH_MODE</text>
+
+<!-- Simulated -->
+<rect class="group" x="320" y="80" width="240" height="280" rx="12" style="stroke:#ea580c;stroke-width:2"/>
+<text class="group-label" x="336" y="102" style="fill:#c2410c">Simulated untrusted</text>
+<rect class="box" x="350" y="120" width="180" height="50" rx="10" fill="#ffedd5" stroke="#ea580c" filter="url(#soft)"/>
+<text class="label" x="440.0" y="137.0" text-anchor="middle" dominant-baseline="middle" font-size="12">Malicious package</text>
+<text class="label" x="440.0" y="153.0" text-anchor="middle" dominant-baseline="middle" font-size="12">/ CI script</text>
+<rect class="box" x="350" y="210" width="180" height="50" rx="10" fill="#ffedd5" stroke="#ea580c" filter="url(#soft)"/>
+<text class="label" x="440.0" y="227.0" text-anchor="middle" dominant-baseline="middle" font-size="12">127.0.0.1</text>
+<text class="label" x="440.0" y="243.0" text-anchor="middle" dominant-baseline="middle" font-size="12">mock collectors</text>
+<rect class="box" x="350" y="290" width="180" height="45" rx="10" fill="#ffedd5" stroke="#ea580c" filter="url(#soft)"/>
+<text class="label" x="440.0" y="312.5" text-anchor="middle" dominant-baseline="middle" font-size="12">127.0.0.1:4566 Floci</text>
+
+<!-- Forbidden -->
+<rect class="group" x="640" y="80" width="220" height="180" rx="12" style="stroke:#dc2626;stroke-width:2"/>
+<text class="group-label" x="656" y="102" style="fill:#b91c1c">Forbidden</text>
+<rect class="box" x="665" y="130" width="170" height="70" rx="10" fill="#fee2e2" stroke="#dc2626" filter="url(#soft)"/>
+<text class="label" x="750.0" y="157.0" text-anchor="middle" dominant-baseline="middle" font-size="13">External C2 /</text>
+<text class="label" x="750.0" y="173.0" text-anchor="middle" dominant-baseline="middle" font-size="13">real AWS</text>
+
+<!-- SCAS → Payload -->
+<path class="arrow" d="M240 227 L350 145"/>
+<!-- Payload → Mock -->
+<path class="arrow" d="M400 170 L400 210"/>
+<!-- Payload → Floci (separate edge, not via Mock) -->
+<path class="arrow" d="M500 170 L500 290"/>
+<!-- Payload -.-> must not → Internet -->
+<path class="arrow-dash" d="M530 145 L665 165"/>
+<text class="edge-label" x="560" y="130" style="fill:#b91c1c">must not</text>
+
+<text class="caption" x="24" y="400">Edges match threat model: SCAS → Payload; Payload → Mock; Payload → Floci; Payload must not reach External C2 / real AWS</text>
+<text class="caption" x="24" y="420">Host and SCAS are operator-trusted; payload is simulated-untrusted inside the lab</text>
+</svg>

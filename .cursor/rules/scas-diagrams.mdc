@@ -1,0 +1,33 @@
+---
+description: Excalidraw→SVG diagram pairs, unique per-scenario observability assets, Mermaid sequence for scenarios only
+globs: documentation/assets/diagrams/**,documentation/platform/ARCHITECTURE.md,documentation/product/**,documentation/learning-path/SUPPLY_CHAIN_ATTACKS_ZERO_TO_HERO.md,documentation/scenario-guides/zero-to-hero/**,detection-tools/es/generate-observability-section.js,scripts/lib/diagram-specs.js,scripts/generate-scenario-observability-diagrams.js
+alwaysApply: false
+---
+
+# Diagrams (Excalidraw → SVG)
+
+Markdown **cannot** render `.excalidraw`. Always maintain a pair under `documentation/assets/diagrams/`:
+
+- `<basename>.excalidraw` — editable source
+- `<basename>.svg` — what docs embed via `![alt](…/basename.svg)`
+
+## Source of truth for *what to draw*
+
+[`scripts/lib/diagram-specs.js`](scripts/lib/diagram-specs.js) — `DIAGRAM_SPECS` + `DRAWING_RULES`.
+
+## Observability (23 unique zero-to-hero guides)
+
+- Basename: `scas-observability-scenario-NN`
+- Regenerate SVG: `node scripts/generate-scenario-observability-diagrams.js`
+- Inject into guides: `node detection-tools/es/generate-observability-section.js`
+- **Scenarios keep both:** Excalidraw/SVG swimlane **and** Mermaid `sequenceDiagram`
+- Platform/curriculum hand-authored diagrams stay **SVG-only** (no Mermaid)
+
+## Strict rules
+
+1. Hand-authored platform docs: no Mermaid — SVG embed only.
+2. Scenario observability sections: SVG embed **plus** Mermaid `sequenceDiagram`.
+3. SVG must be well-formed XML — escape `&` as `&amp;`.
+4. Keep dashed edge labels on SVGs: `SCAS_ES_URL`, `SCAS_FLOCI_ENABLED`, `must not`.
+5. Observability SVG Phases 1–5 (harness-enforced): actors; Terminal A/B; numbered Phase-2 steps; gutters/pills/z-order; Verify footer; `markerUnits="userSpaceOnUse"`.
+6. After edits: `node scripts/check-diagram-assets.js` (wired in `smoke.yml`).

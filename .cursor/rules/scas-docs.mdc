@@ -26,8 +26,9 @@ Zero-to-hero and quick-ref trees are in `.cursorignore` for code-focused indexin
 2. `node scripts/sync-mitigation-gaps.js` — DETECT `## Mitigation` + README playbooks (01–06)
 3. `node scripts/inject-zero-to-hero-mitigation-playbooks.js` — zero-to-hero playbooks
 4. `node scripts/inject-markdown-toc.js all` — rebuild TOCs
-5. Observability blocks: `detection-tools/es/scenario-diagram-steps.js` → `generate-observability-section.js`
+5. Observability blocks: `detection-tools/es/scenario-diagram-steps.js` → `generate-observability-section.js` (embeds shared `scas-observability-flow.svg`; no Mermaid)
 6. `node detection-tools/es/load-runbooks.js` — if `DETECT.md` structure changed
 7. **Add/remove a scenario:** update README / AUTHORS / Pages hero + `docs-manifest` / CATALOG / zero-to-hero + quick-ref + modules indexes / observability N and 2N counts / playbooks / control-plane registry — then `node scripts/check-info-consistency.js` (CI-enforced)
+8. **Hand-authored diagrams:** specs in `scripts/lib/diagram-specs.js` (nodes/edges/labels/drawing rules). Assets under `documentation/assets/diagrams/` as `.excalidraw` + `.svg` pairs. Markdown embeds SVG only — no Mermaid in contracted docs / observability sections. Escape `&` as `&amp;` in SVG. After edits: `node scripts/check-diagram-assets.js` (CI-enforced)
 
 Full script catalog: `platform/TOOLING.md`.
