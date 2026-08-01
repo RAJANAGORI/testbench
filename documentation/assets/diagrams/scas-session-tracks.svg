@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="520" viewBox="0 0 860 520" role="img" aria-label="SCAS session and tracks flow">
+<style>
+  .box { stroke-width: 2; stroke-linejoin: round; }
+  .title { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 700; fill: #0f172a; }
+  .label { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; fill: #0f172a; }
+  .caption { font-family: 'Segoe UI', system-ui, sans-serif; fill: #64748b; font-size: 12px; }
+  .edge-label { font-family: 'Segoe UI', system-ui, sans-serif; fill: #475569; font-size: 11px; font-weight: 600; }
+  .arrow { stroke: #334155; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+  .arrow-dash { stroke: #b91c1c; stroke-width: 2; fill: none; stroke-dasharray: 6 4; marker-end: url(#arrowhead-red); }
+  .arrow-opt { stroke: #64748b; stroke-width: 2; fill: none; stroke-dasharray: 6 4; marker-end: url(#arrowhead-muted); }
+  .group { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.5; }
+  .group-label { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 11px; font-weight: 700; fill: #64748b; letter-spacing: 0.05em; text-transform: uppercase; }
+</style>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#334155"/></marker>
+    <marker id="arrowhead-muted" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/></marker>
+    <marker id="arrowhead-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#b91c1c"/></marker>
+    <filter id="soft" x="-5%" y="-5%" width="110%" height="110%"><feDropShadow dx="0" dy="1" stdDeviation="1.2" flood-opacity="0.08"/></filter>
+  </defs>
+
+<rect width="860" height="520" fill="#ffffff"/>
+<text class="title" x="24" y="32" font-size="18">High-level session flow</text>
+<text class="caption" x="24" y="52">Operator → core track; optional ES/Floci sidecars; all evidence paths end at blue-team review</text>
+
+<!-- Operator -->
+<rect class="group" x="40" y="80" width="180" height="200" rx="12"/>
+<text class="group-label" x="56" y="102">Operator</text>
+<rect class="box" x="55" y="120" width="150" height="48" rx="10" fill="#dbeafe" stroke="#2563eb" filter="url(#soft)"/>
+<text class="label" x="130.0" y="136.0" text-anchor="middle" dominant-baseline="middle" font-size="11">setup.sh +</text>
+<text class="label" x="130.0" y="152.0" text-anchor="middle" dominant-baseline="middle" font-size="11">TESTBENCH_MODE</text>
+<rect class="box" x="55" y="200" width="150" height="48" rx="10" fill="#dbeafe" stroke="#2563eb" filter="url(#soft)"/>
+<text class="label" x="130.0" y="216.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Run victim app</text>
+<text class="label" x="130.0" y="232.0" text-anchor="middle" dominant-baseline="middle" font-size="11">/ CI sim</text>
+<path class="arrow" d="M130 168 L130 200"/>
+
+<!-- Core -->
+<rect class="group" x="280" y="80" width="200" height="280" rx="12"/>
+<text class="group-label" x="296" y="102">Core track</text>
+<rect class="box" x="300" y="120" width="160" height="48" rx="10" fill="#ffedd5" stroke="#ea580c" filter="url(#soft)"/>
+<text class="label" x="380.0" y="136.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Malicious package</text>
+<text class="label" x="380.0" y="152.0" text-anchor="middle" dominant-baseline="middle" font-size="11">/ build script</text>
+<rect class="box" x="300" y="200" width="160" height="48" rx="10" fill="#ffedd5" stroke="#ea580c" filter="url(#soft)"/>
+<text class="label" x="380.0" y="216.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Mock server</text>
+<text class="label" x="380.0" y="232.0" text-anchor="middle" dominant-baseline="middle" font-size="11">:3000–3023</text>
+<rect class="box" x="300" y="280" width="160" height="48" rx="10" fill="#ffedd5" stroke="#ea580c" filter="url(#soft)"/>
+<text class="label" x="380.0" y="304.0" text-anchor="middle" dominant-baseline="middle" font-size="11">captured-data.json</text>
+<path class="arrow" d="M380 168 L380 200"/>
+<path class="arrow" d="M380 248 L380 280"/>
+
+<!-- Optional -->
+<rect class="group" x="560" y="80" width="260" height="200" rx="12"/>
+<text class="group-label" x="576" y="102">Optional tracks</text>
+<rect class="box" x="580" y="120" width="100" height="70" rx="10" fill="#e0f2fe" stroke="#0284c7" filter="url(#soft)"/>
+<text class="label" x="630.0" y="139.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Elasticsearch</text>
+<text class="label" x="630.0" y="155.0" text-anchor="middle" dominant-baseline="middle" font-size="11">scas-</text>
+<text class="label" x="630.0" y="171.0" text-anchor="middle" dominant-baseline="middle" font-size="11">detections</text>
+<rect class="box" x="700" y="120" width="100" height="70" rx="10" fill="#ecfccb" stroke="#65a30d" filter="url(#soft)"/>
+<text class="label" x="750.0" y="139.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Floci</text>
+<text class="label" x="750.0" y="155.0" text-anchor="middle" dominant-baseline="middle" font-size="11">S3/ECR</text>
+<text class="label" x="750.0" y="171.0" text-anchor="middle" dominant-baseline="middle" font-size="11">:4566</text>
+
+<!-- Blue -->
+<rect class="box" x="280" y="400" width="300" height="56" rx="10" fill="#e0e7ff" stroke="#4338ca" filter="url(#soft)"/>
+<text class="label" x="430.0" y="428.0" text-anchor="middle" dominant-baseline="middle" font-size="13">DETECT.md + detectors  (blue-team review)</text>
+
+<!-- RunLab → Payload -->
+<path class="arrow" d="M205 224 L300 144"/>
+<!-- Mock -.-> ES -->
+<path class="arrow-opt" d="M460 224 L580 155"/>
+<text class="edge-label" x="490" y="175">SCAS_ES_URL</text>
+<!-- Payload -.-> Floci -->
+<path class="arrow-opt" d="M460 144 L700 155"/>
+<text class="edge-label" x="560" y="130">SCAS_FLOCI_ENABLED</text>
+<!-- Capture → Blue -->
+<path class="arrow" d="M380 328 L380 400"/>
+<!-- ES → Blue -->
+<path class="arrow" d="M630 190 L630 300 L430 400"/>
+<!-- Floci → Blue -->
+<path class="arrow" d="M750 190 L750 320 L520 400"/>
+
+<text class="caption" x="24" y="480">Solid = Mermaid solid edges · Dashed gray = optional tracks (SCAS_ES_URL from Mock; SCAS_FLOCI_ENABLED from Payload)</text>
+<text class="caption" x="24" y="500">Exfil targets remain 127.0.0.1 / localhost only (safety constraint)</text>
+</svg>

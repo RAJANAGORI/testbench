@@ -466,8 +466,12 @@ free_common_ports
   echo $! >/tmp/tb22-mock.pid
   sleep 1
   cd victim-app
+  # setup.sh creates .venv; smoke must recreate it when setup was not run
+  rm -rf .venv
+  python3 -m venv .venv
   # shellcheck source=/dev/null
   source .venv/bin/activate
+  python -m pip install -U -q pip setuptools wheel >/tmp/tb22-pip-tools.log 2>&1
   pip install -U -q ../python-packages/v1_82_7 >/tmp/tb22-pip.log 2>&1
   TESTBENCH_MODE=enabled python run_victim.py >/tmp/tb22-run.log 2>&1 || true
   C="$(curl -s http://127.0.0.1:3022/captured-data)"
@@ -481,11 +485,27 @@ free_common_ports
 {
   cd "$ROOT"
   cd scenarios/23-trivy-supply-chain-attack
+  echo '{"captures":[]}' > infrastructure/captured-data.json
   node infrastructure/mock-c2-server.js >/tmp/tb23-mock.log 2>&1 &
   echo $! >/tmp/tb23-mock.pid
   sleep 1
+  # Plant lookalike CI secrets (same as setup.sh)
+  if [[ -f ../_shared/plant-lookalike-secrets.sh ]]; then
+    bash ../_shared/plant-lookalike-secrets.sh 23 >/tmp/tb23-secrets.log 2>&1 || true
+  fi
+  # setup.sh installs victim-ci deps; smoke must recreate node_modules when setup was not run
   cd victim-ci
+  rm -rf node_modules package-lock.json
+  npm install --ignore-scripts >/tmp/tb23-npm.log 2>&1
+  if [[ -f ../.env.ci-lab ]]; then
+    set -a
+    # shellcheck source=/dev/null
+    source ../.env.ci-lab
+    set +a
+  fi
   TESTBENCH_MODE=enabled node run-pipeline.js >/tmp/tb23-run.log 2>&1 || true
+  # run-pipeline fires async HTTP on require; wait for capture before curl
+  sleep 2
   C="$(curl -s http://127.0.0.1:3023/captured-data)"
   if has_capture_payload "$C"; then ok "23"; else bad "23"; fi
   kill "$(cat /tmp/tb23-mock.pid)" 2>/dev/null || true

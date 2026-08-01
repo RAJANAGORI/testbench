@@ -6,16 +6,57 @@ const metadata = JSON.parse(
   fs.readFileSync(path.join(__dirname, 'scenario-observability.json'), 'utf8')
 );
 
-function shortLabel(label) {
-  return label.split(' (')[0].trim();
+/** Per-scenario Excalidraw SVG (unique Phase 2 + shared phase frame). */
+function observabilityBasename(scenarioId) {
+  return `scas-observability-scenario-${scenarioId}`;
 }
 
-function buildDiagram(scenario) {
+function observabilityRel(scenarioId) {
+  return `../../assets/diagrams/${observabilityBasename(scenarioId)}.svg`;
+}
+
+function observabilitySourceRel(scenarioId) {
+  return `../../assets/diagrams/${observabilityBasename(scenarioId)}.excalidraw`;
+}
+
+function shortLabel(label) {
+  return String(label).split(' (')[0].trim();
+}
+
+function captureFileHint(scenario) {
+  const ep = scenario.mock_endpoint || 'POST /collect';
+  if (/beacon/i.test(ep)) return 'captured beacon JSON';
+  if (/credential/i.test(scenario.mock_label || '')) return 'captured-credentials.json';
+  return scenario.capture_file || 'captured-data.json';
+}
+
+function escapeMdCell(value) {
+  return String(value).replace(/\|/g, '\\|').replace(/\n/g, ' ');
+}
+
+/**
+ * Unique per-scenario Excalidraw→SVG embed.
+ * Assets from: node scripts/generate-scenario-observability-diagrams.js
+ */
+function buildSvgDiagram(scenario) {
   const id = scenario.scenario_id;
-  const captureFile = scenario.capture_file || 'captured-data.json';
+  const base = observabilityBasename(id);
+  return [
+    `![Scenario ${id} observability flow: Phase 1 collectors → Phase 2 lab steps → Phase 3 localhost exfil → optional Elasticsearch → Kibana Detections and Rules](${observabilityRel(id)})`,
+    '',
+    `*Swimlane diagram for Scenario ${id}. Editable source: [\`${base}.excalidraw\`](${observabilitySourceRel(id)}). Regenerate with \`node scripts/generate-scenario-observability-diagrams.js\`.*`,
+  ].join('\n');
+}
+
+/**
+ * Per-scenario Mermaid sequenceDiagram (Phase 1–5) — kept alongside the SVG
+ * so guide.html can expand/lightbox the interaction sequence.
+ */
+function buildSequenceDiagram(scenario) {
+  const id = scenario.scenario_id;
+  const captureFile = captureFileHint(scenario);
   const diagramMeta = SCENARIO_DIAGRAMS[id] || {
-    intro: `End-to-end capture and observability path for Scenario ${id}.`,
-    attack_steps: [{ from: 'Learner', to: 'Victim', message: scenario.trigger_action }]
+    attack_steps: [{ from: 'Learner', to: 'Victim', message: scenario.trigger_action }],
   };
 
   const lines = [
@@ -30,14 +71,14 @@ function buildDiagram(scenario) {
     '    participant Kibana as Kibana :5601',
     '',
     '    Note over Learner,Mock: Phase 1 — Start collectors (Terminal A)',
-    `    Learner->>Mock: export TESTBENCH_MODE=enabled`,
+    '    Learner->>Mock: export TESTBENCH_MODE=enabled',
     '    Learner->>Mock: export SCAS_ES_URL=http://localhost:9200 (optional)',
     `    Learner->>Mock: ${scenario.mock_start}`,
     '    Mock->>Mock: Listen for exfil POST on localhost',
     '',
     '    Note over Learner,MalPkg: Phase 2 — Run the lab (Terminal B)',
     '    Learner->>Learner: export TESTBENCH_MODE=enabled',
-    '    Learner->>Learner: export SCAS_ES_URL=http://localhost:9200 (optional)'
+    '    Learner->>Learner: export SCAS_ES_URL=http://localhost:9200 (optional)',
   ];
 
   for (const step of diagramMeta.attack_steps) {
@@ -74,6 +115,39 @@ function buildDiagram(scenario) {
   return lines.join('\n');
 }
 
+/** SVG swimlane + Mermaid sequence — both required for scenario guides. */
+function buildDiagram(scenario) {
+  return [
+    buildSvgDiagram(scenario),
+    '',
+    '### Sequence diagram (Phase 1–5)',
+    '',
+    'Same flow as a participant sequence (expandable in the docs hub).',
+    '',
+    buildSequenceDiagram(scenario),
+  ].join('\n');
+}
+
+function buildAttackStepsTable(scenario) {
+  const id = scenario.scenario_id;
+  const diagramMeta = SCENARIO_DIAGRAMS[id] || {
+    attack_steps: [{ from: 'Learner', to: 'Victim', message: scenario.trigger_action }],
+  };
+  const rows = diagramMeta.attack_steps.map((step, i) => {
+    return `| ${i + 1} | ${escapeMdCell(step.from)} | ${escapeMdCell(step.to)} | ${escapeMdCell(step.message)} |`;
+  });
+  return [
+    '### Scenario-specific attack steps (Phase 2)',
+    '',
+    'Same Phase-2 path as the diagrams above (for skimming / accessibility).',
+    '',
+    '| # | From | To | Action |',
+    '|---|------|----|--------|',
+    ...rows,
+    '',
+  ].join('\n');
+}
+
 function buildDiagramLegend() {
   return [
     '### How to read this diagram',
@@ -81,13 +155,13 @@ function buildDiagramLegend() {
     '| Phase | What you should look for |',
     '|-------|--------------------------|',
     '| **1 — Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |',
-    '| **2 — Lab execution** | Terminal B runs the scenario README steps. Numbered arrows follow the attack path in order. |',
+    '| **2 — Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |',
     '| **3 — Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |',
     '| **4 — Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |',
     '| **5 — Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |',
     '',
     '> **Safety:** All network calls stay on `127.0.0.1`. Malicious logic runs only when `TESTBENCH_MODE=enabled`.',
-    ''
+    '',
   ].join('\n');
 }
 
@@ -113,6 +187,7 @@ function buildSection(scenario) {
     '',
     buildDiagram(scenario),
     '',
+    buildAttackStepsTable(scenario),
     '### Prerequisites',
     '',
     'From the repository root:',
@@ -141,7 +216,7 @@ function buildSection(scenario) {
     'export SCAS_ES_URL=http://localhost:9200',
     scenario.lab_run,
     '```',
-    ''
+    '',
   ];
 
   if (scenario.notes) {
@@ -248,4 +323,14 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { buildSection, buildDiagram, buildDiagramLegend, metadata };
+module.exports = {
+  buildSection,
+  buildDiagram,
+  buildSvgDiagram,
+  buildSequenceDiagram,
+  buildAttackStepsTable,
+  buildDiagramLegend,
+  metadata,
+  observabilityBasename,
+  observabilityRel,
+};

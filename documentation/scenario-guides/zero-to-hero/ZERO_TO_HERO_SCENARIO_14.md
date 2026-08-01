@@ -573,8 +573,6 @@ docker run --rm scas-legit
 
 ---
 
----
-
 ## Mitigation Playbook
 
 Canonical prevention and mitigation controls (aligned with the [scenario README](../../../scenarios/14-container-image-supply-chain-attack/README.md)). Lab walkthroughs above expand each control with hands-on steps.
@@ -603,7 +601,7 @@ Container supply chain: compromised-image entrypoint sends build-time payload to
 | Phase | What you should look for |
 |-------|--------------------------|
 | **1 — Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
-| **2 — Lab execution** | Terminal B runs the scenario README steps. Numbered arrows follow the attack path in order. |
+| **2 — Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
 | **3 — Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
 | **4 — Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
 | **5 — Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
@@ -611,6 +609,14 @@ Container supply chain: compromised-image entrypoint sends build-time payload to
 > **Safety:** All network calls stay on `127.0.0.1`. Malicious logic runs only when `TESTBENCH_MODE=enabled`.
 
 ### End-to-end flow
+
+![Scenario 14 observability flow: Phase 1 collectors → Phase 2 lab steps → Phase 3 localhost exfil → optional Elasticsearch → Kibana Detections and Rules](../../assets/diagrams/scas-observability-scenario-14.svg)
+
+*Swimlane diagram for Scenario 14. Editable source: [`scas-observability-scenario-14.excalidraw`](../../assets/diagrams/scas-observability-scenario-14.excalidraw). Regenerate with `node scripts/generate-scenario-observability-diagrams.js`.*
+
+### Sequence diagram (Phase 1–5)
+
+Same flow as a participant sequence (expandable in the docs hub).
 
 ```mermaid
 sequenceDiagram
@@ -659,6 +665,17 @@ sequenceDiagram
     ES-->>Kibana: Return IOCs, Sigma, YARA from DETECT.md
     Learner->>Learner: Correlate capture detail with runbook IOCs
 ```
+
+### Scenario-specific attack steps (Phase 2)
+
+Same Phase-2 path as the diagrams above (for skimming / accessibility).
+
+| # | From | To | Action |
+|---|------|----|--------|
+| 1 | Learner | Victim | TESTBENCH_MODE=enabled node images/compromised-image/malicious-start.js |
+| 2 | Victim | MalPkg | Compromised image layer / entrypoint runs |
+| 3 | MalPkg | MalPkg | Simulated container startup exfil stub |
+| 4 | Learner | Victim | (Optional) docker run scas-compromised image |
 
 ### Prerequisites
 

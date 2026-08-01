@@ -28,6 +28,9 @@ jobs:
       - name: Check public info consistency
         run: node scripts/check-info-consistency.js
 
+      - name: Check diagram assets
+        run: node scripts/check-diagram-assets.js
+
       - name: Run smoke tests
         run: |
           node --test detection-tools/package-scanner.test.js

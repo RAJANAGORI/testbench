@@ -124,7 +124,10 @@ const RANGE_PATTERNS = [
   { re: /numbered folders `01-` … `(\d{2})-`/g, label: 'numbered folders 01- … NN-' },
 ];
 
-const SAVED_SEARCHES_RE = /\*\*(\d+)\*\*\s+saved searches/gi;
+const SAVED_SEARCHES_RES = [
+  /\*\*(\d+)\*\*\s+saved searches/gi, // **46** saved searches
+  /\*\*(\d+)\s+saved searches\*\*/gi, // **46 saved searches**
+];
 
 /** High-signal public / maintainer surfaces (not every markdown file). */
 const SURFACE_FILES = [
@@ -158,9 +161,7 @@ const SURFACE_FILES = [
   'documentation/learning-path/SUPPLY_CHAIN_ATTACKS_ZERO_TO_HERO.md',
   'documentation/guides/index.md',
   'documentation/guides/FLOCI_INTEGRATION.md',
-  'documentation/talks/BLACKHAT_SLIDE_OUTLINE.md',
-  'documentation/talks/INFOGRAPHIC_COPY.md',
-  'documentation/talks/README.md',
+  // documentation/talks/* is gitignored (local talk drafts) — not a CI surface
 ];
 
 function checkProseCounts(expectedCount, maxId) {
@@ -203,14 +204,23 @@ function checkProseCounts(expectedCount, maxId) {
       }
     }
 
-    SAVED_SEARCHES_RE.lastIndex = 0;
-    let sm;
-    while ((sm = SAVED_SEARCHES_RE.exec(text)) !== null) {
-      const got = Number(sm[1]);
-      const want = expectedCount * 2;
-      if (got !== want) {
-        fail(`${relPath}: saved searches claims ${got}, expected ${want} (2× ${expectedCount} labs)`);
+    let savedHits = 0;
+    for (const re of SAVED_SEARCHES_RES) {
+      re.lastIndex = 0;
+      let sm;
+      while ((sm = re.exec(text)) !== null) {
+        savedHits += 1;
+        const got = Number(sm[1]);
+        const want = expectedCount * 2;
+        if (got !== want) {
+          fail(`${relPath}: saved searches claims ${got}, expected ${want} (2× ${expectedCount} labs)`);
+        }
       }
+    }
+    if (relPath === 'observability/README.md' && savedHits === 0) {
+      fail(
+        'observability/README.md: missing saved-searches count (expected **NN saved searches** or **NN** saved searches)'
+      );
     }
   }
 }
@@ -351,6 +361,57 @@ function checkStructural(scenarios) {
   return idSet;
 }
 
+/** Mermaid sequence + SVG chips share these participant ids — no undeclared C2 etc. */
+const DIAGRAM_ACTORS = new Set(['Learner', 'Victim', 'MalPkg', 'Mock', 'ES', 'Kibana']);
+
+function checkDiagramStepActors(scenarios) {
+  const stepsPath = path.join(ROOT, 'detection-tools/es/scenario-diagram-steps.js');
+  const metaPath = path.join(ROOT, 'detection-tools/es/scenario-observability.json');
+  if (!exists(stepsPath) || !exists(metaPath)) {
+    fail('missing scenario-diagram-steps.js or scenario-observability.json');
+    return;
+  }
+  const { SCENARIO_DIAGRAMS } = require(stepsPath);
+  const meta = JSON.parse(read(metaPath));
+  const metaIds = meta.map((s) => s.scenario_id);
+  const diskIds = scenarios.map((s) => s.id);
+
+  const metaMissing = missingIds(new Set(metaIds), diskIds);
+  if (metaMissing.length) fail(`scenario-observability.json missing ids: ${metaMissing.join(', ')}`);
+  else ok('scenario-observability.json covers every on-disk scenario');
+
+  const stepMissing = diskIds.filter((id) => !SCENARIO_DIAGRAMS[id]);
+  if (stepMissing.length) {
+    fail(`scenario-diagram-steps.js missing SCENARIO_DIAGRAMS entries: ${stepMissing.join(', ')}`);
+  } else {
+    ok('scenario-diagram-steps.js has attack_steps for every scenario');
+  }
+
+  const bad = [];
+  for (const id of diskIds) {
+    const entry = SCENARIO_DIAGRAMS[id];
+    if (!entry || !Array.isArray(entry.attack_steps)) continue;
+    for (const step of entry.attack_steps) {
+      if (!DIAGRAM_ACTORS.has(step.from) || !DIAGRAM_ACTORS.has(step.to)) {
+        bad.push(`${id}: ${step.from}→${step.to}`);
+      }
+    }
+  }
+  if (bad.length) {
+    fail(
+      `diagram attack_steps use undeclared actors (allowed: ${[...DIAGRAM_ACTORS].join(', ')}): ${bad.join('; ')}`
+    );
+  } else {
+    ok('diagram attack_steps use only Learner/Victim/MalPkg/Mock/ES/Kibana');
+  }
+
+  for (const row of meta) {
+    const folder = path.join(ROOT, 'scenarios', row.folder);
+    if (!exists(folder)) fail(`scenario-observability.json folder missing: ${row.folder}`);
+  }
+  ok('scenario-observability.json folders exist on disk');
+}
+
 function main() {
   const scenarios = discoverScenarios();
   if (scenarios.length === 0) {
@@ -375,6 +436,7 @@ function main() {
   console.log('');
 
   checkStructural(scenarios);
+  checkDiagramStepActors(scenarios);
   console.log('');
   checkProseCounts(count, maxId);
 

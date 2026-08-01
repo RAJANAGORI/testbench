@@ -14,6 +14,12 @@ Day-two operations for running, cleaning up, and validating the test bench.
 
 **Full install walkthrough:** [Full-stack setup](../getting-started/FULL_STACK_SETUP.md)
 
+## Session flow
+
+![SCAS session flow: operator, core mock/capture track, optional Elasticsearch and Floci, blue-team review](../assets/diagrams/scas-session-tracks.svg)
+
+*Editable source: [`scas-session-tracks.excalidraw`](../assets/diagrams/scas-session-tracks.excalidraw).*
+
 ## First-time setup
 
 ```bash
@@ -52,6 +58,7 @@ source .testbench.env
 | [`scripts/kill-port.sh`](../../scripts/kill-port.sh) | Free one port or all ports from `ports.env` |
 | [`scripts/smoke-all-scenarios.sh`](../../scripts/smoke-all-scenarios.sh) | End-to-end smoke for all 23 scenarios |
 | [`scripts/check-info-consistency.js`](../../scripts/check-info-consistency.js) | Fail CI if public lab counts / indexes drift from on-disk scenarios |
+| [`scripts/check-diagram-assets.js`](../../scripts/check-diagram-assets.js) | Fail CI if Excalidraw/SVG diagram contract drifts |
 | [`scripts/elasticsearch-up.sh`](../../scripts/elasticsearch-up.sh) | Start ES + Kibana, seed runbooks |
 | [`scripts/elasticsearch-down.sh`](../../scripts/elasticsearch-down.sh) | Stop observability stack |
 | [`scripts/setup-kibana-data-views.sh`](../../scripts/setup-kibana-data-views.sh) | Create Kibana data views + saved searches |

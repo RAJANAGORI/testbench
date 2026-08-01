@@ -669,7 +669,7 @@ Transitive dependency: victim-app trusts web-utils; hidden data-processor depend
 | Phase | What you should look for |
 |-------|--------------------------|
 | **1 — Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
-| **2 — Lab execution** | Terminal B runs the scenario README steps. Numbered arrows follow the attack path in order. |
+| **2 — Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
 | **3 — Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
 | **4 — Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
 | **5 — Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
@@ -677,6 +677,14 @@ Transitive dependency: victim-app trusts web-utils; hidden data-processor depend
 > **Safety:** All network calls stay on `127.0.0.1`. Malicious logic runs only when `TESTBENCH_MODE=enabled`.
 
 ### End-to-end flow
+
+![Scenario 07 observability flow: Phase 1 collectors → Phase 2 lab steps → Phase 3 localhost exfil → optional Elasticsearch → Kibana Detections and Rules](../../assets/diagrams/scas-observability-scenario-07.svg)
+
+*Swimlane diagram for Scenario 07. Editable source: [`scas-observability-scenario-07.excalidraw`](../../assets/diagrams/scas-observability-scenario-07.excalidraw). Regenerate with `node scripts/generate-scenario-observability-diagrams.js`.*
+
+### Sequence diagram (Phase 1–5)
+
+Same flow as a participant sequence (expandable in the docs hub).
 
 ```mermaid
 sequenceDiagram
@@ -725,6 +733,17 @@ sequenceDiagram
     ES-->>Kibana: Return IOCs, Sigma, YARA from DETECT.md
     Learner->>Learner: Correlate capture detail with runbook IOCs
 ```
+
+### Scenario-specific attack steps (Phase 2)
+
+Same Phase-2 path as the diagrams above (for skimming / accessibility).
+
+| # | From | To | Action |
+|---|------|----|--------|
+| 1 | Learner | Victim | npm install (pulls web-utils + transitive deps) |
+| 2 | Victim | MalPkg | web-utils requires nested data-processor |
+| 3 | Learner | Victim | npm start |
+| 4 | MalPkg | MalPkg | Transitive payload executes without direct dependency |
 
 ### Prerequisites
 

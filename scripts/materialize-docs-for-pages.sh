@@ -79,6 +79,12 @@ for name in LEGAL.md ATTRIBUTION.md AUTHORS.md DOCUMENTATION-CC-BY-NC-ND.md; do
   echo "materialized: docs/$name (from repo root)"
 done
 
+# guide.html resolves ../../assets/diagrams/*.svg → /assets/diagrams/*.svg
+mkdir -p "$DOCS/assets"
+rm -rf "$DOCS/assets/diagrams"
+cp -R "$ROOT/documentation/assets/diagrams" "$DOCS/assets/diagrams"
+echo "materialized: docs/assets/diagrams (from documentation/assets/diagrams)"
+
 echo "Done. Markdown for guide.html lives under docs/_sources/ (not browsable as raw .md URLs)."
 
 # Internal-only docs — never publish on the public site

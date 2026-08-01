@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="260" viewBox="0 0 980 260" role="img" aria-label="SCAS curriculum learning stages">
+<style>
+  .box { stroke-width: 2; stroke-linejoin: round; }
+  .title { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 700; fill: #0f172a; }
+  .label { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; fill: #0f172a; }
+  .caption { font-family: 'Segoe UI', system-ui, sans-serif; fill: #64748b; font-size: 12px; }
+  .edge-label { font-family: 'Segoe UI', system-ui, sans-serif; fill: #475569; font-size: 11px; font-weight: 600; }
+  .arrow { stroke: #334155; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+  .arrow-dash { stroke: #b91c1c; stroke-width: 2; fill: none; stroke-dasharray: 6 4; marker-end: url(#arrowhead-red); }
+  .arrow-opt { stroke: #64748b; stroke-width: 2; fill: none; stroke-dasharray: 6 4; marker-end: url(#arrowhead-muted); }
+  .group { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.5; }
+  .group-label { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 11px; font-weight: 700; fill: #64748b; letter-spacing: 0.05em; text-transform: uppercase; }
+</style>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#334155"/></marker>
+    <marker id="arrowhead-muted" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/></marker>
+    <marker id="arrowhead-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#b91c1c"/></marker>
+    <filter id="soft" x="-5%" y="-5%" width="110%" height="110%"><feDropShadow dx="0" dy="1" stdDeviation="1.2" flood-opacity="0.08"/></filter>
+  </defs>
+
+<rect width="980" height="260" fill="#ffffff"/>
+<text class="title" x="24" y="32" font-size="18">Visual learning flow</text>
+<text class="caption" x="24" y="52">Matches Mermaid path + Stage 0–5 titles from the Zero-to-Hero curriculum</text>
+<rect class="box" x="24" y="100" width="140" height="88" rx="10" fill="#dbeafe" stroke="#2563eb" filter="url(#soft)"/>
+<text class="label" x="94.0" y="136.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Stage 0</text>
+<text class="label" x="94.0" y="152.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Foundations</text><path class="arrow" d="M164 144 L180 144"/><rect class="box" x="180" y="100" width="140" height="88" rx="10" fill="#ffedd5" stroke="#ea580c" filter="url(#soft)"/>
+<text class="label" x="250.0" y="136.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Stage 1</text>
+<text class="label" x="250.0" y="152.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Entry Attacks</text><path class="arrow" d="M320 144 L336 144"/><rect class="box" x="336" y="100" width="140" height="88" rx="10" fill="#dcfce7" stroke="#16a34a" filter="url(#soft)"/>
+<text class="label" x="406.0" y="128.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Stage 2</text>
+<text class="label" x="406.0" y="144.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Resolution &amp;</text>
+<text class="label" x="406.0" y="160.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Integrity Attacks</text><path class="arrow" d="M476 144 L492 144"/><rect class="box" x="492" y="100" width="140" height="88" rx="10" fill="#e0f2fe" stroke="#0284c7" filter="url(#soft)"/>
+<text class="label" x="562.0" y="128.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Stage 3</text>
+<text class="label" x="562.0" y="144.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Pipeline &amp;</text>
+<text class="label" x="562.0" y="160.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Infrastructure</text><path class="arrow" d="M632 144 L648 144"/><rect class="box" x="648" y="100" width="140" height="88" rx="10" fill="#ffedd5" stroke="#c2410c" filter="url(#soft)"/>
+<text class="label" x="718.0" y="128.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Stage 4</text>
+<text class="label" x="718.0" y="144.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Advanced</text>
+<text class="label" x="718.0" y="160.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Attack Chains</text><path class="arrow" d="M788 144 L804 144"/><rect class="box" x="804" y="100" width="140" height="88" rx="10" fill="#e0e7ff" stroke="#4338ca" filter="url(#soft)"/>
+<text class="label" x="874.0" y="128.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Stage 5</text>
+<text class="label" x="874.0" y="144.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Capstone</text>
+<text class="label" x="874.0" y="160.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Defense-in-Depth</text>
+<text class="caption" x="24" y="220">Foundations → Entry Attacks → IntegrityAndResolution → PipelineAndInfra → AdvancedAttackChains → DefenseInDepthCapstone</text>
+<text class="caption" x="24" y="240">Each stage builds on the previous; Stage 5 is the defense-in-depth capstone</text>
+</svg>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="520" viewBox="0 0 1100 520" role="img" aria-label="SCAS shared observability flow across all scenarios">
+<style>
+  .box { stroke-width: 2; stroke-linejoin: round; }
+  .title { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 700; fill: #0f172a; }
+  .label { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; fill: #0f172a; }
+  .caption { font-family: 'Segoe UI', system-ui, sans-serif; fill: #64748b; font-size: 12px; }
+  .edge-label { font-family: 'Segoe UI', system-ui, sans-serif; fill: #475569; font-size: 11px; font-weight: 600; }
+  .phase { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 11px; font-weight: 700; fill: #64748b; letter-spacing: 0.04em; text-transform: uppercase; }
+  .arrow { stroke: #334155; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+  .arrow-opt { stroke: #64748b; stroke-width: 2; fill: none; stroke-dasharray: 6 4; marker-end: url(#arrowhead-muted); }
+  .lane { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.5; }
+</style>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#334155"/></marker>
+    <marker id="arrowhead-muted" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/></marker>
+    <filter id="soft" x="-5%" y="-5%" width="110%" height="110%"><feDropShadow dx="0" dy="1" stdDeviation="1.2" flood-opacity="0.08"/></filter>
+  </defs>
+
+<rect width="1100" height="520" fill="#ffffff"/>
+<text class="title" x="24" y="32" font-size="18">Shared observability flow (all scenarios)</text>
+<text class="caption" x="24" y="52">Phases 1–5 are common; scenario-specific install/run steps stay in the guide legend table below the diagram</text>
+
+<!-- Actors row -->
+<text class="phase" x="24" y="84">Actors</text>
+<rect class="box" x="24" y="96" width="150" height="44" rx="10" fill="#dbeafe" stroke="#2563eb" filter="url(#soft)"/>
+<text class="label" x="99.0" y="118.0" text-anchor="middle" dominant-baseline="middle" font-size="12">Learner (you)</text>
+<rect class="box" x="194" y="96" width="150" height="44" rx="10" fill="#ffedd5" stroke="#ea580c" filter="url(#soft)"/>
+<text class="label" x="269.0" y="118.0" text-anchor="middle" dominant-baseline="middle" font-size="12">Victim app</text>
+<rect class="box" x="364" y="96" width="160" height="44" rx="10" fill="#ffedd5" stroke="#c2410c" filter="url(#soft)"/>
+<text class="label" x="444.0" y="118.0" text-anchor="middle" dominant-baseline="middle" font-size="12">Malicious package</text>
+<rect class="box" x="544" y="96" width="160" height="44" rx="10" fill="#fef3c7" stroke="#d97706" filter="url(#soft)"/>
+<text class="label" x="624.0" y="110.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Mock collector</text>
+<text class="label" x="624.0" y="126.0" text-anchor="middle" dominant-baseline="middle" font-size="11">localhost</text>
+<rect class="box" x="724" y="96" width="160" height="44" rx="10" fill="#e0f2fe" stroke="#0284c7" filter="url(#soft)"/>
+<text class="label" x="804.0" y="110.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Elasticsearch</text>
+<text class="label" x="804.0" y="126.0" text-anchor="middle" dominant-baseline="middle" font-size="11">:9200</text>
+<rect class="box" x="904" y="96" width="160" height="44" rx="10" fill="#e0e7ff" stroke="#4338ca" filter="url(#soft)"/>
+<text class="label" x="984.0" y="110.0" text-anchor="middle" dominant-baseline="middle" font-size="12">Kibana</text>
+<text class="label" x="984.0" y="126.0" text-anchor="middle" dominant-baseline="middle" font-size="12">:5601</text>
+
+<!-- Phase 1 -->
+<rect class="lane" x="24" y="170" width="320" height="130" rx="12"/>
+<text class="phase" x="40" y="192">Phase 1 — Collectors (Terminal A)</text>
+<rect class="box" x="44" y="210" width="280" height="70" rx="10" fill="#dbeafe" stroke="#2563eb" filter="url(#soft)"/>
+<text class="label" x="184.0" y="229.0" text-anchor="middle" dominant-baseline="middle" font-size="11">TESTBENCH_MODE=enabled</text>
+<text class="label" x="184.0" y="245.0" text-anchor="middle" dominant-baseline="middle" font-size="11">SCAS_ES_URL optional</text>
+<text class="label" x="184.0" y="261.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Start mock / harvester</text>
+
+<!-- Phase 2 -->
+<rect class="lane" x="364" y="170" width="320" height="130" rx="12"/>
+<text class="phase" x="380" y="192">Phase 2 — Lab execution (Terminal B)</text>
+<rect class="box" x="384" y="210" width="280" height="70" rx="10" fill="#ffedd5" stroke="#ea580c" filter="url(#soft)"/>
+<text class="label" x="524.0" y="229.0" text-anchor="middle" dominant-baseline="middle" font-size="11">TESTBENCH_MODE=enabled</text>
+<text class="label" x="524.0" y="245.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Run scenario README steps</text>
+<text class="label" x="524.0" y="261.0" text-anchor="middle" dominant-baseline="middle" font-size="11">(see attack-steps table)</text>
+
+<!-- Phase 3 -->
+<rect class="lane" x="704" y="170" width="360" height="130" rx="12"/>
+<text class="phase" x="720" y="192">Phase 3 — Exfiltration (127.0.0.1 only)</text>
+<rect class="box" x="724" y="210" width="320" height="70" rx="10" fill="#fef3c7" stroke="#d97706" filter="url(#soft)"/>
+<text class="label" x="884.0" y="229.0" text-anchor="middle" dominant-baseline="middle" font-size="11">MalPkg → Mock JSON POST</text>
+<text class="label" x="884.0" y="245.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Append infrastructure/captured-*.json</text>
+<text class="label" x="884.0" y="261.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Gated by TESTBENCH_MODE</text>
+
+<!-- Phase 4 -->
+<rect class="lane" x="24" y="320" width="520" height="130" rx="12"/>
+<text class="phase" x="40" y="342">Phase 4 — Optional Elasticsearch</text>
+<rect class="box" x="44" y="360" width="220" height="70" rx="10" fill="#e0f2fe" stroke="#0284c7" filter="url(#soft)"/>
+<text class="label" x="154.0" y="379.0" text-anchor="middle" dominant-baseline="middle" font-size="11">If SCAS_ES_URL set:</text>
+<text class="label" x="154.0" y="395.0" text-anchor="middle" dominant-baseline="middle" font-size="11">POST scas-detections</text>
+<text class="label" x="154.0" y="411.0" text-anchor="middle" dominant-baseline="middle" font-size="11">event_type=exfil_capture</text>
+<rect class="box" x="290" y="360" width="230" height="70" rx="10" fill="#f1f5f9" stroke="#64748b" filter="url(#soft)"/>
+<text class="label" x="405.0" y="379.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Else: file-only capture</text>
+<text class="label" x="405.0" y="395.0" text-anchor="middle" dominant-baseline="middle" font-size="11">scas-rules/_doc/NN</text>
+<text class="label" x="405.0" y="411.0" text-anchor="middle" dominant-baseline="middle" font-size="11">pre-seeded from DETECT.md</text>
+
+<!-- Phase 5 -->
+<rect class="lane" x="564" y="320" width="500" height="130" rx="12"/>
+<text class="phase" x="580" y="342">Phase 5 — Blue-team review (Kibana)</text>
+<rect class="box" x="584" y="360" width="220" height="70" rx="10" fill="#e0e7ff" stroke="#4338ca" filter="url(#soft)"/>
+<text class="label" x="694.0" y="387.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Discover: SCAS Detections</text>
+<text class="label" x="694.0" y="403.0" text-anchor="middle" dominant-baseline="middle" font-size="11">filter scenario_id=NN</text>
+<rect class="box" x="824" y="360" width="220" height="70" rx="10" fill="#e0e7ff" stroke="#4338ca" filter="url(#soft)"/>
+<text class="label" x="934.0" y="387.0" text-anchor="middle" dominant-baseline="middle" font-size="11">Discover: SCAS Rules</text>
+<text class="label" x="934.0" y="403.0" text-anchor="middle" dominant-baseline="middle" font-size="11">IOCs / Sigma / YARA</text>
+
+<!-- Flow arrows between phases -->
+<path class="arrow" d="M344 235 L364 235"/>
+<path class="arrow" d="M684 235 L704 235"/>
+<path class="arrow" d="M884 300 L884 320"/>
+<path class="arrow-opt" d="M804 280 L400 360"/>
+<text class="edge-label" x="560" y="310">SCAS_ES_URL</text>
+<path class="arrow" d="M520 385 L584 385"/>
+
+<text class="caption" x="24" y="480">Solid = always-on lab path · Dashed = optional live indexing when SCAS_ES_URL is set before Terminal A starts the mock</text>
+<text class="caption" x="24" y="500">Safety: localhost/127.0.0.1 only · malicious paths require TESTBENCH_MODE=enabled · scenario-specific steps are listed under the diagram in each guide</text>
+</svg>
