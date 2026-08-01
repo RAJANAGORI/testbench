@@ -28,7 +28,9 @@ alwaysApply: true
 
 **Exceptions:** **06** — `credential-harvester.js`, `mock-cdn.js`; **21**/**22** — npm/PyPI sims, **22** uses `mock_server.py`.
 
-Shared-pattern edits: implement in **01** (or exception), `grep` `scenarios/` + `documentation/scenario-guides/`, apply the same diff — do not open all 22 folders.
+Shared-pattern edits: implement in **01** (or exception), `grep` `scenarios/` + `documentation/scenario-guides/`, apply the same diff — do not open all 23 folders.
+
+**Public-count drift:** after adding/removing a lab, run `node scripts/check-info-consistency.js` (CI-enforced in `smoke.yml`).
 
 ## Exploration
 

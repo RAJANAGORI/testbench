@@ -17,10 +17,10 @@ if ! curl -fsS "${ES_URL}/_cluster/health" >/dev/null 2>&1; then
 fi
 
 RULE_COUNT="$(curl -fsS "${ES_URL}/scas-rules/_count" | node -pe 'JSON.parse(fs.readFileSync(0,"utf8")).count')"
-if [[ "${RULE_COUNT}" -ge 22 ]]; then
-  ok "scas-rules has ${RULE_COUNT} documents (expected >= 22)"
+if [[ "${RULE_COUNT}" -ge 23 ]]; then
+  ok "scas-rules has ${RULE_COUNT} documents (expected >= 23)"
 else
-  bad "scas-rules has ${RULE_COUNT} documents (expected >= 22)"
+  bad "scas-rules has ${RULE_COUNT} documents (expected >= 23)"
 fi
 
 export SCAS_ES_URL="${ES_URL}"

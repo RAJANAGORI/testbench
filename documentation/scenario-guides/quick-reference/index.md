@@ -26,6 +26,7 @@ Command cheat sheets for live teaching and fast practice. Each card includes a *
 | 20 | Package version confusion | [QUICK_REFERENCE_SCENARIO_20.md](./QUICK_REFERENCE_SCENARIO_20.md) |
 | 21 | Axios-style npm release | [QUICK_REFERENCE_SCENARIO_21.md](./QUICK_REFERENCE_SCENARIO_21.md) |
 | 22 | LiteLLM-style PyPI compromise | [QUICK_REFERENCE_SCENARIO_22.md](./QUICK_REFERENCE_SCENARIO_22.md) |
+| 23 | Trivy supply chain attack | [QUICK_REFERENCE_SCENARIO_23.md](./QUICK_REFERENCE_SCENARIO_23.md) |
 
 **Navigation hub:** [QUICK_REFERENCE.md](../../platform/QUICK_REFERENCE.md) · **Walkthroughs:** [zero-to-hero/index.md](../zero-to-hero/index.md)
 

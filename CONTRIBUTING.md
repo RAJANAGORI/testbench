@@ -99,14 +99,17 @@ Canonical mitigation bullets live in `scripts/lib/mitigation-playbooks.js` — e
 
 ## Testing requirements
 
-Run the full smoke test locally before opening a PR:
+Run these locally before opening a PR:
 
 ```bash
+# Catches lab-count / index / public-doc drift (fast; also runs in CI)
+node scripts/check-info-consistency.js
+
 chmod +x scripts/*.sh
 ./scripts/smoke-all-scenarios.sh
 ```
 
-If your change only affects one scenario, you should still run that scenario fully and confirm capture output appears as expected.
+If your change only affects one scenario, you should still run that scenario fully and confirm capture output appears as expected. When you **add or remove a scenario**, update every public surface that states the lab count or lists `01–NN`, then re-run `check-info-consistency.js`.
 
 ## Pull request checklist
 

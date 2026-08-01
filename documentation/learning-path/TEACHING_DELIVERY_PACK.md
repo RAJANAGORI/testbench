@@ -13,6 +13,7 @@ You can teach the same core material as a live session, written guide, course, o
   - [MODULE_INSTANCE_SCENARIO_20.md](../modules/MODULE_INSTANCE_SCENARIO_20.md)
   - [MODULE_INSTANCE_SCENARIO_21.md](../modules/MODULE_INSTANCE_SCENARIO_21.md)
   - [MODULE_INSTANCE_SCENARIO_22.md](../modules/MODULE_INSTANCE_SCENARIO_22.md)
+  - [MODULE_INSTANCE_SCENARIO_23.md](../modules/MODULE_INSTANCE_SCENARIO_23.md)
 
 ## 1) Live Talk / Workshop Variant
 

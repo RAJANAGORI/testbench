@@ -19,6 +19,7 @@ Every maintainer-facing script in [`scripts/`](../../scripts/), grouped by purpo
 | [`scripts/teardown.sh`](../../scripts/teardown.sh) | Kill scenario ports, remove captures & `node_modules` |
 | [`scripts/kill-port.sh`](../../scripts/kill-port.sh) | Free one port, or `--all` ports from `ports.env` |
 | [`scripts/smoke-all-scenarios.sh`](../../scripts/smoke-all-scenarios.sh) | End-to-end smoke test across all 23 scenarios |
+| [`scripts/check-info-consistency.js`](../../scripts/check-info-consistency.js) | **CI harness** — fail if public lab counts / indexes / ranges drift from on-disk `scenarios/NN-*` |
 | [`scripts/ports.env`](../../scripts/ports.env) | Source-of-truth port allow-list (see [Operations → port matrix](./OPERATIONS.md#port-matrix)) |
 
 ### Observability (Elasticsearch + Kibana)
@@ -98,6 +99,13 @@ node scripts/inject-zero-to-hero-mitigation-playbooks.js
 
 # 4. Rebuild every Table of Contents
 node scripts/inject-markdown-toc.js all
+
+# 5. After adding/removing a scenario (or changing public counts):
+#    update README, AUTHORS, docs/index.html, docs/docs-manifest.json,
+#    CATALOG + zero-to-hero / quick-ref / modules indexes, observability
+#    “N runbooks” / “2N saved searches”, playbooks, control-plane registry —
+#    then verify:
+node scripts/check-info-consistency.js
 ```
 
 **What goes where:**

@@ -28,5 +28,6 @@ Zero-to-hero and quick-ref trees are in `.cursorignore` for code-focused indexin
 4. `node scripts/inject-markdown-toc.js all` — rebuild TOCs
 5. Observability blocks: `detection-tools/es/scenario-diagram-steps.js` → `generate-observability-section.js`
 6. `node detection-tools/es/load-runbooks.js` — if `DETECT.md` structure changed
+7. **Add/remove a scenario:** update README / AUTHORS / Pages hero + `docs-manifest` / CATALOG / zero-to-hero + quick-ref + modules indexes / observability N and 2N counts / playbooks / control-plane registry — then `node scripts/check-info-consistency.js` (CI-enforced)
 
 Full script catalog: `platform/TOOLING.md`.

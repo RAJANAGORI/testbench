@@ -25,6 +25,9 @@ jobs:
         with:
           python-version: 3.11.9
 
+      - name: Check public info consistency
+        run: node scripts/check-info-consistency.js
+
       - name: Run smoke tests
         run: |
           node --test detection-tools/package-scanner.test.js

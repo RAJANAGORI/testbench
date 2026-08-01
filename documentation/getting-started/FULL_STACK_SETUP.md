@@ -44,7 +44,7 @@ Manual step-by-step remains below if you prefer to install piece by piece.
 
 | Component | Purpose | Required? |
 |-----------|---------|-----------|
-| **SCAS core** | 22 hands-on supply-chain attack labs | Yes |
+| **SCAS core** | 23 hands-on supply-chain attack labs | Yes |
 | **Elasticsearch + Kibana** | Index detection runbooks and lab events for blue-team practice | Optional (recommended for workshops) |
 | **Floci** | Local AWS emulator (S3 universal; ECR/IAM/pipeline on select labs) | Optional (all **23** scenarios; extended **05, 06, 11, 14, 17, 19, 23**) |
 
@@ -158,7 +158,7 @@ This will:
 1. Start Elasticsearch on **http://localhost:9200**
 2. Start Kibana on **http://localhost:5601**
 3. Create indices `scas-rules` and `scas-detections`
-4. Load all 22 scenario `DETECT.md` runbooks into Elasticsearch
+4. Load all 23 scenario `DETECT.md` runbooks into Elasticsearch
 5. Set up Kibana data views (when Kibana is ready)
 
 First run can take **2–5 minutes** while Docker pulls images.
@@ -372,7 +372,7 @@ More: `scenarios/05-build-compromise/FLOCI.md` · [Floci integration guide](../g
 | 9200 | Elasticsearch |
 | 5601 | Kibana |
 | 4566 | Floci (AWS emulator) |
-| 3000–3022 | Scenario mock servers (see [`scripts/ports.env`](../../scripts/ports.env)) |
+| 3000–3023 | Scenario mock servers (see [`scripts/ports.env`](../../scripts/ports.env)) |
 
 Floci uses **4566 only** — it does not start floci-ui on 3000/3001, so it will not conflict with SCAS mock servers.
 

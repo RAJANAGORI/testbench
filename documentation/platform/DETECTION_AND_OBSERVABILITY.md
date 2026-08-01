@@ -73,12 +73,12 @@ export SCAS_ES_URL=http://localhost:9200
 
 | Index | Contents | Kibana data view |
 |-------|----------|------------------|
-| `scas-rules` | 22 DETECT.md runbooks | **SCAS Rules** (`ingested_at`) |
+| `scas-rules` | 23 DETECT.md runbooks | **SCAS Rules** (`ingested_at`) |
 | `scas-detections` | Runtime captures + scanner findings | **SCAS Detections** (`@timestamp`) |
 
 ### Kibana saved searches
 
-One pair per scenario (01–22):
+One pair per scenario (01–23):
 
 - `SCAS Rules — Scenario NN`
 - `SCAS Detections — Scenario NN`

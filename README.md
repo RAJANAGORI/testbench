@@ -26,7 +26,7 @@ This test bench provides hands-on scenarios for supply chain attacks—among the
 
 **At a glance**
 
-- **22** self-contained labs under `scenarios/` (numbered folders `01-` … `22-`)
+- **23** self-contained labs under `scenarios/` (numbered folders `01-` … `23-`)
 - Each lab includes attack mechanics, detection ideas, mitigations, and references where relevant
 - Canonical guides and learning paths live in [`documentation/`](documentation/index.md)
 - Malicious samples are gated (for example `TESTBENCH_MODE=enabled`) and designed for localhost-style exercises—see [Security notice](#security-notice)
@@ -55,7 +55,7 @@ For a **full numbered list** with paths and skills, see [Scenario walkthroughs](
 
 ```
 supply-chain-attack-simulator/
-├── scenarios/                  # Attack scenario labs (01- … 22-)
+├── scenarios/                  # Attack scenario labs (01- … 23-)
 ├── vulnerable-apps/             # Optional sample vulnerable Node.js app (scenario 03)
 ├── malicious-packages/          # Example malicious packages (for learning)
 ├── detection-tools/             # Security scanning and detection tools
@@ -149,6 +149,7 @@ Open each folder’s **README** for objectives, duration, and step-by-step steps
 | 20 | [Package version confusion](scenarios/20-package-version-confusion/) | Advanced |
 | 21 | [Axios-style npm release (simulation)](scenarios/21-axios-compromised-release-attack/) | Advanced |
 | 22 | [LiteLLM-style PyPI compromise (simulation)](scenarios/22-litellm-pypi-compromise/) | Advanced |
+| 23 | [Trivy supply chain attack (simulation)](scenarios/23-trivy-supply-chain-attack/) | Advanced |
 
 ## Defense & detection
 
@@ -199,7 +200,7 @@ This repository contains intentionally vulnerable code and malicious package exa
 
 Authoritative Markdown lives under **`documentation/`** — start at the **[documentation index](documentation/index.md)** (master source of truth).
 
-**Browse on the web:** [Documentation hub](docs/guide.html) — sequential Zero to Hero guides (01→22), setup, detection, and FAQ rendered from the same Markdown files.
+**Browse on the web:** [Documentation hub](docs/guide.html) — sequential Zero to Hero guides (01→23), setup, detection, and FAQ rendered from the same Markdown files.
 
 | Doc | Purpose |
 |-----|---------|
@@ -237,7 +238,7 @@ There is **no single mandatory order** for all 23 scenarios. Use this as a rule 
 
 1. **Foundation**: Complete **01 → 02 → 03** (typosquatting, dependency confusion, compromised package) before deep dives.
 2. **Before scenario 06**: Finish **01–05** first. **06 (Shai-Hulud)** is the heaviest “single scenario” lab and assumes you understand earlier mechanics and response concepts.
-3. **Everything else**: Choose by role—intermediate registry and repo labs (for example **07, 08, 10, 12, 13, 16**), advanced CI and signing labs (**05, 09, 11, 14, 15, 17–22**) as needed. Enterprise-focused notes apply especially to **11** (mirrors); container tooling to **14**.
+3. **Everything else**: Choose by role—intermediate registry and repo labs (for example **07, 08, 10, 12, 13, 16**), advanced CI and signing labs (**05, 09, 11, 14, 15, 17–23**) as needed. Enterprise-focused notes apply especially to **11** (mirrors); container tooling to **14**; scanner/toolchain trust to **23**.
 
 Capstone-style work is described in the **[Capstone rubric](documentation/learning-path/CAPSTONE_RUBRIC.md)**.
 

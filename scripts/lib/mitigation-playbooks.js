@@ -1,6 +1,6 @@
 'use strict';
 
-/** Canonical mitigation bullets per scenario (01–22). Single source for README, DETECT, zero-to-hero. */
+/** Canonical mitigation bullets per scenario (01–23). Single source for README, DETECT, zero-to-hero. */
 const PLAYBOOKS = {
   '01': {
     scenarioDir: '01-typosquatting',

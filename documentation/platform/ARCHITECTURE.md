@@ -13,7 +13,7 @@ How the Supply Chain Attack Simulator (SCAS) is organized and how data flows thr
 
 ```text
 supply-chain-attack-simulator/
-├── scenarios/              # 22 attack labs (01- … 22-)
+├── scenarios/              # 23 attack labs (01- … 23-)
 ├── detection-tools/        # Shared scanners + Elasticsearch shippers
 ├── observability/          # Optional Docker ES + Kibana stack
 ├── documentation/          # Canonical docs (YOU ARE HERE)
@@ -105,7 +105,7 @@ flowchart LR
 
 ## CI and quality
 
-- **Smoke tests:** `.github/workflows/smoke.yml` runs `scripts/smoke-all-scenarios.sh`
+- **Smoke tests:** `.github/workflows/smoke.yml` runs `scripts/check-info-consistency.js` then `scripts/smoke-all-scenarios.sh`
 - **Observability smoke:** `scripts/smoke-observability.sh` (optional ES stack)
 
 ## Related docs
