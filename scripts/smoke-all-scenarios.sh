@@ -466,8 +466,12 @@ free_common_ports
   echo $! >/tmp/tb22-mock.pid
   sleep 1
   cd victim-app
+  # setup.sh creates .venv; smoke must recreate it when setup was not run
+  rm -rf .venv
+  python3 -m venv .venv
   # shellcheck source=/dev/null
   source .venv/bin/activate
+  python -m pip install -U -q pip setuptools wheel >/tmp/tb22-pip-tools.log 2>&1
   pip install -U -q ../python-packages/v1_82_7 >/tmp/tb22-pip.log 2>&1
   TESTBENCH_MODE=enabled python run_victim.py >/tmp/tb22-run.log 2>&1 || true
   C="$(curl -s http://127.0.0.1:3022/captured-data)"
