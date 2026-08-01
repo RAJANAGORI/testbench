@@ -1,6 +1,6 @@
 ---
 description: Excalidraw→SVG diagram pairs, unique per-scenario observability assets, Mermaid sequence for scenarios only
-globs: documentation/assets/diagrams/**,documentation/platform/ARCHITECTURE.md,documentation/product/**,documentation/learning-path/SUPPLY_CHAIN_ATTACKS_ZERO_TO_HERO.md,documentation/scenario-guides/zero-to-hero/**,detection-tools/es/generate-observability-section.js,scripts/lib/diagram-specs.js,scripts/generate-scenario-observability-diagrams.js
+globs: documentation/assets/diagrams/**,documentation/platform/ARCHITECTURE.md,documentation/platform/OPERATIONS.md,documentation/learning-path/SUPPLY_CHAIN_ATTACKS_ZERO_TO_HERO.md,documentation/scenario-guides/zero-to-hero/**,detection-tools/es/generate-observability-section.js,scripts/lib/diagram-specs.js,scripts/generate-scenario-observability-diagrams.js
 alwaysApply: false
 ---
 

@@ -85,7 +85,7 @@ const HAND_AUTHORED_SPECS = [
   },
   {
     basename: 'scas-session-tracks',
-    markdownDoc: 'documentation/product/LAB_FLOW.md',
+    markdownDoc: 'documentation/platform/OPERATIONS.md',
     title: 'High-level session flow',
     purpose:
       'Show operator → core mock/capture track, optional ES/Floci sidecars, and blue-team review sink.',
@@ -129,7 +129,7 @@ const HAND_AUTHORED_SPECS = [
   },
   {
     basename: 'scas-threat-boundaries',
-    markdownDoc: 'documentation/product/SECURITY_THREAT_MODEL.md',
+    markdownDoc: 'documentation/platform/ARCHITECTURE.md',
     title: 'Trust boundaries',
     purpose:
       'Show trusted operator controls vs simulated untrusted payload/collectors vs forbidden external C2.',

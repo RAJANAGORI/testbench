@@ -73,6 +73,12 @@ Forwarding runs only when `SCAS_ES_URL` is set (see [DETECTION_AND_OBSERVABILITY
 | Localhost exfil | Mock servers, package code | No real C2 or external IPs |
 | Isolated VM | Operator responsibility | Do not run on production or shared hosts |
 
+## Trust boundaries
+
+![SCAS trust boundaries: SCAS → Payload; Payload → localhost mocks and Floci; Payload must not reach External C2 / real AWS](../assets/diagrams/scas-threat-boundaries.svg)
+
+*Editable source: [`scas-threat-boundaries.excalidraw`](../assets/diagrams/scas-threat-boundaries.excalidraw). Full narrative: local `documentation/product/SECURITY_THREAT_MODEL.md` (gitignored draft).*
+
 ## End-to-end lab flow
 
 ![SCAS end-to-end lab flow: setup.sh → scenario setup → mock → victim → captured-data.json & scas-detections; DETECT.md + detection-tools + evidence → Kibana Discover](../assets/diagrams/scas-e2e-lab-flow.svg)

@@ -161,9 +161,7 @@ const SURFACE_FILES = [
   'documentation/learning-path/SUPPLY_CHAIN_ATTACKS_ZERO_TO_HERO.md',
   'documentation/guides/index.md',
   'documentation/guides/FLOCI_INTEGRATION.md',
-  'documentation/talks/BLACKHAT_SLIDE_OUTLINE.md',
-  'documentation/talks/INFOGRAPHIC_COPY.md',
-  'documentation/talks/README.md',
+  // documentation/talks/* is gitignored (local talk drafts) — not a CI surface
 ];
 
 function checkProseCounts(expectedCount, maxId) {

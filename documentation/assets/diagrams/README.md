@@ -15,8 +15,8 @@ Markdown cannot render raw `.excalidraw`. Always ship a pair:
 | Basename | Doc(s) |
 |----------|--------|
 | `scas-e2e-lab-flow` | [ARCHITECTURE.md](../../platform/ARCHITECTURE.md) |
-| `scas-session-tracks` | [LAB_FLOW.md](../../product/LAB_FLOW.md) |
-| `scas-threat-boundaries` | [SECURITY_THREAT_MODEL.md](../../product/SECURITY_THREAT_MODEL.md) |
+| `scas-session-tracks` | [OPERATIONS.md](../../platform/OPERATIONS.md) |
+| `scas-threat-boundaries` | [ARCHITECTURE.md](../../platform/ARCHITECTURE.md) |
 | `scas-curriculum-stages` | [SUPPLY_CHAIN_ATTACKS_ZERO_TO_HERO.md](../../learning-path/SUPPLY_CHAIN_ATTACKS_ZERO_TO_HERO.md) |
 | `scas-scenario-17-stage-chain` | [ZERO_TO_HERO_SCENARIO_17.md](../../scenario-guides/zero-to-hero/ZERO_TO_HERO_SCENARIO_17.md) |
 

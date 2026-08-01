@@ -14,6 +14,12 @@ Day-two operations for running, cleaning up, and validating the test bench.
 
 **Full install walkthrough:** [Full-stack setup](../getting-started/FULL_STACK_SETUP.md)
 
+## Session flow
+
+![SCAS session flow: operator, core mock/capture track, optional Elasticsearch and Floci, blue-team review](../assets/diagrams/scas-session-tracks.svg)
+
+*Editable source: [`scas-session-tracks.excalidraw`](../assets/diagrams/scas-session-tracks.excalidraw).*
+
 ## First-time setup
 
 ```bash
