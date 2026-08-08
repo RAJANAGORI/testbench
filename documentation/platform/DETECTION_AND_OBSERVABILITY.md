@@ -23,7 +23,7 @@ Each scenario includes a blue-team runbook at `scenarios/<folder>/DETECT.md`:
 **Load into Elasticsearch:**
 
 ```bash
-./scripts/elasticsearch-up.sh          # includes load-runbooks.js
+./scripts/observability/elasticsearch-up.sh          # includes load-runbooks.js
 # or manually:
 node detection-tools/es/load-runbooks.js
 ```
@@ -64,8 +64,8 @@ Full operational guide: [`observability/README.md`](../../observability/README.m
 ### Quick start
 
 ```bash
-./scripts/elasticsearch-up.sh
-./scripts/setup-kibana-data-views.sh
+./scripts/observability/elasticsearch-up.sh
+./scripts/observability/setup-kibana-data-views.sh
 export SCAS_ES_URL=http://localhost:9200
 ```
 
@@ -94,7 +94,7 @@ Zero-to-hero guides include per-scenario sequence diagrams under **Elasticsearch
 ### Smoke validation
 
 ```bash
-./scripts/smoke-observability.sh
+./scripts/observability/smoke-observability.sh
 ```
 
 ## Scenario-local detectors

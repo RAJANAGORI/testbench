@@ -8,8 +8,8 @@
 From the repo root:
 
 ```bash
-chmod +x scripts/elasticsearch-up.sh scripts/elasticsearch-down.sh
-./scripts/elasticsearch-up.sh
+chmod +x scripts/observability/elasticsearch-up.sh scripts/observability/elasticsearch-down.sh
+./scripts/observability/elasticsearch-up.sh
 ```
 
 This will:
@@ -23,7 +23,7 @@ Open Kibana at [http://localhost:5601](http://localhost:5601).
 **Automated setup (recommended):**
 
 ```bash
-./scripts/setup-kibana-data-views.sh
+./scripts/observability/setup-kibana-data-views.sh
 ```
 
 This creates:
@@ -72,19 +72,19 @@ node detection-tools/es/ship-captures.js
 With the stack running:
 
 ```bash
-./scripts/smoke-observability.sh
+./scripts/observability/smoke-observability.sh
 ```
 
 ## Stop the stack
 
 ```bash
-./scripts/elasticsearch-down.sh
+./scripts/observability/elasticsearch-down.sh
 ```
 
 Remove persisted cluster data:
 
 ```bash
-./scripts/elasticsearch-down.sh --volumes
+./scripts/observability/elasticsearch-down.sh --volumes
 ```
 
 ## Index reference

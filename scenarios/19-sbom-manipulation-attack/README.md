@@ -103,7 +103,7 @@ curl -s http://127.0.0.1:3019/captured-data
 ### Cleanup (optional)
 
 ```bash
-../../scripts/kill-port.sh 3019
+../../scripts/setup/kill-port.sh 3019
 ```
 
 ## 📝 Lab Tasks
@@ -162,7 +162,7 @@ Key indicators to capture:
 
 - Compare `victim-app/sbom.json` with `truth/dependencies.json` first, then run detector.
 - If no captures appear, verify mock server on `3019`.
-- Use `../../scripts/kill-port.sh 3019` for cleanup.
+- Use `../../scripts/setup/kill-port.sh 3019` for cleanup.
 
 ## Lab Report Prompts
 

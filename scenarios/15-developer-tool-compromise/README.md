@@ -105,7 +105,7 @@ curl -s http://127.0.0.1:3015/captured-data
 ### Cleanup (optional)
 
 ```bash
-../../scripts/kill-port.sh 3015
+../../scripts/setup/kill-port.sh 3015
 ```
 
 ## 📝 Lab Tasks
@@ -163,7 +163,7 @@ Key indicators to capture:
 
 - Start from `victim-app/package.json` and installed `node_modules` lifecycle fields.
 - If captures are empty, verify mock server is running on `3015` and `TESTBENCH_MODE=enabled`.
-- Reset quickly with `../../scripts/kill-port.sh 3015`.
+- Reset quickly with `../../scripts/setup/kill-port.sh 3015`.
 
 ## Lab Report Prompts
 

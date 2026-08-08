@@ -1,5 +1,5 @@
 # Fast path — published Floci image (no vendor clone / no Java build).
-# Setup: ../../scripts/floci-setup.sh --image
+# Setup: ../../scripts/floci/floci-setup.sh --image
 
 name: scas-floci
 

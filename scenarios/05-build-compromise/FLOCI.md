@@ -7,8 +7,8 @@ Extend **Build System Compromise** with a local AWS emulator so learners see the
 From **repo root** (one-time + each session):
 
 ```bash
-./scripts/floci-setup.sh          # once: clone vendor/floci-aws + build
-./scripts/floci-up.sh             # start scas-floci on :4566
+./scripts/floci/floci-setup.sh          # once: clone vendor/floci-aws + build
+./scripts/floci/floci-up.sh             # start scas-floci on :4566
 source .testbench.env && source .floci.env
 ```
 
@@ -53,7 +53,7 @@ npm run build
 ### 4. Compare legitimate vs compromised in S3
 
 ```bash
-source ../../scripts/floci-bridge.sh
+source ../../scripts/floci/floci-bridge.sh
 scas_floci_aws s3 ls s3://scas-sc05-artifacts/releases/ --recursive
 ```
 
@@ -75,20 +75,20 @@ Unset `SCAS_FLOCI_ENABLED`. The lab behaves exactly as before (smoke tests uncha
 
 ```bash
 cd ~/supply-chain-attack-simulator
-./scripts/floci-down.sh
+./scripts/floci/floci-down.sh
 rm -rf infrastructure/floci/data/*
 # Use memory storage (avoid hybrid 500 on Linux/aarch64)
 grep -q FLOCI_STORAGE_MODE infrastructure/floci/.env \
   && sed -i 's/^FLOCI_STORAGE_MODE=.*/FLOCI_STORAGE_MODE=memory/' infrastructure/floci/.env \
   || echo 'FLOCI_STORAGE_MODE=memory' >> infrastructure/floci/.env
-./scripts/floci-up.sh
+./scripts/floci/floci-up.sh
 source .floci.env
-./scripts/floci-status.sh    # Init must show "ready"
+./scripts/floci/floci-status.sh    # Init must show "ready"
 cd scenarios/05-build-compromise
 ./infrastructure/floci/seed.sh
 ```
 
-1. **Floci init ready?** `./scripts/floci-status.sh` — must show `Init: ✅ ready`
+1. **Floci init ready?** `./scripts/floci/floci-status.sh` — must show `Init: ✅ ready`
 2. **Use emulator credentials:** `source .floci.env` from repo root (do not rely on host `~/.aws/credentials`)
 3. **Inspect logs:** `docker logs scas-floci --tail 80`
 4. **Manual upload test** (inside container):

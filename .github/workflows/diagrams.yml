@@ -1,8 +1,8 @@
 name: Diagrams
 
 # Runs when diagram sources / embeds change. Regenerates unique scenario
-# observability assets and fails if the working tree drifts (committed SVG
-# must match the generator). Also re-runs the drawing-contract harness.
+# observability + codeflow assets and fails if the working tree drifts
+# (committed SVG must match the generators). Also re-runs the drawing-contract harness.
 
 on:
   workflow_dispatch:
@@ -11,8 +11,8 @@ on:
     paths:
       - 'documentation/assets/diagrams/**'
       - 'scripts/lib/diagram-specs.js'
-      - 'scripts/check-diagram-assets.js'
-      - 'scripts/generate-scenario-observability-diagrams.js'
+      - 'scripts/lib/diagram-paths.js'
+      - 'scripts/diagrams/**'
       - 'detection-tools/es/scenario-diagram-steps.js'
       - 'detection-tools/es/scenario-observability.json'
       - 'detection-tools/es/generate-observability-section.js'
@@ -27,8 +27,8 @@ on:
     paths:
       - 'documentation/assets/diagrams/**'
       - 'scripts/lib/diagram-specs.js'
-      - 'scripts/check-diagram-assets.js'
-      - 'scripts/generate-scenario-observability-diagrams.js'
+      - 'scripts/lib/diagram-paths.js'
+      - 'scripts/diagrams/**'
       - 'detection-tools/es/scenario-diagram-steps.js'
       - 'detection-tools/es/scenario-observability.json'
       - 'detection-tools/es/generate-observability-section.js'
@@ -54,19 +54,26 @@ jobs:
           node-version: 20.19.0
 
       - name: Regenerate unique scenario observability diagrams
-        run: node scripts/generate-scenario-observability-diagrams.js
+        run: node scripts/diagrams/generate-scenario-observability-diagrams.js
+
+      - name: Regenerate scenario codeflow diagrams
+        run: node scripts/diagrams/generate-scenario-codeflow-diagrams.js
 
       - name: Fail if generated diagram assets drifted
         run: |
-          if ! git diff --quiet -- documentation/assets/diagrams/scas-observability-scenario-*.excalidraw \
-                                 documentation/assets/diagrams/scas-observability-scenario-*.svg; then
+          if ! git diff --quiet -- \
+            documentation/assets/diagrams/observability/svg/scas-observability-scenario-*.svg \
+            documentation/assets/diagrams/observability/excalidraw/scas-observability-scenario-*.excalidraw \
+            documentation/assets/diagrams/codeflow/svg/scas-codeflow-scenario-*.svg \
+            documentation/assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-*.excalidraw; then
             echo "::error::Generated diagram assets differ from the commit. Re-run locally:"
-            echo "  node scripts/generate-scenario-observability-diagrams.js"
+            echo "  node scripts/diagrams/generate-scenario-observability-diagrams.js"
+            echo "  node scripts/diagrams/generate-scenario-codeflow-diagrams.js"
             echo "  node detection-tools/es/generate-observability-section.js"
-            echo "  node scripts/check-diagram-assets.js"
-            git --no-pager diff --stat -- documentation/assets/diagrams/scas-observability-scenario-*
+            echo "  node scripts/diagrams/check-diagram-assets.js"
+            git --no-pager diff --stat -- documentation/assets/diagrams/observability documentation/assets/diagrams/codeflow
             exit 1
           fi
 
       - name: Check diagram drawing contract
-        run: node scripts/check-diagram-assets.js
+        run: node scripts/diagrams/check-diagram-assets.js

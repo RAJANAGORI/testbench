@@ -15,10 +15,6 @@ By the end of this guide, you will:
 - Apply the **Mitigation Playbook** from this guide and the scenario README
 ---
 
-
-
-
-
 ## Table of Contents
 
 <div class="doc-toc">
@@ -555,7 +551,7 @@ If `dist.integrity` is present and mismatched, the validator reports **tarball i
 
 ```bash
 # 1. Stop mock server (if still running)
-../../scripts/kill-port.sh 3001
+../../scripts/setup/kill-port.sh 3001
 
 # 2. Remove compromised package from victim app
 rm -rf victim-app/node_modules/clean-utils
@@ -627,7 +623,11 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 ---
 
----
+## Code-level workflow
+
+![Scenario 13 code-level workflow: Package Metadata Manipulation](../../assets/diagrams/codeflow/svg/scas-codeflow-scenario-13.svg)
+
+*Code-level workflow for Scenario 13. Editable source: [`scas-codeflow-scenario-13.excalidraw`](../../assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-13.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-codeflow-diagrams.js`.*
 
 ## Elasticsearch + Kibana observability (optional)
 
@@ -652,9 +652,9 @@ Metadata manipulation: clean-utils package.json spoof misleads install; mock lis
 
 ### End-to-end flow
 
-![Scenario 13 observability flow: Phase 1 collectors → Phase 2 lab steps → Phase 3 localhost exfil → optional Elasticsearch → Kibana Detections and Rules](../../assets/diagrams/scas-observability-scenario-13.svg)
+![Scenario 13 observability flow: Phase 1 collectors → Phase 2 lab steps → Phase 3 localhost exfil → optional Elasticsearch → Kibana Detections and Rules](../../assets/diagrams/observability/svg/scas-observability-scenario-13.svg)
 
-*Swimlane diagram for Scenario 13. Editable source: [`scas-observability-scenario-13.excalidraw`](../../assets/diagrams/scas-observability-scenario-13.excalidraw). Regenerate with `node scripts/generate-scenario-observability-diagrams.js`.*
+*Swimlane diagram for Scenario 13. Editable source: [`scas-observability-scenario-13.excalidraw`](../../assets/diagrams/observability/excalidraw/scas-observability-scenario-13.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-observability-diagrams.js`.*
 
 ### Sequence diagram (Phase 1–5)
 
@@ -724,8 +724,8 @@ Same Phase-2 path as the diagrams above (for skimming / accessibility).
 From the repository root:
 
 ```bash
-./scripts/elasticsearch-up.sh
-./scripts/setup-kibana-data-views.sh   # data views + saved searches for all 23 scenarios
+./scripts/observability/elasticsearch-up.sh
+./scripts/observability/setup-kibana-data-views.sh   # data views + saved searches for all 23 scenarios
 ```
 
 ### Run this scenario with live Elasticsearch forwarding

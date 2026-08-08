@@ -14,10 +14,6 @@ By the end of this guide, you will:
 - Apply the **Mitigation Playbook** from this guide and the scenario README
 ---
 
-
-
-
-
 ## Table of Contents
 
 <div class="doc-toc">
@@ -526,9 +522,6 @@ npm uses semantic versioning (semver) to resolve versions:
 
 ---
 
-
----
-
 ## Mitigation Playbook
 
 Canonical prevention and mitigation controls (aligned with the [scenario README](../../../scenarios/02-dependency-confusion/README.md)). Lab walkthroughs above expand each control with hands-on steps.
@@ -543,7 +536,11 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 ---
 
----
+## Code-level workflow
+
+![Scenario 02 code-level workflow: Dependency Confusion](../../assets/diagrams/codeflow/svg/scas-codeflow-scenario-02.svg)
+
+*Code-level workflow for Scenario 02. Editable source: [`scas-codeflow-scenario-02.excalidraw`](../../assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-02.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-codeflow-diagrams.js`.*
 
 ## Elasticsearch + Kibana observability (optional)
 
@@ -568,9 +565,9 @@ Dependency confusion: a scoped internal name resolves to a higher public version
 
 ### End-to-end flow
 
-![Scenario 02 observability flow: Phase 1 collectors → Phase 2 lab steps → Phase 3 localhost exfil → optional Elasticsearch → Kibana Detections and Rules](../../assets/diagrams/scas-observability-scenario-02.svg)
+![Scenario 02 observability flow: Phase 1 collectors → Phase 2 lab steps → Phase 3 localhost exfil → optional Elasticsearch → Kibana Detections and Rules](../../assets/diagrams/observability/svg/scas-observability-scenario-02.svg)
 
-*Swimlane diagram for Scenario 02. Editable source: [`scas-observability-scenario-02.excalidraw`](../../assets/diagrams/scas-observability-scenario-02.excalidraw). Regenerate with `node scripts/generate-scenario-observability-diagrams.js`.*
+*Swimlane diagram for Scenario 02. Editable source: [`scas-observability-scenario-02.excalidraw`](../../assets/diagrams/observability/excalidraw/scas-observability-scenario-02.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-observability-diagrams.js`.*
 
 ### Sequence diagram (Phase 1–5)
 
@@ -640,8 +637,8 @@ Same Phase-2 path as the diagrams above (for skimming / accessibility).
 From the repository root:
 
 ```bash
-./scripts/elasticsearch-up.sh
-./scripts/setup-kibana-data-views.sh   # data views + saved searches for all 23 scenarios
+./scripts/observability/elasticsearch-up.sh
+./scripts/observability/setup-kibana-data-views.sh   # data views + saved searches for all 23 scenarios
 ```
 
 ### Run this scenario with live Elasticsearch forwarding
@@ -800,4 +797,3 @@ You've completed the Dependency Confusion attack scenario! You now understand:
 **Remember**: Proper registry configuration is critical for enterprise security!
 
 Happy learning! 🔐
-

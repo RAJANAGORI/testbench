@@ -6,7 +6,7 @@ alwaysApply: false
 
 # Detection tools
 
-Opt-in observability: `export SCAS_ES_URL=http://localhost:9200` (stack: `observability/README.md`, `scripts/elasticsearch-up.sh`).
+Opt-in observability: `export SCAS_ES_URL=http://localhost:9200` (stack: `observability/README.md`, `scripts/observability/elasticsearch-up.sh`).
 
 ## ES pipeline
 

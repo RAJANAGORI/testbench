@@ -526,7 +526,7 @@
       text = result.text;
       loadedFromGithub = result.source === 'github';
     } catch (err) {
-      showError('Could not load ' + path + '. ' + err.message + ' (static host may not publish symlinked docs — redeploy after running scripts/materialize-docs-for-pages.sh)');
+      showError('Could not load ' + path + '. ' + err.message + ' (static host may not publish symlinked docs — redeploy after running scripts/docs/materialize-docs-for-pages.sh)');
       return;
     }
 
@@ -537,7 +537,7 @@
 
     els.content.insertAdjacentHTML('beforeend',
       '<div class="docs-source-note">Source: <a href="' + repoBlobUrl(repoPathForResolved(path)) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(repoPathForResolved(path)) + '</a> — © Raja Nagori. Documentation under CC BY-NC-ND 4.0 unless noted.' +
-      (loadedFromGithub ? ' <em>(loaded from GitHub — run <code>scripts/materialize-docs-for-pages.sh</code> before deploy for offline hosting)</em>' : '') +
+      (loadedFromGithub ? ' <em>(loaded from GitHub — run <code>scripts/docs/materialize-docs-for-pages.sh</code> before deploy for offline hosting)</em>' : '') +
       '</div>'
     );
 

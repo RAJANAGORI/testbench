@@ -14,25 +14,26 @@ Every maintainer-facing script in [`scripts/`](../../scripts/), grouped by purpo
 |--------|---------|
 | [`install.sh`](../../install.sh) | **Generic one-shot full stack** — prereqs, npm, ES/Kibana, Floci; writes `.scas.env` (workshops) |
 | [`install-external.sh`](../../install-external.sh) | **Optional** external-disk wrapper — storage on USB HDD/SSD, then calls `install.sh` |
-| [`scripts/setup-external-storage.sh`](../../scripts/setup-external-storage.sh) | Low-level: Docker `data-root` + repo/npm cache onto an external disk (no stack install) |
-| [`scripts/setup.sh`](../../scripts/setup.sh) | Repo-wide setup; creates `.testbench.env` |
-| [`scripts/teardown.sh`](../../scripts/teardown.sh) | Kill scenario ports, remove captures & `node_modules` |
-| [`scripts/kill-port.sh`](../../scripts/kill-port.sh) | Free one port, or `--all` ports from `ports.env` |
-| [`scripts/smoke-all-scenarios.sh`](../../scripts/smoke-all-scenarios.sh) | End-to-end smoke test across all 23 scenarios |
-| [`scripts/check-info-consistency.js`](../../scripts/check-info-consistency.js) | **CI harness** — fail if public lab counts / indexes / ranges drift from on-disk `scenarios/NN-*` |
-| [`scripts/check-diagram-assets.js`](../../scripts/check-diagram-assets.js) | **CI harness** — Excalidraw/SVG drawing contract (`scripts/lib/diagram-specs.js`); also in [Smoke](../../.github/workflows/smoke.yml) + path-filtered [Diagrams](../../.github/workflows/diagrams.yml) |
+| [`scripts/setup/setup-external-storage.sh`](../../scripts/setup/setup-external-storage.sh) | Low-level: Docker `data-root` + repo/npm cache onto an external disk (no stack install) |
+| [`scripts/setup/setup.sh`](../../scripts/setup/setup.sh) | Repo-wide setup; creates `.testbench.env` |
+| [`scripts/setup/teardown.sh`](../../scripts/setup/teardown.sh) | Kill scenario ports, remove captures & `node_modules` |
+| [`scripts/setup/kill-port.sh`](../../scripts/setup/kill-port.sh) | Free one port, or `--all` ports from `ports.env` |
+| [`scripts/smoke/smoke-all-scenarios.sh`](../../scripts/smoke/smoke-all-scenarios.sh) | End-to-end smoke test across all 23 scenarios |
+| [`scripts/docs/check-info-consistency.js`](../../scripts/docs/check-info-consistency.js) | **CI harness** — fail if public lab counts / indexes / ranges drift from on-disk `scenarios/NN-*` |
+| [`scripts/diagrams/check-diagram-assets.js`](../../scripts/diagrams/check-diagram-assets.js) | **CI harness** — Excalidraw/SVG drawing contract (`scripts/lib/diagram-specs.js`); also in [Smoke](../../.github/workflows/smoke.yml) + path-filtered [Diagrams](../../.github/workflows/diagrams.yml) |
 | [`scripts/lib/diagram-specs.js`](../../scripts/lib/diagram-specs.js) | Canonical nodes/edges/labels for diagrams — edit before redrawing |
-| [`scripts/generate-scenario-observability-diagrams.js`](../../scripts/generate-scenario-observability-diagrams.js) | Generate unique `scas-observability-scenario-NN.{excalidraw,svg}` for all 23 labs (CI regenerates and fails on drift) |
-| [`scripts/ports.env`](../../scripts/ports.env) | Source-of-truth port allow-list (see [Operations → port matrix](./OPERATIONS.md#port-matrix)) |
+| [`scripts/diagrams/generate-scenario-observability-diagrams.js`](../../scripts/diagrams/generate-scenario-observability-diagrams.js) | Generate unique `scas-observability-scenario-NN.{excalidraw,svg}` for all 23 labs (CI regenerates and fails on drift) |
+| [`scripts/diagrams/generate-scenario-codeflow-diagrams.js`](../../scripts/diagrams/generate-scenario-codeflow-diagrams.js) | Generate dense `scas-codeflow-scenario-NN.{excalidraw,svg}` for all 23 labs (Panel A–E code-level workflow) |
+| [`scripts/setup/ports.env`](../../scripts/setup/ports.env) | Source-of-truth port allow-list (see [Operations → port matrix](./OPERATIONS.md#port-matrix)) |
 
 ### Observability (Elasticsearch + Kibana)
 
 | Script | Purpose |
 |--------|---------|
-| [`scripts/elasticsearch-up.sh`](../../scripts/elasticsearch-up.sh) | Start ES + Kibana, seed runbooks |
-| [`scripts/elasticsearch-down.sh`](../../scripts/elasticsearch-down.sh) | Stop the observability stack |
-| [`scripts/setup-kibana-data-views.sh`](../../scripts/setup-kibana-data-views.sh) | Create Kibana data views + saved searches |
-| [`scripts/smoke-observability.sh`](../../scripts/smoke-observability.sh) | Validate ES indices and shippers |
+| [`scripts/observability/elasticsearch-up.sh`](../../scripts/observability/elasticsearch-up.sh) | Start ES + Kibana, seed runbooks |
+| [`scripts/observability/elasticsearch-down.sh`](../../scripts/observability/elasticsearch-down.sh) | Stop the observability stack |
+| [`scripts/observability/setup-kibana-data-views.sh`](../../scripts/observability/setup-kibana-data-views.sh) | Create Kibana data views + saved searches |
+| [`scripts/observability/smoke-observability.sh`](../../scripts/observability/smoke-observability.sh) | Validate ES indices and shippers |
 
 Full workflow: [Detection & observability](./DETECTION_AND_OBSERVABILITY.md) · [Observability stack](../../observability/README.md).
 
@@ -42,12 +43,12 @@ Local-AWS emulator track for all 23 scenarios (S3 universal; extended on 05, 06,
 
 | Script | Purpose |
 |--------|---------|
-| [`scripts/floci-setup.sh`](../../scripts/floci-setup.sh) | Clone + build vendor, or `--image` for the published container |
-| [`scripts/floci-up.sh`](../../scripts/floci-up.sh) | Start emulator and wait for health |
-| [`scripts/floci-down.sh`](../../scripts/floci-down.sh) | Stop emulator |
-| [`scripts/floci-status.sh`](../../scripts/floci-status.sh) | Health + container status |
-| [`scripts/floci-bridge.sh`](../../scripts/floci-bridge.sh) | Shared S3/ECR/Secrets helpers, sourced by scenario seed/verify scripts |
-| [`scripts/floci-upload-json.sh`](../../scripts/floci-upload-json.sh) | Pipe JSON → `s3://scas-scNN-artifacts/` |
+| [`scripts/floci/floci-setup.sh`](../../scripts/floci/floci-setup.sh) | Clone + build vendor, or `--image` for the published container |
+| [`scripts/floci/floci-up.sh`](../../scripts/floci/floci-up.sh) | Start emulator and wait for health |
+| [`scripts/floci/floci-down.sh`](../../scripts/floci/floci-down.sh) | Stop emulator |
+| [`scripts/floci/floci-status.sh`](../../scripts/floci/floci-status.sh) | Health + container status |
+| [`scripts/floci/floci-bridge.sh`](../../scripts/floci/floci-bridge.sh) | Shared S3/ECR/Secrets helpers, sourced by scenario seed/verify scripts |
+| [`scripts/floci/floci-upload-json.sh`](../../scripts/floci/floci-upload-json.sh) | Pipe JSON → `s3://scas-scNN-artifacts/` |
 
 ### Documentation maintenance
 
@@ -55,34 +56,34 @@ Keeps scenario docs, table-of-contents blocks, and mitigation playbooks consiste
 
 | Script | Purpose |
 |--------|---------|
-| [`scripts/inject-markdown-toc.js`](../../scripts/inject-markdown-toc.js) | Regenerate the **Table of Contents** in zero-to-hero guides, scenario READMEs, and quick-reference cards. Targets: `all`, `readme`, `quick-ref`, `zero-to-hero` |
-| [`scripts/sync-mitigation-gaps.js`](../../scripts/sync-mitigation-gaps.js) | Sync `## Mitigation` (DETECT.md) and README playbooks for scenarios 01–06 from canonical data |
-| [`scripts/inject-zero-to-hero-mitigation-playbooks.js`](../../scripts/inject-zero-to-hero-mitigation-playbooks.js) | Insert `## Mitigation Playbook` into a zero-to-hero guide (idempotent) |
-| [`scripts/inject-zero-to-hero-toc.js`](../../scripts/inject-zero-to-hero-toc.js) | Deprecated wrapper → `inject-markdown-toc.js zero-to-hero` |
-| [`scripts/restore-docs-symlinks.sh`](../../scripts/restore-docs-symlinks.sh) | Restore `docs/` → `documentation/` symlinks after accidental local materialize |
+| [`scripts/docs/inject-markdown-toc.js`](../../scripts/docs/inject-markdown-toc.js) | Regenerate the **Table of Contents** in zero-to-hero guides, scenario READMEs, and quick-reference cards. Targets: `all`, `readme`, `quick-ref`, `zero-to-hero` |
+| [`scripts/docs/sync-mitigation-gaps.js`](../../scripts/docs/sync-mitigation-gaps.js) | Sync `## Mitigation` (DETECT.md) and README playbooks for scenarios 01–06 from canonical data |
+| [`scripts/docs/inject-zero-to-hero-mitigation-playbooks.js`](../../scripts/docs/inject-zero-to-hero-mitigation-playbooks.js) | Insert `## Mitigation Playbook` into a zero-to-hero guide (idempotent) |
+| [`scripts/docs/inject-zero-to-hero-toc.js`](../../scripts/docs/inject-zero-to-hero-toc.js) | Deprecated wrapper → `inject-markdown-toc.js zero-to-hero` |
+| [`scripts/docs/restore-docs-symlinks.sh`](../../scripts/docs/restore-docs-symlinks.sh) | Restore `docs/` → `documentation/` symlinks after accidental local materialize |
 | [`scripts/lib/markdown-toc.js`](../../scripts/lib/markdown-toc.js) | Shared TOC/slug helpers (consumed by the inject scripts) |
 | [`scripts/lib/mitigation-playbooks.js`](../../scripts/lib/mitigation-playbooks.js) | **Canonical mitigation bullets** per scenario — edit here first |
-| [`scripts/materialize-docs-for-pages.sh`](../../scripts/materialize-docs-for-pages.sh) | Copy Markdown into `docs/_sources/` for GitHub Pages (guide.html fetch; no bare `.md` URLs) |
+| [`scripts/docs/materialize-docs-for-pages.sh`](../../scripts/docs/materialize-docs-for-pages.sh) | Copy Markdown into `docs/_sources/` for GitHub Pages (guide.html fetch; no bare `.md` URLs) |
 
 ### Content & publishing
 
 | Script | Purpose |
 |--------|---------|
-| [`scripts/generate-substack-posts.js`](../../scripts/generate-substack-posts.js) | Generate per-scenario long-form posts into `subsstack/` from observability metadata (shared Excalidraw SVG + attack-steps table; no Mermaid) |
-| [`scripts/substack-scenario-copy.js`](../../scripts/substack-scenario-copy.js) | Editorial copy data consumed by the generator |
+| [`scripts/docs/generate-substack-posts.js`](../../scripts/docs/generate-substack-posts.js) | Generate per-scenario long-form posts into `subsstack/` from observability metadata (shared Excalidraw SVG + attack-steps table; no Mermaid) |
+| [`scripts/docs/substack-scenario-copy.js`](../../scripts/docs/substack-scenario-copy.js) | Editorial copy data consumed by the generator |
 
 ### Provenance & integrity
 
 | Script | Purpose |
 |--------|---------|
-| [`scripts/embed-scenario-provenance.sh`](../../scripts/embed-scenario-provenance.sh) | Embed SCAS authorship fingerprints across scenario trees (idempotent) |
-| [`scripts/verify-provenance.sh`](../../scripts/verify-provenance.sh) | Verify fingerprints in a checkout (yours or a suspect copy) |
+| [`scripts/provenance/embed-scenario-provenance.sh`](../../scripts/provenance/embed-scenario-provenance.sh) | Embed SCAS authorship fingerprints across scenario trees (idempotent) |
+| [`scripts/provenance/verify-provenance.sh`](../../scripts/provenance/verify-provenance.sh) | Verify fingerprints in a checkout (yours or a suspect copy) |
 
 ### Project management
 
 | Script | Purpose |
 |--------|---------|
-| [`scripts/setup-github-project-board.sh`](../../scripts/setup-github-project-board.sh) | Create/populate the "2026 Roadmap" GitHub Project board (needs `gh` with project scopes) |
+| [`scripts/setup/setup-github-project-board.sh`](../../scripts/setup/setup-github-project-board.sh) | Create/populate the "2026 Roadmap" GitHub Project board (needs `gh` with project scopes) |
 
 ---
 
@@ -95,30 +96,31 @@ Canonical mitigation content lives in [`scripts/lib/mitigation-playbooks.js`](..
 #    scripts/lib/mitigation-playbooks.js
 
 # 2. Sync DETECT.md mitigation + README playbooks (scenarios 01–06)
-node scripts/sync-mitigation-gaps.js
+node scripts/docs/sync-mitigation-gaps.js
 
 # 3. Insert the Mitigation Playbook into any new zero-to-hero guide
-node scripts/inject-zero-to-hero-mitigation-playbooks.js
+node scripts/docs/inject-zero-to-hero-mitigation-playbooks.js
 
 # 4. Rebuild every Table of Contents
-node scripts/inject-markdown-toc.js all
+node scripts/docs/inject-markdown-toc.js all
 
 # 5. After adding/removing a scenario (or changing public counts):
 #    update README, AUTHORS, docs/index.html, docs/docs-manifest.json,
 #    CATALOG + zero-to-hero / quick-ref / modules indexes, observability
 #    “N runbooks” / “2N saved searches”, playbooks, control-plane registry —
 #    then verify:
-node scripts/check-info-consistency.js
+node scripts/docs/check-info-consistency.js
 
 # 6. After editing diagrams under documentation/assets/diagrams/:
 #    update scripts/lib/diagram-specs.js if nodes/edges changed, keep .excalidraw+.svg
 #    pairs, escape & in SVG text, no Mermaid in contracted docs.
 #    For observability, regenerate unique per-scenario assets first:
-node scripts/generate-scenario-observability-diagrams.js
-node scripts/check-diagram-assets.js
+node scripts/diagrams/generate-scenario-observability-diagrams.js
+node scripts/diagrams/generate-scenario-codeflow-diagrams.js
+node scripts/diagrams/check-diagram-assets.js
 ```
 
-**Diagrams:** specs in [`scripts/lib/diagram-specs.js`](../../scripts/lib/diagram-specs.js); assets in [`documentation/assets/diagrams/`](../assets/diagrams/README.md). Markdown embeds SVG only. Zero-to-hero uses unique `scas-observability-scenario-NN` diagrams.
+**Diagrams:** specs in [`scripts/lib/diagram-specs.js`](../../scripts/lib/diagram-specs.js); assets in [`documentation/assets/diagrams/`](../assets/diagrams/README.md) under `platform/`, `observability/`, and `codeflow/` (each with `svg/` + `excalidraw/`). Markdown embeds SVG only. Zero-to-hero uses unique `scas-observability-scenario-NN` and `scas-codeflow-scenario-NN` diagrams for all 23 labs.
 
 **What goes where:**
 
@@ -141,15 +143,15 @@ The site under [`docs/`](../../docs/) is GitHub Pages. Content folders are **sym
 
 ```bash
 # Replace docs/ symlinks with real files under docs/_sources/ for guide.html fetch.
-./scripts/materialize-docs-for-pages.sh
+./scripts/docs/materialize-docs-for-pages.sh
 ```
 
 When adding or moving a documentation file, update in lockstep:
 
 1. The relevant section `index.md` (and [`documentation/index.md`](../index.md) map if a new section).
 2. [`docs/docs-manifest.json`](../../docs/docs-manifest.json) — add the page to the right group.
-3. Regenerate the sitemap: `node scripts/generate-sitemap.js` → [`docs/sitemap.xml`](../../docs/sitemap.xml).
-4. [`scripts/materialize-docs-for-pages.sh`](../../scripts/materialize-docs-for-pages.sh) — add the folder if it's a new top-level section.
+3. Regenerate the sitemap: `node scripts/docs/generate-sitemap.js` → [`docs/sitemap.xml`](../../docs/sitemap.xml).
+4. [`scripts/docs/materialize-docs-for-pages.sh`](../../scripts/docs/materialize-docs-for-pages.sh) — add the folder if it's a new top-level section.
 
 Per-page SEO in the docs reader (`guide.html`) is updated at runtime by [`docs/assets/js/docs-app.js`](../../docs/assets/js/docs-app.js) (title, description, canonical, Open Graph, Twitter). Landing-page SEO lives in [`docs/index.html`](../../docs/index.html).
 

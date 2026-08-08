@@ -17,10 +17,6 @@ By the end of this guide, you will:
 - Apply the **Mitigation Playbook** from this guide and the scenario README
 ---
 
-
-
-
-
 ## Table of Contents
 
 <div class="doc-toc">
@@ -506,7 +502,7 @@ ls -la victim-app/.testbench-litellm-*.json
 
 ```bash
 # Stop workloads using compromised venv
-../../scripts/kill-port.sh 3022
+../../scripts/setup/kill-port.sh 3022
 
 cd victim-app
 deactivate 2>/dev/null || true
@@ -571,7 +567,11 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 ---
 
----
+## Code-level workflow
+
+![Scenario 22 code-level workflow: LiteLLM-style PyPI Compromise](../../assets/diagrams/codeflow/svg/scas-codeflow-scenario-22.svg)
+
+*Code-level workflow for Scenario 22. Editable source: [`scas-codeflow-scenario-22.excalidraw`](../../assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-22.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-codeflow-diagrams.js`.*
 
 ## Elasticsearch + Kibana observability (optional)
 
@@ -596,9 +596,9 @@ LiteLLM-style PyPI: litellm_like exfil on import (1.82.7) or via .pth at interpr
 
 ### End-to-end flow
 
-![Scenario 22 observability flow: Phase 1 collectors → Phase 2 lab steps → Phase 3 localhost exfil → optional Elasticsearch → Kibana Detections and Rules](../../assets/diagrams/scas-observability-scenario-22.svg)
+![Scenario 22 observability flow: Phase 1 collectors → Phase 2 lab steps → Phase 3 localhost exfil → optional Elasticsearch → Kibana Detections and Rules](../../assets/diagrams/observability/svg/scas-observability-scenario-22.svg)
 
-*Swimlane diagram for Scenario 22. Editable source: [`scas-observability-scenario-22.excalidraw`](../../assets/diagrams/scas-observability-scenario-22.excalidraw). Regenerate with `node scripts/generate-scenario-observability-diagrams.js`.*
+*Swimlane diagram for Scenario 22. Editable source: [`scas-observability-scenario-22.excalidraw`](../../assets/diagrams/observability/excalidraw/scas-observability-scenario-22.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-observability-diagrams.js`.*
 
 ### Sequence diagram (Phase 1–5)
 
@@ -668,8 +668,8 @@ Same Phase-2 path as the diagrams above (for skimming / accessibility).
 From the repository root:
 
 ```bash
-./scripts/elasticsearch-up.sh
-./scripts/setup-kibana-data-views.sh   # data views + saved searches for all 23 scenarios
+./scripts/observability/elasticsearch-up.sh
+./scripts/observability/setup-kibana-data-views.sh   # data views + saved searches for all 23 scenarios
 ```
 
 ### Run this scenario with live Elasticsearch forwarding

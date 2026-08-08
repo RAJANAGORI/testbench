@@ -104,7 +104,7 @@ curl -s http://127.0.0.1:3018/captured-data
 ### Cleanup (optional)
 
 ```bash
-../../scripts/kill-port.sh 3018
+../../scripts/setup/kill-port.sh 3018
 ```
 
 ## 📝 Lab Tasks
@@ -160,7 +160,7 @@ Key indicators to capture:
 
 - Start by reading active plugin wiring in `victim-app` before execution.
 - If no captures appear, verify mock server on `3018`.
-- Cleanup fast with `../../scripts/kill-port.sh 3018`.
+- Cleanup fast with `../../scripts/setup/kill-port.sh 3018`.
 
 ## Lab Report Prompts
 

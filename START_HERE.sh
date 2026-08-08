@@ -92,8 +92,8 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     exit 0
 fi
 
-chmod +x scripts/setup.sh
-./scripts/setup.sh
+chmod +x scripts/setup/setup.sh
+./scripts/setup/setup.sh
 
 echo ""
 
@@ -137,7 +137,7 @@ echo -e "${YELLOW}📚 Documentation:${NC}"
 echo "   - Zero to Hero Guide: ${CYAN}documentation/getting-started/ZERO_TO_HERO.md${NC}"
 echo "   - Quick Reference: ${CYAN}documentation/platform/QUICK_REFERENCE.md${NC}"
 echo "   - Setup Guide: ${CYAN}documentation/getting-started/SETUP.md${NC}"
-echo "   - Teardown script: ${CYAN}./scripts/teardown.sh${NC}"
+echo "   - Teardown script: ${CYAN}./scripts/setup/teardown.sh${NC}"
 echo ""
 echo "Cleanup command for current shell:"
 echo "   ${CYAN}unset TESTBENCH_MODE${NC}"

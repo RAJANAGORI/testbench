@@ -3,7 +3,7 @@
 Maps **CVE-2026-336334** mechanics to Floci: **ECR**, **CodePipeline**, **IAM/STS**, **CloudWatch Logs**, **S3 exfil**.
 
 ```bash
-# repo root: ./scripts/floci-setup.sh --image && ./scripts/floci-up.sh && source .floci.env
+# repo root: ./scripts/floci/floci-setup.sh --image && ./scripts/floci/floci-up.sh && source .floci.env
 export TESTBENCH_MODE=enabled SCAS_FLOCI_ENABLED=1
 cd scenarios/23-trivy-supply-chain-attack
 ./infrastructure/floci/seed.sh

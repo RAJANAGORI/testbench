@@ -2,8 +2,8 @@
 # Push compromised Trivy image marker to Floci ECR (scenario 23 capstone).
 set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
-# shellcheck source=../../../../scripts/floci-bridge.sh
-source "${REPO_ROOT}/scripts/floci-bridge.sh"
+# shellcheck source=../../../../scripts/floci/floci-bridge.sh
+source "${REPO_ROOT}/scripts/floci/floci-bridge.sh"
 
 [ "${TESTBENCH_MODE:-}" = "enabled" ] || exit 0
 [ "${SCAS_FLOCI_ENABLED:-}" = "1" ] || exit 0

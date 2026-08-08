@@ -107,5 +107,5 @@ After finishing a scenario, free the port(s) used by that scenario's mock attack
 Run:
 
 ```bash
-./scripts/kill-port.sh <PORT>
+./scripts/setup/kill-port.sh <PORT>
 ```

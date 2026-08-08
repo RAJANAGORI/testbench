@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="360" viewBox="0 0 1040 360" role="img" aria-label="SCAS end-to-end lab flow">
+<style>
+  .box { stroke-width: 2; stroke-linejoin: round; }
+  .title { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 700; fill: #0f172a; }
+  .label { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; fill: #0f172a; }
+  .caption { font-family: 'Segoe UI', system-ui, sans-serif; fill: #64748b; font-size: 12px; }
+  .edge-label { font-family: 'Segoe UI', system-ui, sans-serif; fill: #475569; font-size: 11px; font-weight: 600; }
+  .arrow { stroke: #334155; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+  .arrow-dash { stroke: #b91c1c; stroke-width: 2; fill: none; stroke-dasharray: 6 4; marker-end: url(#arrowhead-red); }
+  .arrow-opt { stroke: #64748b; stroke-width: 2; fill: none; stroke-dasharray: 6 4; marker-end: url(#arrowhead-muted); }
+  .group { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.5; }
+  .group-label { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 11px; font-weight: 700; fill: #64748b; letter-spacing: 0.05em; text-transform: uppercase; }
+</style>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#334155"/></marker>
+    <marker id="arrowhead-muted" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/></marker>
+    <marker id="arrowhead-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#b91c1c"/></marker>
+    <filter id="soft" x="-5%" y="-5%" width="110%" height="110%"><feDropShadow dx="0" dy="1" stdDeviation="1.2" flood-opacity="0.08"/></filter>
+  </defs>
+
+<rect width="1040" height="360" fill="#ffffff"/>
+<text class="title" x="24" y="32" font-size="18">End-to-end lab flow</text>
+<text class="caption" x="24" y="52">Exact edges from architecture: Setup → Attack → Evidence; Defense artifacts converge on Kibana</text>
+
+<!-- Setup -->
+<rect class="group" x="24" y="72" width="190" height="200" rx="12"/>
+<text class="group-label" x="40" y="94">Setup</text>
+<rect class="box" x="44" y="112" width="150" height="44" rx="10" fill="#dbeafe" stroke="#2563eb" filter="url(#soft)"/>
+<text class="label" x="119.0" y="134.0" text-anchor="middle" dominant-baseline="middle" font-size="12">./scripts/setup/setup.sh</text>
+<rect class="box" x="44" y="190" width="150" height="50" rx="10" fill="#dbeafe" stroke="#2563eb" filter="url(#soft)"/>
+<text class="label" x="119.0" y="207.0" text-anchor="middle" dominant-baseline="middle" font-size="12">scenarios/NN/</text>
+<text class="label" x="119.0" y="223.0" text-anchor="middle" dominant-baseline="middle" font-size="12">setup.sh</text>
+<path class="arrow" d="M119 156 L119 190"/>
+
+<!-- Attack -->
+<rect class="group" x="250" y="72" width="210" height="200" rx="12"/>
+<text class="group-label" x="266" y="94">Attack</text>
+<rect class="box" x="270" y="112" width="170" height="50" rx="10" fill="#ffedd5" stroke="#ea580c" filter="url(#soft)"/>
+<text class="label" x="355.0" y="129.0" text-anchor="middle" dominant-baseline="middle" font-size="12">Terminal A:</text>
+<text class="label" x="355.0" y="145.0" text-anchor="middle" dominant-baseline="middle" font-size="12">mock server</text>
+<rect class="box" x="270" y="190" width="170" height="50" rx="10" fill="#ffedd5" stroke="#ea580c" filter="url(#soft)"/>
+<text class="label" x="355.0" y="207.0" text-anchor="middle" dominant-baseline="middle" font-size="12">Terminal B:</text>
+<text class="label" x="355.0" y="223.0" text-anchor="middle" dominant-baseline="middle" font-size="12">victim app</text>
+<path class="arrow" d="M355 162 L355 190"/>
+
+<!-- Evidence -->
+<rect class="group" x="500" y="72" width="210" height="200" rx="12"/>
+<text class="group-label" x="516" y="94">Evidence</text>
+<rect class="box" x="520" y="112" width="170" height="50" rx="10" fill="#dcfce7" stroke="#16a34a" filter="url(#soft)"/>
+<text class="label" x="605.0" y="137.0" text-anchor="middle" dominant-baseline="middle" font-size="12">captured-data.json</text>
+<rect class="box" x="520" y="190" width="170" height="50" rx="10" fill="#dcfce7" stroke="#16a34a" filter="url(#soft)"/>
+<text class="label" x="605.0" y="207.0" text-anchor="middle" dominant-baseline="middle" font-size="12">scas-detections</text>
+<text class="label" x="605.0" y="223.0" text-anchor="middle" dominant-baseline="middle" font-size="12">index</text>
+
+<!-- Defense -->
+<rect class="group" x="750" y="72" width="260" height="240" rx="12"/>
+<text class="group-label" x="766" y="94">Defense</text>
+<rect class="box" x="770" y="112" width="100" height="50" rx="10" fill="#e2e8f0" stroke="#475569" filter="url(#soft)"/>
+<text class="label" x="820.0" y="129.0" text-anchor="middle" dominant-baseline="middle" font-size="11">DETECT.md</text>
+<text class="label" x="820.0" y="145.0" text-anchor="middle" dominant-baseline="middle" font-size="11">runbook</text>
+<rect class="box" x="890" y="112" width="100" height="50" rx="10" fill="#e2e8f0" stroke="#475569" filter="url(#soft)"/>
+<text class="label" x="940.0" y="129.0" text-anchor="middle" dominant-baseline="middle" font-size="11">detection-</text>
+<text class="label" x="940.0" y="145.0" text-anchor="middle" dominant-baseline="middle" font-size="11">tools/</text>
+<rect class="box" x="790" y="220" width="180" height="50" rx="10" fill="#e0e7ff" stroke="#4338ca" filter="url(#soft)"/>
+<text class="label" x="880.0" y="245.0" text-anchor="middle" dominant-baseline="middle" font-size="13">Kibana Discover</text>
+
+<!-- A→B already vertical; B→C -->
+<path class="arrow" d="M194 215 L270 137"/>
+<!-- C→D already vertical in Attack -->
+<!-- D→E and D→F -->
+<path class="arrow" d="M440 215 L520 137"/>
+<path class="arrow" d="M440 215 L520 215"/>
+<!-- E→I, G→I, H→I -->
+<path class="arrow" d="M690 137 L880 220"/>
+<path class="arrow" d="M820 162 L880 220"/>
+<path class="arrow" d="M940 162 L880 220"/>
+
+<text class="caption" x="24" y="310">A→B→C→D; D fans out to captured-data.json and scas-detections; DETECT.md, detection-tools/, and evidence all feed Kibana Discover</text>
+<text class="caption" x="24" y="332">Safety (lab constraint, not a Mermaid node): TESTBENCH_MODE=enabled · exfil to localhost only</text>
+</svg>

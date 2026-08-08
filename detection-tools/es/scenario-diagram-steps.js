@@ -2,7 +2,7 @@
  * Learner-facing observability Phase-2 steps for zero-to-hero guides.
  * Keep messages aligned with each scenario README "Run the lab" flow.
  *
- * Unique diagrams: documentation/assets/diagrams/scas-observability-scenario-NN.{excalidraw,svg}
+ * Unique diagrams: documentation/assets/diagrams/observability/{svg,excalidraw}/scas-observability-scenario-NN.*
  * plus Mermaid sequenceDiagram in zero-to-hero guides via generate-observability-section.js.
  */
 

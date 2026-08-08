@@ -15,10 +15,6 @@ By the end of this guide, you will:
 - Apply the **Mitigation Playbook** from this guide and the scenario README
 ---
 
-
-
-
-
 ## Table of Contents
 
 <div class="doc-toc">
@@ -637,9 +633,6 @@ git commit -m "Update package-lock.json with safe dependencies"
 
 ---
 
-
----
-
 ## Mitigation Playbook
 
 Canonical prevention and mitigation controls (aligned with the [scenario README](../../../scenarios/07-transitive-dependency/README.md)). Lab walkthroughs above expand each control with hands-on steps.
@@ -653,7 +646,11 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 ---
 
----
+## Code-level workflow
+
+![Scenario 07 code-level workflow: Transitive Dependency](../../assets/diagrams/codeflow/svg/scas-codeflow-scenario-07.svg)
+
+*Code-level workflow for Scenario 07. Editable source: [`scas-codeflow-scenario-07.excalidraw`](../../assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-07.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-codeflow-diagrams.js`.*
 
 ## Elasticsearch + Kibana observability (optional)
 
@@ -678,9 +675,9 @@ Transitive dependency: victim-app trusts web-utils; hidden data-processor depend
 
 ### End-to-end flow
 
-![Scenario 07 observability flow: Phase 1 collectors → Phase 2 lab steps → Phase 3 localhost exfil → optional Elasticsearch → Kibana Detections and Rules](../../assets/diagrams/scas-observability-scenario-07.svg)
+![Scenario 07 observability flow: Phase 1 collectors → Phase 2 lab steps → Phase 3 localhost exfil → optional Elasticsearch → Kibana Detections and Rules](../../assets/diagrams/observability/svg/scas-observability-scenario-07.svg)
 
-*Swimlane diagram for Scenario 07. Editable source: [`scas-observability-scenario-07.excalidraw`](../../assets/diagrams/scas-observability-scenario-07.excalidraw). Regenerate with `node scripts/generate-scenario-observability-diagrams.js`.*
+*Swimlane diagram for Scenario 07. Editable source: [`scas-observability-scenario-07.excalidraw`](../../assets/diagrams/observability/excalidraw/scas-observability-scenario-07.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-observability-diagrams.js`.*
 
 ### Sequence diagram (Phase 1–5)
 
@@ -750,8 +747,8 @@ Same Phase-2 path as the diagrams above (for skimming / accessibility).
 From the repository root:
 
 ```bash
-./scripts/elasticsearch-up.sh
-./scripts/setup-kibana-data-views.sh   # data views + saved searches for all 23 scenarios
+./scripts/observability/elasticsearch-up.sh
+./scripts/observability/setup-kibana-data-views.sh   # data views + saved searches for all 23 scenarios
 ```
 
 ### Run this scenario with live Elasticsearch forwarding
@@ -861,5 +858,3 @@ You've successfully completed Scenario 7: Transitive Dependency Attack!
 - [npm audit documentation](https://docs.npmjs.com/cli/v8/commands/npm-audit)
 
 🔐 Happy Learning!
-
-

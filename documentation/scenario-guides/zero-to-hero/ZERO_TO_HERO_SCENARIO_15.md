@@ -15,10 +15,6 @@ By the end of this guide, you will:
 - Apply the **Mitigation Playbook** from this guide and the scenario README
 ---
 
-
-
-
-
 ## Table of Contents
 
 <div class="doc-toc">
@@ -522,7 +518,7 @@ diff -r dev-tools/legitimate-dev-tool victim-app/node_modules/dev-tool
 
 ```bash
 # Stop mock server
-../../scripts/kill-port.sh 3015
+../../scripts/setup/kill-port.sh 3015
 
 # Remove compromised tool
 rm -rf victim-app/node_modules/dev-tool
@@ -587,7 +583,11 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 ---
 
----
+## Code-level workflow
+
+![Scenario 15 code-level workflow: Developer Tool Compromise](../../assets/diagrams/codeflow/svg/scas-codeflow-scenario-15.svg)
+
+*Code-level workflow for Scenario 15. Editable source: [`scas-codeflow-scenario-15.excalidraw`](../../assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-15.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-codeflow-diagrams.js`.*
 
 ## Elasticsearch + Kibana observability (optional)
 
@@ -612,9 +612,9 @@ Developer tool compromise: malicious-dev-tool postinstall runs when victim-app i
 
 ### End-to-end flow
 
-![Scenario 15 observability flow: Phase 1 collectors → Phase 2 lab steps → Phase 3 localhost exfil → optional Elasticsearch → Kibana Detections and Rules](../../assets/diagrams/scas-observability-scenario-15.svg)
+![Scenario 15 observability flow: Phase 1 collectors → Phase 2 lab steps → Phase 3 localhost exfil → optional Elasticsearch → Kibana Detections and Rules](../../assets/diagrams/observability/svg/scas-observability-scenario-15.svg)
 
-*Swimlane diagram for Scenario 15. Editable source: [`scas-observability-scenario-15.excalidraw`](../../assets/diagrams/scas-observability-scenario-15.excalidraw). Regenerate with `node scripts/generate-scenario-observability-diagrams.js`.*
+*Swimlane diagram for Scenario 15. Editable source: [`scas-observability-scenario-15.excalidraw`](../../assets/diagrams/observability/excalidraw/scas-observability-scenario-15.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-observability-diagrams.js`.*
 
 ### Sequence diagram (Phase 1–5)
 
@@ -684,8 +684,8 @@ Same Phase-2 path as the diagrams above (for skimming / accessibility).
 From the repository root:
 
 ```bash
-./scripts/elasticsearch-up.sh
-./scripts/setup-kibana-data-views.sh   # data views + saved searches for all 23 scenarios
+./scripts/observability/elasticsearch-up.sh
+./scripts/observability/setup-kibana-data-views.sh   # data views + saved searches for all 23 scenarios
 ```
 
 ### Run this scenario with live Elasticsearch forwarding

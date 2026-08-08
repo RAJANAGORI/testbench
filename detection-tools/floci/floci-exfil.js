@@ -1,6 +1,6 @@
 /**
  * Optional Floci S3 mirror for SCAS scenarios (SCAS_FLOCI_ENABLED=1).
- * Walks up from cwd to find scripts/floci-upload-json.sh (works from victim-app / packages).
+ * Walks up from cwd to find scripts/floci/floci-upload-json.sh (works from victim-app / packages).
  */
 'use strict';
 

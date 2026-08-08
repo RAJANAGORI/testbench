@@ -17,10 +17,6 @@ By the end of this guide, you will:
 - Apply the **Mitigation Playbook** from this guide and the scenario README
 ---
 
-
-
-
-
 ## Table of Contents
 
 <div class="doc-toc">
@@ -567,7 +563,7 @@ cat infrastructure/captured-data.json | jq '.captures[] | {time: .timestamp, pkg
 
 ```bash
 # 1. Stop mock server
-../../scripts/kill-port.sh 3000
+../../scripts/setup/kill-port.sh 3000
 
 # 2. Disable mirror (production parallel: take mirror offline)
 # In lab: stop installing from compromised-mirror
@@ -656,7 +652,11 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 ---
 
----
+## Code-level workflow
+
+![Scenario 11 code-level workflow: Registry Mirror Poisoning](../../assets/diagrams/codeflow/svg/scas-codeflow-scenario-11.svg)
+
+*Code-level workflow for Scenario 11. Editable source: [`scas-codeflow-scenario-11.excalidraw`](../../assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-11.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-codeflow-diagrams.js`.*
 
 ## Elasticsearch + Kibana observability (optional)
 
@@ -681,9 +681,9 @@ Registry mirror poisoning: corporate-app installs from compromised-mirror instea
 
 ### End-to-end flow
 
-![Scenario 11 observability flow: Phase 1 collectors → Phase 2 lab steps → Phase 3 localhost exfil → optional Elasticsearch → Kibana Detections and Rules](../../assets/diagrams/scas-observability-scenario-11.svg)
+![Scenario 11 observability flow: Phase 1 collectors → Phase 2 lab steps → Phase 3 localhost exfil → optional Elasticsearch → Kibana Detections and Rules](../../assets/diagrams/observability/svg/scas-observability-scenario-11.svg)
 
-*Swimlane diagram for Scenario 11. Editable source: [`scas-observability-scenario-11.excalidraw`](../../assets/diagrams/scas-observability-scenario-11.excalidraw). Regenerate with `node scripts/generate-scenario-observability-diagrams.js`.*
+*Swimlane diagram for Scenario 11. Editable source: [`scas-observability-scenario-11.excalidraw`](../../assets/diagrams/observability/excalidraw/scas-observability-scenario-11.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-observability-diagrams.js`.*
 
 ### Sequence diagram (Phase 1–5)
 
@@ -753,8 +753,8 @@ Same Phase-2 path as the diagrams above (for skimming / accessibility).
 From the repository root:
 
 ```bash
-./scripts/elasticsearch-up.sh
-./scripts/setup-kibana-data-views.sh   # data views + saved searches for all 23 scenarios
+./scripts/observability/elasticsearch-up.sh
+./scripts/observability/setup-kibana-data-views.sh   # data views + saved searches for all 23 scenarios
 ```
 
 ### Run this scenario with live Elasticsearch forwarding

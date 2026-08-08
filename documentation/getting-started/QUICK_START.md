@@ -21,8 +21,8 @@ git clone <repository-url>
 cd testbench
 
 # Run setup
-chmod +x scripts/setup.sh
-./scripts/setup.sh
+chmod +x scripts/setup/setup.sh
+./scripts/setup/setup.sh
 ```
 
 ### 3. Enable Testbench Mode

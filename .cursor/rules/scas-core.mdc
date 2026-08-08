@@ -24,14 +24,14 @@ alwaysApply: true
 | DETECT runbook | `scenarios/01-typosquatting/DETECT.md` |
 | ES forward hook | `detection-tools/es/forward-capture.js` |
 | Scripts / doc sync | `documentation/platform/TOOLING.md` |
-| Ports | `scripts/ports.env` |
+| Ports | `scripts/setup/ports.env` |
 
 **Exceptions:** **06** — `credential-harvester.js`, `mock-cdn.js`; **21**/**22** — npm/PyPI sims, **22** uses `mock_server.py`.
 
 Shared-pattern edits: implement in **01** (or exception), `grep` `scenarios/` + `documentation/scenario-guides/`, apply the same diff — do not open all 23 folders.
 
-**Public-count drift:** after adding/removing a lab, run `node scripts/check-info-consistency.js` (CI-enforced in `smoke.yml`).
-**Diagrams:** what to draw lives in `scripts/lib/diagram-specs.js`; validate with `node scripts/check-diagram-assets.js`.
+**Public-count drift:** after adding/removing a lab, run `node scripts/docs/check-info-consistency.js` (CI-enforced in `smoke.yml`).
+**Diagrams:** what to draw lives in `scripts/lib/diagram-specs.js`; validate with `node scripts/diagrams/check-diagram-assets.js`.
 
 ## Exploration
 
