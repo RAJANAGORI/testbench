@@ -176,7 +176,7 @@ function assertObservabilityScenarioLayout(basename, svgText) {
   // --- Phase 2 numbered steps (must match scenario-diagram-steps) ---
   let expectedSteps = 0;
   try {
-    const { SCENARIO_DIAGRAMS } = require('../detection-tools/es/scenario-diagram-steps');
+    const { SCENARIO_DIAGRAMS } = require('../../detection-tools/es/scenario-diagram-steps');
     expectedSteps = (SCENARIO_DIAGRAMS[id] && SCENARIO_DIAGRAMS[id].attack_steps) || [];
     expectedSteps = expectedSteps.length;
   } catch {

@@ -601,8 +601,6 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 *Code-level workflow for Scenario 18. Editable source: [`scas-codeflow-scenario-18.excalidraw`](../../assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-18.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-codeflow-diagrams.js`.*
 
----
-
 ## Elasticsearch + Kibana observability (optional)
 
 Scenario **18 — Package Manager Plugin Attack** is indexed in Elasticsearch when the observability stack is running.

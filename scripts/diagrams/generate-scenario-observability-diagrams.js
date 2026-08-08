@@ -12,7 +12,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { SCENARIO_DIAGRAMS } = require('../detection-tools/es/scenario-diagram-steps');
+const { SCENARIO_DIAGRAMS } = require('../../detection-tools/es/scenario-diagram-steps');
 
 const ROOT = path.resolve(__dirname, '../..');
 const { diagramAssetPaths } = require('../lib/diagram-paths');

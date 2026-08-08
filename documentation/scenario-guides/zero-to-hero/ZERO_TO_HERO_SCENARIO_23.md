@@ -397,8 +397,6 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 *Code-level workflow for Scenario 23. Editable source: [`scas-codeflow-scenario-23.excalidraw`](../../assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-23.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-codeflow-diagrams.js`.*
 
----
-
 ## Elasticsearch + Kibana observability (optional)
 
 Scenario **23 — Trivy Supply Chain Attack (CVE-2026-33634)** is indexed in Elasticsearch when the observability stack is running.

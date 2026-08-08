@@ -571,8 +571,6 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 *Code-level workflow for Scenario 19. Editable source: [`scas-codeflow-scenario-19.excalidraw`](../../assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-19.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-codeflow-diagrams.js`.*
 
----
-
 ## Elasticsearch + Kibana observability (optional)
 
 Scenario **19 — SBOM Manipulation** is indexed in Elasticsearch when the observability stack is running.

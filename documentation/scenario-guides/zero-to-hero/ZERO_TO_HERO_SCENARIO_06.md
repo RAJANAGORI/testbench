@@ -631,8 +631,6 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 *Code-level workflow for Scenario 06. Editable source: [`scas-codeflow-scenario-06.excalidraw`](../../assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-06.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-codeflow-diagrams.js`.*
 
----
-
 ## Elasticsearch + Kibana observability (optional)
 
 Scenario **06 — Shai-Hulud (Self-Replicating)** is indexed in Elasticsearch when the observability stack is running.

@@ -610,8 +610,6 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 *Code-level workflow for Scenario 17. Editable source: [`scas-codeflow-scenario-17.excalidraw`](../../assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-17.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-codeflow-diagrams.js`.*
 
----
-
 ## Elasticsearch + Kibana observability (optional)
 
 Scenario **17 — Multi-Stage Attack Chain** is indexed in Elasticsearch when the observability stack is running.

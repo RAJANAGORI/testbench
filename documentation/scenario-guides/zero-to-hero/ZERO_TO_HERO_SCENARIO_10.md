@@ -341,8 +341,6 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 *Code-level workflow for Scenario 10. Editable source: [`scas-codeflow-scenario-10.excalidraw`](../../assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-10.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-codeflow-diagrams.js`.*
 
----
-
 ## Elasticsearch + Kibana observability (optional)
 
 Scenario **10 — Git Submodule Attack** is indexed in Elasticsearch when the observability stack is running.

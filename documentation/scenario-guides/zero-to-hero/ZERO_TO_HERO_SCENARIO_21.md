@@ -590,8 +590,6 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 *Code-level workflow for Scenario 21. Editable source: [`scas-codeflow-scenario-21.excalidraw`](../../assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-21.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-codeflow-diagrams.js`.*
 
----
-
 ## Elasticsearch + Kibana observability (optional)
 
 Scenario **21 — Axios-style Compromised Release** is indexed in Elasticsearch when the observability stack is running.

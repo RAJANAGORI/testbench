@@ -406,8 +406,6 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 *Code-level workflow for Scenario 05. Editable source: [`scas-codeflow-scenario-05.excalidraw`](../../assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-05.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-codeflow-diagrams.js`.*
 
----
-
 ## Elasticsearch + Kibana observability (optional)
 
 Scenario **05 — Build System Compromise** is indexed in Elasticsearch when the observability stack is running.

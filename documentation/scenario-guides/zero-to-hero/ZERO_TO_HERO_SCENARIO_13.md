@@ -629,8 +629,6 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 *Code-level workflow for Scenario 13. Editable source: [`scas-codeflow-scenario-13.excalidraw`](../../assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-13.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-codeflow-diagrams.js`.*
 
----
-
 ## Elasticsearch + Kibana observability (optional)
 
 Scenario **13 — Package Metadata Manipulation** is indexed in Elasticsearch when the observability stack is running.

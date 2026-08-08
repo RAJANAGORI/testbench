@@ -393,8 +393,6 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 *Code-level workflow for Scenario 04. Editable source: [`scas-codeflow-scenario-04.excalidraw`](../../assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-04.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-codeflow-diagrams.js`.*
 
----
-
 ## Elasticsearch + Kibana observability (optional)
 
 Scenario **04 — Malicious Update** is indexed in Elasticsearch when the observability stack is running.

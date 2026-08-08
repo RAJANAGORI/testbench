@@ -573,8 +573,6 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 *Code-level workflow for Scenario 22. Editable source: [`scas-codeflow-scenario-22.excalidraw`](../../assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-22.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-codeflow-diagrams.js`.*
 
----
-
 ## Elasticsearch + Kibana observability (optional)
 
 Scenario **22 — LiteLLM-style PyPI Compromise** is indexed in Elasticsearch when the observability stack is running.
