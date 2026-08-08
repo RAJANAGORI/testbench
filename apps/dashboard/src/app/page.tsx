@@ -116,7 +116,7 @@ export default function OverviewPage() {
 
       {!cpReachable && (
         <Alert variant="error" >
-          Control plane unreachable. Run <code className="rounded bg-canvas-hover px-1.5 py-0.5 font-mono text-xs">npm run dev:control-plane</code> or <code className="rounded bg-canvas-hover px-1.5 py-0.5 font-mono text-xs">./scripts/start-dashboard.sh</code>
+          Control plane unreachable. Run <code className="rounded bg-canvas-hover px-1.5 py-0.5 font-mono text-xs">npm run dev:control-plane</code> or <code className="rounded bg-canvas-hover px-1.5 py-0.5 font-mono text-xs">./scripts/ui/start-dashboard.sh</code>
         </Alert>
       )}
 

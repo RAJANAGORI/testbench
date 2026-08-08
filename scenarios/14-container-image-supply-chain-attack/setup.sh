@@ -37,6 +37,6 @@ Next steps:
    docker run --rm -e TESTBENCH_MODE=enabled --add-host=host.docker.internal:host-gateway scas-compromised
 
 5) Cleanup
-   ../../scripts/kill-port.sh 3002
+   ../../scripts/setup/kill-port.sh 3002
 EOF
 

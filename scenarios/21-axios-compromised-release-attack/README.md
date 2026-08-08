@@ -116,7 +116,7 @@ Key indicators to capture:
 
 - Use the packed `axios-like-1.14.1.tgz` path from setup to ensure bundled dependency behavior.
 - If no captures appear, verify mock server on `3021` and `TESTBENCH_MODE=enabled`.
-- Reset quickly with `../../scripts/kill-port.sh 3021`.
+- Reset quickly with `../../scripts/setup/kill-port.sh 3021`.
 
 ## Lab Report Prompts
 

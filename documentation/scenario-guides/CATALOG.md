@@ -49,8 +49,8 @@ See [SCENARIO_LEARNING_PATH.md](../learning-path/SCENARIO_LEARNING_PATH.md). Min
 ## Port cleanup
 
 ```bash
-./scripts/kill-port.sh <PORT>
-./scripts/teardown.sh
+./scripts/setup/kill-port.sh <PORT>
+./scripts/setup/teardown.sh
 ```
 
-Full port list: [OPERATIONS.md](../platform/OPERATIONS.md) · source of truth: [`scripts/ports.env`](../../scripts/ports.env)
+Full port list: [OPERATIONS.md](../platform/OPERATIONS.md) · source of truth: [`scripts/setup/ports.env`](../../scripts/setup/ports.env)

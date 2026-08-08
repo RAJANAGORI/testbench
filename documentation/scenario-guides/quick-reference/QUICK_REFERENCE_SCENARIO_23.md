@@ -52,4 +52,4 @@ node scenarios/23-trivy-supply-chain-attack/detection-tools/ci-workflow-auditor.
 
 ## Port cleanup
 
-`./scripts/kill-port.sh 3023`
+`./scripts/setup/kill-port.sh 3023`

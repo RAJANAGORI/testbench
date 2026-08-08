@@ -26,13 +26,13 @@ jobs:
           python-version: 3.11.9
 
       - name: Check public info consistency
-        run: node scripts/check-info-consistency.js
+        run: node scripts/docs/check-info-consistency.js
 
       - name: Check diagram assets
-        run: node scripts/check-diagram-assets.js
+        run: node scripts/diagrams/check-diagram-assets.js
 
       - name: Run smoke tests
         run: |
           node --test detection-tools/package-scanner.test.js
-          chmod +x scripts/*.sh
-          ./scripts/smoke-all-scenarios.sh
+          find scripts -name '*.sh' -type f -exec chmod +x {} +
+          ./scripts/smoke/smoke-all-scenarios.sh

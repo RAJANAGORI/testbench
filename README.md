@@ -14,7 +14,7 @@ Pick **one** path; everything else links out so you are not stuck in a long READ
 |----------|---------|
 | **New to the project** | `./install.sh -y` (SCAS + ES + Floci) · [Full-stack setup](documentation/getting-started/FULL_STACK_SETUP.md) · or `./START_HERE.sh` |
 | **Pi / USB HDD host** | Optional: [`install-external.sh`](install-external.sh) then same stack — [Pi storage](documentation/getting-started/RASPBERRY_PI_STORAGE.md) |
-| **Prefer a browser UI** | [Dashboard](documentation/platform/DASHBOARD.md) — `./scripts/start-dashboard.sh` (localhost only) |
+| **Prefer a browser UI** | [Dashboard](documentation/platform/DASHBOARD.md) — `./scripts/ui/start-dashboard.sh` (localhost only) |
 | **Planning teaching or a curriculum** | Use the [Scenario learning path](documentation/learning-path/SCENARIO_LEARNING_PATH.md) (beginner → intermediate → advanced) |
 | **Comfortable with npm, shells, and isolated VMs** | [Quick Start](#quick-start-experienced-users) below, then open the README inside each scenario folder |
 
@@ -91,7 +91,7 @@ source .scas.env
 
 ```bash
 ./install.sh -y --core-only
-# or: chmod +x scripts/setup.sh && ./scripts/setup.sh
+# or: chmod +x scripts/setup/setup.sh && ./scripts/setup/setup.sh
 ```
 
 ### 3. Run Scenario 1 (example CLI flow)
@@ -112,13 +112,13 @@ You should see captured exercise data from the mock exfiltration endpoint (exact
 ### 4. Clean up the scenario port
 
 ```bash
-./scripts/kill-port.sh 3000
+./scripts/setup/kill-port.sh 3000
 ```
 
 Or clean up all testbench processes and local scenario artifacts:
 
 ```bash
-./scripts/teardown.sh
+./scripts/setup/teardown.sh
 ```
 
 ## Scenario index
@@ -166,7 +166,7 @@ Each scenario includes:
 For workshops, you can index all detection runbooks and runtime events into a local Docker stack (roadmap issue [#22](https://github.com/RAJANAGORI/supply-chain-attack-simulator/issues/22)):
 
 ```bash
-./scripts/elasticsearch-up.sh
+./scripts/observability/elasticsearch-up.sh
 export SCAS_ES_URL=http://localhost:9200   # opt-in live capture forwarding
 ```
 

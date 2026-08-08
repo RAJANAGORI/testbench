@@ -107,7 +107,7 @@ curl -s http://127.0.0.1:3001/captured-data
 ### Cleanup (optional)
 
 ```bash
-../../scripts/kill-port.sh 3001
+../../scripts/setup/kill-port.sh 3001
 ```
 
 ## 📝 Lab Tasks
@@ -167,7 +167,7 @@ node detection-tools/metadata-validator.js victim-app/node_modules/clean-utils
 
 - Run detector against installed package path, not only source package folders.
 - If captures are empty, check `TESTBENCH_MODE` and ensure mock server is running on `3001`.
-- Reset quickly with `../../scripts/kill-port.sh 3001`.
+- Reset quickly with `../../scripts/setup/kill-port.sh 3001`.
 
 ## Lab Report Prompts
 

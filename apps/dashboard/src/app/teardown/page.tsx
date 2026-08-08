@@ -42,7 +42,7 @@ export default function TeardownPage() {
         setPhase('failed');
         setResult(
           (prev) =>
-            `${prev}\n\n✗ Control plane went offline during reset. Run ./scripts/start-dashboard.sh again.`,
+            `${prev}\n\n✗ Control plane went offline during reset. Run ./scripts/ui/start-dashboard.sh again.`,
         );
       }
     } catch (e) {
@@ -74,7 +74,7 @@ export default function TeardownPage() {
         Stops lab mock servers and clears capture files. Does not stop Elasticsearch, Kibana, Floci, or this UI.
       </Alert>
 
-      <Card className="mt-6" title="Full teardown" subtitle="Runs scripts/teardown.sh — watch status below (not Labs dock)">
+      <Card className="mt-6" title="Full teardown" subtitle="Runs scripts/setup/teardown.sh — watch status below (not Labs dock)">
         <div className="flex flex-wrap gap-3">
           <Btn variant="danger" size="lg" disabled={busy} onClick={runTeardown}>
             {busy ? 'Resetting…' : 'Reset environment'}

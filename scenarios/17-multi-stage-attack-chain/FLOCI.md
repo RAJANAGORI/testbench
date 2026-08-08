@@ -3,7 +3,7 @@
 Each attack stage writes a marker to **S3** for cloud-side kill-chain correlation.
 
 ```bash
-# repo root: ./scripts/floci-setup.sh && ./scripts/floci-up.sh && source .floci.env
+# repo root: ./scripts/floci/floci-setup.sh && ./scripts/floci/floci-up.sh && source .floci.env
 export TESTBENCH_MODE=enabled SCAS_FLOCI_ENABLED=1
 ./infrastructure/floci/seed.sh
 node infrastructure/mock-server.js &

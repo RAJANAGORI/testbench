@@ -107,7 +107,7 @@ curl -s http://127.0.0.1:3016/captured-data
 ### Cleanup (optional)
 
 ```bash
-../../scripts/kill-port.sh 3016
+../../scripts/setup/kill-port.sh 3016
 ```
 
 ## 📝 Lab Tasks
@@ -164,7 +164,7 @@ Key indicators to capture:
 
 - Run at least two install cycles to prove persistence behavior.
 - If no captures appear, verify mock server on `3016` and `TESTBENCH_MODE=enabled`.
-- Use `../../scripts/kill-port.sh 3016` for fast cleanup.
+- Use `../../scripts/setup/kill-port.sh 3016` for fast cleanup.
 
 ## Lab Report Prompts
 

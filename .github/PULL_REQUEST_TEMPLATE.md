@@ -6,9 +6,9 @@
 
 ## Testing
 
-- [ ] I ran `node scripts/check-info-consistency.js` (required if scenarios or public counts changed).
-- [ ] I ran `node scripts/check-diagram-assets.js` (required if diagrams under `documentation/assets/diagrams/` or their Markdown embeds changed).
-- [ ] I ran `./scripts/smoke-all-scenarios.sh` locally (or documented why not).
+- [ ] I ran `node scripts/docs/check-info-consistency.js` (required if scenarios or public counts changed).
+- [ ] I ran `node scripts/diagrams/check-diagram-assets.js` (required if diagrams under `documentation/assets/diagrams/` or their Markdown embeds changed).
+- [ ] I ran `./scripts/smoke/smoke-all-scenarios.sh` locally (or documented why not).
 - [ ] I validated the affected scenario(s) end-to-end.
 
 ## Safety checklist (required for scenario changes)

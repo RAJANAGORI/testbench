@@ -2,8 +2,8 @@
 # Push locally built image to Floci ECR (optional Floci track).
 set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
-# shellcheck source=../../../../scripts/floci-bridge.sh
-source "${REPO_ROOT}/scripts/floci-bridge.sh"
+# shellcheck source=../../../../scripts/floci/floci-bridge.sh
+source "${REPO_ROOT}/scripts/floci/floci-bridge.sh"
 
 [ "${TESTBENCH_MODE:-}" = "enabled" ] || { echo "Set TESTBENCH_MODE=enabled"; exit 1; }
 [ "${SCAS_FLOCI_ENABLED:-}" = "1" ] || { echo "Set SCAS_FLOCI_ENABLED=1"; exit 1; }

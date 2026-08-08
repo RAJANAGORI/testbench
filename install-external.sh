@@ -14,7 +14,7 @@
 #   ./install-external.sh --skip-storage -y          # storage already done
 #
 # Storage-only (no SCAS stack):
-#   ./scripts/setup-external-storage.sh /path/to/disk --persist-mount --move-repo
+#   ./scripts/setup/setup-external-storage.sh /path/to/disk --persist-mount --move-repo
 
 set -euo pipefail
 
@@ -101,8 +101,8 @@ if [ "$SKIP_STORAGE" != "1" ]; then
   [ "$YES" = "1" ] && STORAGE_ARGS+=(-y)
 
   echo -e "${YELLOW}Step 1/2 — external storage (Docker data-root on disk)${NC}"
-  chmod +x "${REPO_ROOT}/scripts/setup-external-storage.sh"
-  "${REPO_ROOT}/scripts/setup-external-storage.sh" "$DISK" "${STORAGE_ARGS[@]}"
+  chmod +x "${REPO_ROOT}/scripts/setup/setup-external-storage.sh"
+  "${REPO_ROOT}/scripts/setup/setup-external-storage.sh" "$DISK" "${STORAGE_ARGS[@]}"
 
   if [ -d /mnt/scas-data/scas/repo/supply-chain-attack-simulator ]; then
     REPO_ROOT="/mnt/scas-data/scas/repo/supply-chain-attack-simulator"

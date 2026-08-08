@@ -38,6 +38,6 @@ cat <<'EOF'
    curl -s http://127.0.0.1:3017/captured-data
 
 6) Cleanup:
-   ../../scripts/kill-port.sh 3017
+   ../../scripts/setup/kill-port.sh 3017
 ================================================
 EOF

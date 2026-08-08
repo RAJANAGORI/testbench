@@ -68,7 +68,7 @@ When a higher version exists on the public registry, it may take precedence!
 
 ### Prerequisites
 - Node.js 16+ and npm installed
-- Repository root setup completed once (`./scripts/setup.sh` from the repo root; see [SETUP.md](../../documentation/getting-started/SETUP.md))
+- Repository root setup completed once (`./scripts/setup/setup.sh` from the repo root; see [SETUP.md](../../documentation/getting-started/SETUP.md))
 
 ### Environment Setup
 

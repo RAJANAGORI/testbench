@@ -56,7 +56,7 @@ You work for a security research team. Your task is to:
 
 ### Prerequisites
 - Node.js 16+ and npm installed
-- Repository root setup completed once (`./scripts/setup.sh` from the repo root; see [SETUP.md](../../documentation/getting-started/SETUP.md))
+- Repository root setup completed once (`./scripts/setup/setup.sh` from the repo root; see [SETUP.md](../../documentation/getting-started/SETUP.md))
 
 ### Environment Setup
 

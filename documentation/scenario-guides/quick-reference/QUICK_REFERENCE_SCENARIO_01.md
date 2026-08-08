@@ -30,8 +30,8 @@ echo 'export TESTBENCH_MODE=enabled' >> ~/.zshrc
 source ~/.zshrc
 
 # 2. Run main setup
-chmod +x scripts/setup.sh
-./scripts/setup.sh
+chmod +x scripts/setup/setup.sh
+./scripts/setup/setup.sh
 ```
 
 ## 🎯 Scenario 1: Quick Start

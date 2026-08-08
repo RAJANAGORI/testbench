@@ -30,14 +30,14 @@ Authoritative content lives under **`documentation/`**. The **`docs/`** director
 ## Common commands
 
 ```bash
-source .testbench.env   # created by scripts/setup.sh
+source .testbench.env   # created by scripts/setup/setup.sh
 export TESTBENCH_MODE=enabled
 cd scenarios/01-typosquatting && ./setup.sh
-./scripts/kill-port.sh 3000
-./scripts/kill-port.sh --all
-./scripts/teardown.sh
-./scripts/elasticsearch-up.sh              # optional observability
-./scripts/setup-kibana-data-views.sh
+./scripts/setup/kill-port.sh 3000
+./scripts/setup/kill-port.sh --all
+./scripts/setup/teardown.sh
+./scripts/observability/elasticsearch-up.sh              # optional observability
+./scripts/observability/setup-kibana-data-views.sh
 ```
 
 ## Blue-team quick start
@@ -48,7 +48,7 @@ cd scenarios/01-typosquatting && ./setup.sh
 
 ## Port allow-list
 
-Centralized in [`scripts/ports.env`](../../scripts/ports.env). See [OPERATIONS.md](./OPERATIONS.md).
+Centralized in [`scripts/setup/ports.env`](../../scripts/setup/ports.env). See [OPERATIONS.md](./OPERATIONS.md).
 
 ## Learning path
 

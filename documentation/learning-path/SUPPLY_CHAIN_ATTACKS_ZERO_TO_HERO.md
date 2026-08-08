@@ -92,9 +92,9 @@ Use the same teaching rhythm in every module:
 
 ## Visual Learning Flow
 
-![SCAS curriculum path: Stage 0 Foundations through Stage 5 Capstone Defense-in-Depth](../assets/diagrams/scas-curriculum-stages.svg)
+![SCAS curriculum path: Stage 0 Foundations through Stage 5 Capstone Defense-in-Depth](../assets/diagrams/platform/svg/scas-curriculum-stages.svg)
 
-*Editable source: [`scas-curriculum-stages.excalidraw`](../assets/diagrams/scas-curriculum-stages.excalidraw).*
+*Editable source: [`scas-curriculum-stages.excalidraw`](../assets/diagrams/platform/excalidraw/scas-curriculum-stages.excalidraw).*
 
 ## Reference
 

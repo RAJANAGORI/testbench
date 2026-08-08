@@ -47,5 +47,5 @@ Use this as your runbook for Scenario 21 when you are teaching live or practicin
 
 ## Port cleanup
 
-`sudo ./scripts/kill-port.sh 3021`
+`sudo ./scripts/setup/kill-port.sh 3021`
 

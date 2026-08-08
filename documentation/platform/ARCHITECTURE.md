@@ -18,7 +18,7 @@ supply-chain-attack-simulator/
 ├── observability/          # Optional Docker ES + Kibana stack
 ├── documentation/          # Canonical docs (YOU ARE HERE)
 ├── docs/                   # GitHub Pages (index.html + symlinks → documentation/)
-├── scripts/                # setup, teardown, smoke, elasticsearch-up, ports.env
+├── scripts/                # setup/, smoke/, observability/, diagrams/, docs/, ui/, floci/, lib/
 ├── vulnerable-apps/        # Sample vulnerable applications
 └── .github/                # CI (smoke.yml), issue templates
 ```
@@ -75,20 +75,20 @@ Forwarding runs only when `SCAS_ES_URL` is set (see [DETECTION_AND_OBSERVABILITY
 
 ## Trust boundaries
 
-![SCAS trust boundaries: SCAS → Payload; Payload → localhost mocks and Floci; Payload must not reach External C2 / real AWS](../assets/diagrams/scas-threat-boundaries.svg)
+![SCAS trust boundaries: SCAS → Payload; Payload → localhost mocks and Floci; Payload must not reach External C2 / real AWS](../assets/diagrams/platform/svg/scas-threat-boundaries.svg)
 
-*Editable source: [`scas-threat-boundaries.excalidraw`](../assets/diagrams/scas-threat-boundaries.excalidraw). Full narrative: local `documentation/product/SECURITY_THREAT_MODEL.md` (gitignored draft).*
+*Editable source: [`scas-threat-boundaries.excalidraw`](../assets/diagrams/platform/excalidraw/scas-threat-boundaries.excalidraw). Full narrative: local `documentation/product/SECURITY_THREAT_MODEL.md` (gitignored draft).*
 
 ## End-to-end lab flow
 
-![SCAS end-to-end lab flow: setup.sh → scenario setup → mock → victim → captured-data.json & scas-detections; DETECT.md + detection-tools + evidence → Kibana Discover](../assets/diagrams/scas-e2e-lab-flow.svg)
+![SCAS end-to-end lab flow: setup.sh → scenario setup → mock → victim → captured-data.json & scas-detections; DETECT.md + detection-tools + evidence → Kibana Discover](../assets/diagrams/platform/svg/scas-e2e-lab-flow.svg)
 
-*Editable source: [`scas-e2e-lab-flow.excalidraw`](../assets/diagrams/scas-e2e-lab-flow.excalidraw).*
+*Editable source: [`scas-e2e-lab-flow.excalidraw`](../assets/diagrams/platform/excalidraw/scas-e2e-lab-flow.excalidraw).*
 
 ## CI and quality
 
-- **Smoke tests:** `.github/workflows/smoke.yml` runs `scripts/check-info-consistency.js` then `scripts/smoke-all-scenarios.sh`
-- **Observability smoke:** `scripts/smoke-observability.sh` (optional ES stack)
+- **Smoke tests:** `.github/workflows/smoke.yml` runs `scripts/docs/check-info-consistency.js` then `scripts/smoke/smoke-all-scenarios.sh`
+- **Observability smoke:** `scripts/observability/smoke-observability.sh` (optional ES stack)
 
 ## Related docs
 

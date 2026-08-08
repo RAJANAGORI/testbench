@@ -12,8 +12,8 @@ The Floci helper scripts are also catalogued in [Tooling & doc maintenance](../p
 
 ```bash
 cd supply-chain-attack-simulator
-./scripts/floci-setup.sh --image   # fast start
-# or: ./scripts/floci-setup.sh     # full source build
+./scripts/floci/floci-setup.sh --image   # fast start
+# or: ./scripts/floci/floci-setup.sh     # full source build
 ```
 
 Creates `infrastructure/floci/`, `.floci.env` (`SCAS_FLOCI_ENABLED=1`), and Docker orchestration for **`scas-floci`** on `:4566`.
@@ -21,7 +21,7 @@ Creates `infrastructure/floci/`, `.floci.env` (`SCAS_FLOCI_ENABLED=1`), and Dock
 ## Quick start (every lab session)
 
 ```bash
-./scripts/floci-up.sh && ./scripts/floci-status.sh
+./scripts/floci/floci-up.sh && ./scripts/floci/floci-status.sh
 source .testbench.env && source .floci.env
 cd scenarios/NN-slug
 ./infrastructure/floci/seed.sh
@@ -36,7 +36,7 @@ cd scenarios/NN-slug
 |-------|------|
 | Mock server (`:3000`–`:3023`) | Primary exfil — always runs |
 | `floci-exfil.js` / `floci_exfil.py` | Opt-in dual-write when `SCAS_FLOCI_ENABLED=1` |
-| `scripts/floci-bridge.sh` | S3, ECR, Secrets, SQS, SNS, EventBridge, STS, ECS, IAM, CodePipeline, Step Functions, Glue, SSM, CloudWatch Logs |
+| `scripts/floci/floci-bridge.sh` | S3, ECR, Secrets, SQS, SNS, EventBridge, STS, ECS, IAM, CodePipeline, Step Functions, Glue, SSM, CloudWatch Logs |
 | `detection-tools/floci/*` | Blue-team verify scripts |
 
 **Safety:** Cloud exfil targets `127.0.0.1:4566` only; gated by `TESTBENCH_MODE=enabled`.
@@ -45,12 +45,12 @@ cd scenarios/NN-slug
 
 | Path | Purpose |
 |------|---------|
-| `scripts/floci-bridge.sh` | AWS emulator helpers + `scas_floci_seed_lookalike_secrets` |
+| `scripts/floci/floci-bridge.sh` | AWS emulator helpers + `scas_floci_seed_lookalike_secrets` |
 | `scenarios/_shared/generate-lookalike-secrets.py` | Generates LAB-ONLY lookalike tokens locally (gitignored outputs) |
 | `scenarios/_shared/ensure-lookalike-secrets.sh` | Create `lookalike-secrets.{env,json}` if missing |
 | `scenarios/_shared/plant-lookalike-secrets.sh` | Plant victim `.npmrc` / `.env` fixtures (05, 06, 21, 23) |
 | `scenarios/_shared/LOOKALIKE_SECRETS.md` | How generated lookalikes work |
-| `scripts/floci-upload-json.sh` | JSON → `s3://scas-scNN-artifacts/exfil/` |
+| `scripts/floci/floci-upload-json.sh` | JSON → `s3://scas-scNN-artifacts/exfil/` |
 | `detection-tools/floci/floci-exfil.js` | Node `uploadJson()` |
 | `detection-tools/floci/floci_exfil.py` | Python `upload_json()` (scenario 22) |
 | `detection-tools/floci/s3-exfil-check.sh` | S3 exfil detector (all scenarios) |
@@ -104,9 +104,9 @@ SCAS runs **`scas-floci` on 4566 only** — not floci-ui (`:3000`/`:4500`). SCAS
 
 | Script | Purpose |
 |--------|---------|
-| `scripts/floci-setup.sh` | Install Floci (`--image` for fast start) |
-| `scripts/floci-up.sh` / `floci-down.sh` / `floci-status.sh` | Lifecycle |
-| `scripts/floci-bridge.sh` | Shared AWS helpers |
+| `scripts/floci/floci-setup.sh` | Install Floci (`--image` for fast start) |
+| `scripts/floci/floci-up.sh` / `floci-down.sh` / `floci-status.sh` | Lifecycle |
+| `scripts/floci/floci-bridge.sh` | Shared AWS helpers |
 | `scenarios/NN-*/infrastructure/floci/seed.sh` | Per-scenario baseline |
 | `scenarios/NN-*/infrastructure/floci/verify.sh` | Blue-team evidence |
 

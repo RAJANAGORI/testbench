@@ -15,7 +15,7 @@
 | [`install.sh`](../../install.sh) | Everyone / workshops | Generic full stack (prereqs, npm, ES/Kibana, Floci) |
 | [`install-external.sh`](../../install-external.sh) | External-disk hosts only | Step 1: move Docker/repo onto the disk · Step 2: call `install.sh` |
 
-Low-level storage helper (no SCAS stack): [`scripts/setup-external-storage.sh`](../../scripts/setup-external-storage.sh).
+Low-level storage helper (no SCAS stack): [`scripts/setup/setup-external-storage.sh`](../../scripts/setup/setup-external-storage.sh).
 
 ## One-shot on an external disk
 
@@ -48,7 +48,7 @@ This:
 ### Storage only (no ES/Floci yet)
 
 ```bash
-./scripts/setup-external-storage.sh /run/media/$USER/<disk> --persist-mount --move-repo
+./scripts/setup/setup-external-storage.sh /run/media/$USER/<disk> --persist-mount --move-repo
 ```
 
 ## Layout
@@ -74,11 +74,11 @@ Published `floci/floci:*` images are **GraalVM native** binaries that require **
 
 | Board | LSE? | Floci path |
 |-------|------|------------|
-| Pi 4 (Cortex-A72) | No | JVM source build: `./scripts/floci-setup.sh --auto` then `./scripts/floci-up.sh` |
+| Pi 4 (Cortex-A72) | No | JVM source build: `./scripts/floci/floci-setup.sh --auto` then `./scripts/floci/floci-up.sh` |
 | Pi 5 | Yes | Published image OK (`--image` / UI Setup) |
 | amd64 / Apple Silicon | Yes | Published image OK |
 
-UI **Setup** already uses `--auto`. If you previously ran Setup with `--image` on a Pi 4, re-run Setup (or `./scripts/floci-setup.sh --auto`) so `FLOCI_USE_IMAGE=0` and the JVM image is built — first build is slow.
+UI **Setup** already uses `--auto`. If you previously ran Setup with `--image` on a Pi 4, re-run Setup (or `./scripts/floci/floci-setup.sh --auto`) so `FLOCI_USE_IMAGE=0` and the JVM image is built — first build is slow.
 
 ## Related
 

@@ -12,11 +12,13 @@ function observabilityBasename(scenarioId) {
 }
 
 function observabilityRel(scenarioId) {
-  return `../../assets/diagrams/${observabilityBasename(scenarioId)}.svg`;
+  const base = observabilityBasename(scenarioId);
+  return `../../assets/diagrams/observability/svg/${base}.svg`;
 }
 
 function observabilitySourceRel(scenarioId) {
-  return `../../assets/diagrams/${observabilityBasename(scenarioId)}.excalidraw`;
+  const base = observabilityBasename(scenarioId);
+  return `../../assets/diagrams/observability/excalidraw/${base}.excalidraw`;
 }
 
 function shortLabel(label) {
@@ -36,7 +38,7 @@ function escapeMdCell(value) {
 
 /**
  * Unique per-scenario Excalidraw→SVG embed.
- * Assets from: node scripts/generate-scenario-observability-diagrams.js
+ * Assets from: node scripts/diagrams/generate-scenario-observability-diagrams.js
  */
 function buildSvgDiagram(scenario) {
   const id = scenario.scenario_id;
@@ -44,7 +46,7 @@ function buildSvgDiagram(scenario) {
   return [
     `![Scenario ${id} observability flow: Phase 1 collectors → Phase 2 lab steps → Phase 3 localhost exfil → optional Elasticsearch → Kibana Detections and Rules](${observabilityRel(id)})`,
     '',
-    `*Swimlane diagram for Scenario ${id}. Editable source: [\`${base}.excalidraw\`](${observabilitySourceRel(id)}). Regenerate with \`node scripts/generate-scenario-observability-diagrams.js\`.*`,
+    `*Swimlane diagram for Scenario ${id}. Editable source: [\`${base}.excalidraw\`](${observabilitySourceRel(id)}). Regenerate with \`node scripts/diagrams/generate-scenario-observability-diagrams.js\`.*`,
   ].join('\n');
 }
 
@@ -193,8 +195,8 @@ function buildSection(scenario) {
     'From the repository root:',
     '',
     '```bash',
-    './scripts/elasticsearch-up.sh',
-    './scripts/setup-kibana-data-views.sh   # data views + saved searches for all 23 scenarios',
+    './scripts/observability/elasticsearch-up.sh',
+    './scripts/observability/setup-kibana-data-views.sh   # data views + saved searches for all 23 scenarios',
     '```',
     '',
     '### Run this scenario with live Elasticsearch forwarding',
@@ -281,26 +283,48 @@ function findInsertIndex(lines) {
   return best;
 }
 
+const OBS_HEADING_RE =
+  /^## Elasticsearch \+ Kibana observability \(optional\)\s*$/m;
+
+/**
+ * Remove every observability section (with or without leading ---).
+ * Previous injectors could leave a bare copy AND a --- wrapped copy, so
+ * replace-one-match logic stacked duplicates across regenerations.
+ */
+function stripObservabilitySections(content) {
+  // Match optional --- rules (with blank lines) + the full section until the next
+  // non-observability H2 (or EOF). Must allow \n between --- and the heading —
+  // otherwise a leftover --- stacks on every regeneration.
+  const blockRe =
+    /(?:^|\n)(?:---\s*\n+)*## Elasticsearch \+ Kibana observability \(optional\)\s*\n[\s\S]*?(?=\n## (?!Elasticsearch \+ Kibana observability)|\s*$)/g;
+
+  let next = content.replace(blockRe, '\n');
+  next = next.replace(/\n---\n(?:\s*\n---\n)+/g, '\n---\n');
+  next = next.replace(/\n{3,}/g, '\n\n');
+  return next;
+}
+
 function patchGuide(guidePath, section) {
   if (!fs.existsSync(guidePath)) {
     return { status: 'missing', path: guidePath };
   }
 
   let content = fs.readFileSync(guidePath, 'utf8');
-  content = content.replace(/\n---\n\n---\n+/g, '\n---\n\n');
-  const blockRe = /\n---\n\n## Elasticsearch \+ Kibana observability \(optional\)[\s\S]*?(?=\n## Part |\n## 🆘|\n## 📚|\n## ⚠️|\n## 🎉|$)/;
+  const hadSection = OBS_HEADING_RE.test(content);
+  content = stripObservabilitySections(content);
 
-  if (blockRe.test(content)) {
-    content = content.replace(blockRe, `\n---\n\n${section.trim()}\n`);
-    fs.writeFileSync(guidePath, content);
-    return { status: 'updated', path: guidePath };
-  }
-
-  const lines = content.split('\n');
+  // buildSection already starts with ---\n\n## … — do not wrap it again.
+  const block = `${section.trim()}\n`;
+  const lines = content.replace(/\s*$/, '\n').split('\n');
   const insertAt = findInsertIndex(lines);
-  lines.splice(insertAt, 0, '---', '', section.trim(), '');
-  fs.writeFileSync(guidePath, lines.join('\n'));
-  return { status: 'patched', path: guidePath };
+  lines.splice(insertAt, 0, ...block.split('\n'), '');
+  content = lines.join('\n');
+  content = content.replace(/\n---\n(?:\s*\n---\n)+/g, '\n---\n');
+  content = content.replace(/\n{3,}/g, '\n\n');
+  if (!content.endsWith('\n')) content += '\n';
+
+  fs.writeFileSync(guidePath, content);
+  return { status: hadSection ? 'updated' : 'patched', path: guidePath };
 }
 
 function main() {

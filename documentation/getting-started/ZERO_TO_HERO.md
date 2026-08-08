@@ -16,8 +16,8 @@ This guide gets a newcomer from zero to running their first scenario and underst
    ```bash
    git clone <repository-url>
    cd supply-chain-attack-simulator
-   chmod +x scripts/setup.sh
-   ./scripts/setup.sh
+   chmod +x scripts/setup/setup.sh
+   ./scripts/setup/setup.sh
    ```
 
 3) Safety first

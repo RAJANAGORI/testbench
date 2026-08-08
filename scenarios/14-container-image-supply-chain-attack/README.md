@@ -94,7 +94,7 @@ docker run --rm -e TESTBENCH_MODE=enabled --add-host=host.docker.internal:host-g
 ### Cleanup (optional)
 
 ```bash
-../../scripts/kill-port.sh 3002
+../../scripts/setup/kill-port.sh 3002
 ```
 
 ## Attack Walkthrough
@@ -169,7 +169,7 @@ Note: this scenario is valid without Docker; scanner + runtime script already mo
 
 - Start with static comparison and scanner output before runtime.
 - If no capture appears, confirm `TESTBENCH_MODE=enabled` and mock server is running on port `3002`.
-- Use `../../scripts/kill-port.sh 3002` if the mock server port is busy.
+- Use `../../scripts/setup/kill-port.sh 3002` if the mock server port is busy.
 
 ## Lab Report Prompts
 

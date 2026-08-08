@@ -3,8 +3,8 @@
 set -euo pipefail
 SCENARIO_ID="${1:-14}"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-# shellcheck source=../../scripts/floci-bridge.sh
-source "${ROOT}/scripts/floci-bridge.sh"
+# shellcheck source=../../scripts/floci/floci-bridge.sh
+source "${ROOT}/scripts/floci/floci-bridge.sh"
 
 scas_floci_require
 REPO="$(scas_floci_ecr_repo_for_scenario "$SCENARIO_ID")"

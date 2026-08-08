@@ -132,7 +132,7 @@ Key indicators to capture:
 
 - Install `1.82.8` with `TESTBENCH_MODE=enabled` before testing `.pth` startup behavior.
 - If no captures appear, verify mock server on `3022` and active virtualenv.
-- Use `../../scripts/kill-port.sh 3022` for cleanup.
+- Use `../../scripts/setup/kill-port.sh 3022` for cleanup.
 
 ## Lab Report Prompts
 

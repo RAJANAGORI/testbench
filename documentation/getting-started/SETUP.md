@@ -84,8 +84,8 @@ cd testbench
 ### Step 3: Run Setup Script
 
 ```bash
-chmod +x scripts/setup.sh
-./scripts/setup.sh
+chmod +x scripts/setup/setup.sh
+./scripts/setup/setup.sh
 ```
 
 The setup script will:
@@ -197,14 +197,14 @@ source .testbench.env
 Use the built-in script with the testbench allow-list:
 
 ```bash
-./scripts/kill-port.sh 3000
-./scripts/kill-port.sh --all
+./scripts/setup/kill-port.sh 3000
+./scripts/setup/kill-port.sh --all
 ```
 
 For a full cleanup:
 
 ```bash
-./scripts/teardown.sh
+./scripts/setup/teardown.sh
 ```
 
 ### Issue: "npm install fails"
@@ -228,7 +228,7 @@ npm install
 
 ```bash
 # Make scripts executable
-chmod +x scripts/*.sh
+find scripts -name '*.sh' -type f -exec chmod +x {} +
 chmod +x scenarios/*/setup.sh
 chmod +x detection-tools/*.sh
 ```
@@ -238,12 +238,12 @@ chmod +x detection-tools/*.sh
 Use teardown:
 
 ```bash
-./scripts/teardown.sh
+./scripts/setup/teardown.sh
 ```
 
 This will:
 
-- Free known testbench ports from `scripts/ports.env`
+- Free known testbench ports from `scripts/setup/ports.env`
 - Remove captured files (`captured-data.json`, `captured-credentials.json`)
 - Remove scenario/sample-app `node_modules`
 

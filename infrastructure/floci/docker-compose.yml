@@ -1,8 +1,8 @@
 # SCAS — local Floci AWS emulator (floci-io/floci)
-# Clone source first: ../../scripts/floci-setup.sh
+# Clone source first: ../../scripts/floci/floci-setup.sh
 #
-# Start: ../../scripts/floci-up.sh
-# Stop:  ../../scripts/floci-down.sh
+# Start: ../../scripts/floci/floci-up.sh
+# Stop:  ../../scripts/floci/floci-down.sh
 
 name: scas-floci
 

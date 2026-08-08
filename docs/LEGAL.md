@@ -53,10 +53,10 @@ This repository includes a canonical authorship record in [`SCAS_PROVENANCE.json
 To check a checkout:
 
 ```bash
-./scripts/verify-provenance.sh
+./scripts/provenance/verify-provenance.sh
 ```
 
-Scenario labs inherit the same fingerprint via `scenarios/_shared/scenario-provenance.js` (loaded by mock servers) and `./scripts/embed-scenario-provenance.sh` (re-applies markers to all scenario `setup.sh`, templates, and infrastructure files).
+Scenario labs inherit the same fingerprint via `scenarios/_shared/scenario-provenance.js` (loaded by mock servers) and `./scripts/provenance/embed-scenario-provenance.sh` (re-applies markers to all scenario `setup.sh`, templates, and infrastructure files).
 
 If someone removes visible copyright notices but leaves these markers (or vice versa), the mismatch supports a claim that the copy originated here. **Git commit history on the canonical repository remains the strongest technical evidence**; fingerprints supplement LICENSE and DMCA processes—they do not replace them.
 

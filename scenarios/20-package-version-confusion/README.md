@@ -107,7 +107,7 @@ curl -s http://127.0.0.1:3020/captured-data
 ### Cleanup (optional)
 
 ```bash
-../../scripts/kill-port.sh 3020
+../../scripts/setup/kill-port.sh 3020
 ```
 
 ## 📝 Lab Tasks
@@ -162,7 +162,7 @@ Key indicators to capture:
 
 - Confirm selected version artifact before and after `npm start`.
 - If capture is empty, verify mock server on `3020` and `TESTBENCH_MODE=enabled`.
-- Use `../../scripts/kill-port.sh 3020` for cleanup.
+- Use `../../scripts/setup/kill-port.sh 3020` for cleanup.
 
 ## Lab Report Prompts
 

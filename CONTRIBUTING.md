@@ -46,8 +46,8 @@ example code from your employer), resolve that **before** opening a PR.
 ## Local setup
 
 ```bash
-chmod +x scripts/setup.sh
-./scripts/setup.sh
+chmod +x scripts/setup/setup.sh
+./scripts/setup/setup.sh
 ```
 
 Recommended toolchain:
@@ -84,8 +84,8 @@ Scenario docs use shared tooling under `scripts/`. The **canonical reference** f
 Quick version after editing scenario mitigations or headings:
 
 ```bash
-node scripts/sync-mitigation-gaps.js     # sync DETECT.md + README playbooks (01–06)
-node scripts/inject-markdown-toc.js all  # rebuild every Table of Contents
+node scripts/docs/sync-mitigation-gaps.js     # sync DETECT.md + README playbooks (01–06)
+node scripts/docs/inject-markdown-toc.js all  # rebuild every Table of Contents
 ```
 
 Canonical mitigation bullets live in `scripts/lib/mitigation-playbooks.js` — edit there first. Learner docs (`documentation/scenario-guides/zero-to-hero/`) carry a **Mitigation Playbook** + **Table of Contents**; blue-team `DETECT.md` runbooks carry detection content plus a short **Mitigation** section.
@@ -103,13 +103,13 @@ Run these locally before opening a PR:
 
 ```bash
 # Catches lab-count / index / public-doc drift (fast; also runs in CI)
-node scripts/check-info-consistency.js
+node scripts/docs/check-info-consistency.js
 
 # Catches Excalidraw/SVG diagram contract drift (nodes, edges, embeds, XML &)
-node scripts/check-diagram-assets.js
+node scripts/diagrams/check-diagram-assets.js
 
-chmod +x scripts/*.sh
-./scripts/smoke-all-scenarios.sh
+find scripts -name '*.sh' -type f -exec chmod +x {} +
+./scripts/smoke/smoke-all-scenarios.sh
 ```
 
 If your change only affects one scenario, you should still run that scenario fully and confirm capture output appears as expected. When you **add or remove a scenario**, update every public surface that states the lab count or lists `01–NN`, then re-run `check-info-consistency.js`. When you **edit diagrams**, update `scripts/lib/diagram-specs.js` if the story changed, keep `.excalidraw`+`.svg` pairs, then re-run `check-diagram-assets.js`.

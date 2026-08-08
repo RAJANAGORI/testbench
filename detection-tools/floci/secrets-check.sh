@@ -4,8 +4,8 @@ set -euo pipefail
 
 SECRET_NAME="${1:?usage: secrets-check.sh <secret-name> e.g. scas/sc06/decoy-npm-token}"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-# shellcheck source=../../scripts/floci-bridge.sh
-source "${ROOT}/scripts/floci-bridge.sh"
+# shellcheck source=../../scripts/floci/floci-bridge.sh
+source "${ROOT}/scripts/floci/floci-bridge.sh"
 
 scas_floci_require
 echo "🔍 Secrets Manager check — ${SECRET_NAME}"

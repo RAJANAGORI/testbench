@@ -55,9 +55,9 @@ echo $TESTBENCH_MODE   # should print: enabled
 A previous mock server is still running:
 
 ```bash
-./scripts/kill-port.sh 3000
+./scripts/setup/kill-port.sh 3000
 # or all known ports:
-./scripts/kill-port.sh --all
+./scripts/setup/kill-port.sh --all
 ```
 
 Port reference: [OPERATIONS.md](./OPERATIONS.md) · [CATALOG.md](../scenario-guides/CATALOG.md)
@@ -113,7 +113,7 @@ node detection-tools/es/ship-captures.js
 Create data views and saved searches:
 
 ```bash
-./scripts/setup-kibana-data-views.sh
+./scripts/observability/setup-kibana-data-views.sh
 ```
 
 ### Smoke observability test fails on scanner findings
@@ -167,5 +167,5 @@ You may fork and use **software** under MIT with attribution. **Documentation** 
 
 1. Check the scenario README: `scenarios/NN-*/README.md`
 2. Check the zero-to-hero guide: `documentation/scenario-guides/zero-to-hero/ZERO_TO_HERO_SCENARIO_NN.md`
-3. Run `./scripts/teardown.sh` and retry from `./setup.sh`
+3. Run `./scripts/setup/teardown.sh` and retry from `./setup.sh`
 4. Open an issue with scenario number, OS, and error output

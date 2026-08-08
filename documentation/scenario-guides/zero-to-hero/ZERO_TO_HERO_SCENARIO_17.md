@@ -15,10 +15,6 @@ By the end of this guide, you will:
 - Apply the **Mitigation Playbook** from this guide and the scenario README
 ---
 
-
-
-
-
 ## Table of Contents
 
 <div class="doc-toc">
@@ -70,9 +66,9 @@ Stage 3 — Replication / Persistence
 
 ### Visual Example: Stage Dependencies
 
-![Scenario 17 stage dependencies: stage1-access-lib writes .stolen/token.json to stage2-compromised-lib, which reads the token into replication spread.json; each stage captures to mock server :3017](../../assets/diagrams/scas-scenario-17-stage-chain.svg)
+![Scenario 17 stage dependencies: stage1-access-lib writes .stolen/token.json to stage2-compromised-lib, which reads the token into replication spread.json; each stage captures to mock server :3017](../../assets/diagrams/platform/svg/scas-scenario-17-stage-chain.svg)
 
-*Editable source: [`scas-scenario-17-stage-chain.excalidraw`](../../assets/diagrams/scas-scenario-17-stage-chain.excalidraw).*
+*Editable source: [`scas-scenario-17-stage-chain.excalidraw`](../../assets/diagrams/platform/excalidraw/scas-scenario-17-stage-chain.excalidraw).*
 
 ### How Multi-Stage Attacks Work
 
@@ -535,7 +531,7 @@ Map to MITRE-style supply chain framing:
 
 ```bash
 # Stop mock server
-../../scripts/kill-port.sh 3017
+../../scripts/setup/kill-port.sh 3017
 
 # Remove stage packages
 cd victim-app
@@ -608,6 +604,12 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 ---
 
+## Code-level workflow
+
+![Scenario 17 code-level workflow: Multi-Stage Attack Chain](../../assets/diagrams/codeflow/svg/scas-codeflow-scenario-17.svg)
+
+*Code-level workflow for Scenario 17. Editable source: [`scas-codeflow-scenario-17.excalidraw`](../../assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-17.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-codeflow-diagrams.js`.*
+
 ---
 
 ## Elasticsearch + Kibana observability (optional)
@@ -633,9 +635,9 @@ Multi-stage chain: stage1-access-lib enables stage2-compromised-lib exfil at run
 
 ### End-to-end flow
 
-![Scenario 17 observability flow: Phase 1 collectors → Phase 2 lab steps → Phase 3 localhost exfil → optional Elasticsearch → Kibana Detections and Rules](../../assets/diagrams/scas-observability-scenario-17.svg)
+![Scenario 17 observability flow: Phase 1 collectors → Phase 2 lab steps → Phase 3 localhost exfil → optional Elasticsearch → Kibana Detections and Rules](../../assets/diagrams/observability/svg/scas-observability-scenario-17.svg)
 
-*Swimlane diagram for Scenario 17. Editable source: [`scas-observability-scenario-17.excalidraw`](../../assets/diagrams/scas-observability-scenario-17.excalidraw). Regenerate with `node scripts/generate-scenario-observability-diagrams.js`.*
+*Swimlane diagram for Scenario 17. Editable source: [`scas-observability-scenario-17.excalidraw`](../../assets/diagrams/observability/excalidraw/scas-observability-scenario-17.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-observability-diagrams.js`.*
 
 ### Sequence diagram (Phase 1–5)
 
@@ -705,8 +707,8 @@ Same Phase-2 path as the diagrams above (for skimming / accessibility).
 From the repository root:
 
 ```bash
-./scripts/elasticsearch-up.sh
-./scripts/setup-kibana-data-views.sh   # data views + saved searches for all 23 scenarios
+./scripts/observability/elasticsearch-up.sh
+./scripts/observability/setup-kibana-data-views.sh   # data views + saved searches for all 23 scenarios
 ```
 
 ### Run this scenario with live Elasticsearch forwarding

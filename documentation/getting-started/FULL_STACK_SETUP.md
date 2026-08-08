@@ -21,7 +21,7 @@ This is the **generic** workshop installer: prerequisites, `TESTBENCH_MODE`, npm
 
 ```bash
 source .scas.env                 # every session
-./scripts/start-dashboard.sh    # optional UI
+./scripts/ui/start-dashboard.sh    # optional UI
 ```
 
 | Flag | Effect |
@@ -32,7 +32,7 @@ source .scas.env                 # every session
 | `--skip-floci` | Skip Floci |
 | `--no-start` | Configure / pull images but do not start containers |
 | `--floci-build` | Build Floci from vendor source instead of `--image` |
-| `--with-ui` | Exec `./scripts/start-dashboard.sh` at the end |
+| `--with-ui` | Exec `./scripts/ui/start-dashboard.sh` at the end |
 
 Manual step-by-step remains below if you prefer to install piece by piece.
 
@@ -109,8 +109,8 @@ cd supply-chain-attack-simulator
 ### Step 2: Run the main setup script
 
 ```bash
-chmod +x scripts/setup.sh START_HERE.sh
-./scripts/setup.sh
+chmod +x scripts/setup/setup.sh START_HERE.sh
+./scripts/setup/setup.sh
 ```
 
 When prompted, type `y` to continue. This script:
@@ -148,9 +148,9 @@ Do this once per machine; start/stop per lab session. Full reference: [Detection
 From **repo root**:
 
 ```bash
-chmod +x scripts/elasticsearch-up.sh scripts/elasticsearch-down.sh \
-  scripts/setup-kibana-data-views.sh scripts/smoke-observability.sh
-./scripts/elasticsearch-up.sh
+chmod +x scripts/observability/elasticsearch-up.sh scripts/observability/elasticsearch-down.sh \
+  scripts/observability/setup-kibana-data-views.sh scripts/observability/smoke-observability.sh
+./scripts/observability/elasticsearch-up.sh
 ```
 
 This will:
@@ -175,7 +175,7 @@ In Kibana → **Discover**, you should see data views **SCAS Rules** and **SCAS 
 If data views are missing:
 
 ```bash
-./scripts/setup-kibana-data-views.sh
+./scripts/observability/setup-kibana-data-views.sh
 ```
 
 ### Step 3: Enable live capture forwarding (opt-in)
@@ -198,7 +198,7 @@ Without `SCAS_ES_URL`, labs still work — captures stay in local JSON files onl
 ### Step 4: Verify observability
 
 ```bash
-./scripts/smoke-observability.sh
+./scripts/observability/smoke-observability.sh
 ```
 
 Expect `PASS` for rules count and detections after shipping.
@@ -218,7 +218,7 @@ From **repo root**, pick one option:
 Published Docker image; no Java build.
 
 ```bash
-./scripts/floci-setup.sh --image
+./scripts/floci/floci-setup.sh --image
 ```
 
 **Option B — Build from source**
@@ -226,7 +226,7 @@ Published Docker image; no Java build.
 Clones `floci-io/floci` into `vendor/floci-aws` (~5–15 min first time).
 
 ```bash
-./scripts/floci-setup.sh
+./scripts/floci/floci-setup.sh
 ```
 
 This creates:
@@ -238,8 +238,8 @@ This creates:
 ### Step 2: Start Floci (each lab session)
 
 ```bash
-./scripts/floci-up.sh
-./scripts/floci-status.sh
+./scripts/floci/floci-up.sh
+./scripts/floci/floci-status.sh
 ```
 
 Floci listens on **http://127.0.0.1:4566** (container name: `scas-floci`).
@@ -271,8 +271,8 @@ source .floci.env
 export SCAS_ES_URL=http://localhost:9200
 
 # If not already running:
-./scripts/elasticsearch-up.sh
-./scripts/floci-up.sh
+./scripts/observability/elasticsearch-up.sh
+./scripts/floci/floci-up.sh
 ```
 
 ---
@@ -331,7 +331,7 @@ source .testbench.env
 source .floci.env
 export SCAS_ES_URL=http://localhost:9200
 
-./scripts/floci-status.sh   # must be healthy
+./scripts/floci/floci-status.sh   # must be healthy
 
 cd scenarios/05-build-compromise
 ./setup.sh
@@ -372,7 +372,7 @@ More: `scenarios/05-build-compromise/FLOCI.md` · [Floci integration guide](../g
 | 9200 | Elasticsearch |
 | 5601 | Kibana |
 | 4566 | Floci (AWS emulator) |
-| 3000–3023 | Scenario mock servers (see [`scripts/ports.env`](../../scripts/ports.env)) |
+| 3000–3023 | Scenario mock servers (see [`scripts/setup/ports.env`](../../scripts/setup/ports.env)) |
 
 Floci uses **4566 only** — it does not start floci-ui on 3000/3001, so it will not conflict with SCAS mock servers.
 
@@ -385,27 +385,27 @@ Full matrix: [Operations runbook](../platform/OPERATIONS.md#port-matrix)
 **Stop Floci**
 
 ```bash
-./scripts/floci-down.sh
+./scripts/floci/floci-down.sh
 ```
 
 **Stop Elasticsearch**
 
 ```bash
-./scripts/elasticsearch-down.sh
+./scripts/observability/elasticsearch-down.sh
 # Remove persisted ES data:
-./scripts/elasticsearch-down.sh --volumes
+./scripts/observability/elasticsearch-down.sh --volumes
 ```
 
 **Reset lab artifacts (ports, captures, node_modules)**
 
 ```bash
-./scripts/teardown.sh
+./scripts/setup/teardown.sh
 ```
 
 **Free a single port**
 
 ```bash
-./scripts/kill-port.sh 3000
+./scripts/setup/kill-port.sh 3000
 ```
 
 ---
@@ -418,15 +418,15 @@ git clone https://github.com/RAJANAGORI/supply-chain-attack-simulator.git
 cd supply-chain-attack-simulator
 ./install.sh -y                 # preferred: core + ES + Floci + .scas.env
 # or piece-by-piece:
-# ./scripts/setup.sh
-# ./scripts/floci-setup.sh --image
-# ./scripts/elasticsearch-up.sh
+# ./scripts/setup/setup.sh
+# ./scripts/floci/floci-setup.sh --image
+# ./scripts/observability/elasticsearch-up.sh
 
 # === EVERY SESSION (repo root) ===
 source .scas.env                # TESTBENCH_MODE + SCAS_ES_URL + .floci.env
 # (equivalent: source .testbench.env && source .floci.env && export SCAS_ES_URL=http://localhost:9200)
 
-./scripts/floci-up.sh          # if you used --no-start, or after floci-down
+./scripts/floci/floci-up.sh          # if you used --no-start, or after floci-down
 # start scenario mock server(s) in scenario folder
 
 # === EACH SCENARIO ===
@@ -435,9 +435,9 @@ cd scenarios/NN-<name>
 cat README.md
 
 # === SHUTDOWN ===
-./scripts/floci-down.sh
-./scripts/elasticsearch-down.sh
-./scripts/teardown.sh
+./scripts/floci/floci-down.sh
+./scripts/observability/elasticsearch-down.sh
+./scripts/setup/teardown.sh
 ```
 
 ---
@@ -447,14 +447,14 @@ cat README.md
 | Problem | Fix |
 |---------|-----|
 | `TESTBENCH_MODE not enabled` | `source .testbench.env` from repo root |
-| Port already in use | `./scripts/kill-port.sh 3000` or `./scripts/teardown.sh` |
+| Port already in use | `./scripts/setup/kill-port.sh 3000` or `./scripts/setup/teardown.sh` |
 | Docker not running | Start Docker Desktop; wait until ready |
 | Elasticsearch won't start | Need ~8 GB RAM free; `docker logs scas-elasticsearch` |
-| Floci not healthy | `./scripts/floci-setup.sh --image` then `./scripts/floci-up.sh`; `docker logs scas-floci` |
+| Floci not healthy | `./scripts/floci/floci-setup.sh --image` then `./scripts/floci/floci-up.sh`; `docker logs scas-floci` |
 | Floci port 4566 conflict | `docker stop scas-floci` or stop other local AWS emulators |
-| Kibana empty | `./scripts/setup-kibana-data-views.sh` |
+| Kibana empty | `./scripts/observability/setup-kibana-data-views.sh` |
 | No ES detections | Run a scenario first, then `node detection-tools/es/ship-captures.js` |
-| Permission denied on scripts | `chmod +x scripts/*.sh scenarios/*/setup.sh` |
+| Permission denied on scripts | `find scripts -name '*.sh' -type f -exec chmod +x {} + scenarios/*/setup.sh` |
 
 More: [FAQ](../platform/FAQ.md) · [Operations](../platform/OPERATIONS.md)
 

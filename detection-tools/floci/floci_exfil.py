@@ -1,6 +1,6 @@
 """
 Optional Floci S3 mirror for SCAS scenarios (SCAS_FLOCI_ENABLED=1).
-Python equivalent of floci-exfil.js — calls scripts/floci-upload-json.sh.
+Python equivalent of floci-exfil.js — calls scripts/floci/floci-upload-json.sh.
 """
 
 from __future__ import annotations

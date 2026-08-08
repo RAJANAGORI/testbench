@@ -111,7 +111,7 @@ curl -s http://127.0.0.1:3017/captured-data
 ### Cleanup (optional)
 
 ```bash
-../../scripts/kill-port.sh 3017
+../../scripts/setup/kill-port.sh 3017
 ```
 
 ## 📝 Lab Tasks
@@ -168,7 +168,7 @@ Key indicators to capture:
 
 - Start by identifying stage-specific markers before running correlation.
 - If events are missing, verify server on `3017` and rerun victim flow.
-- Use `../../scripts/kill-port.sh 3017` between attempts to reset cleanly.
+- Use `../../scripts/setup/kill-port.sh 3017` between attempts to reset cleanly.
 
 ## Lab Report Prompts
 

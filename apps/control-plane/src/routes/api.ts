@@ -114,7 +114,7 @@ export function createApiRouter(): Router {
     if (!scenario) return res.status(404).json({ error: 'Scenario not found' });
     const stopped = processManager.stopForScenario(scenario.id);
     await Promise.all(
-      scenario.ports.map((port) => runScript(resolve(REPO, 'scripts/kill-port.sh'), [String(port)])),
+      scenario.ports.map((port) => runScript(resolve(REPO, 'scripts/setup/kill-port.sh'), [String(port)])),
     );
     res.json({ stopped, async: false });
   });
@@ -294,10 +294,10 @@ export function createApiRouter(): Router {
 
   router.post('/platform/elasticsearch/:action', async (req, res) => {
     if (req.params.action === 'up') {
-      return startPlatformScript(res, 'Elasticsearch up', 'scripts/elasticsearch-up.sh');
+      return startPlatformScript(res, 'Elasticsearch up', 'scripts/observability/elasticsearch-up.sh');
     }
     if (req.params.action === 'down') {
-      return startPlatformScript(res, 'Elasticsearch down', 'scripts/elasticsearch-down.sh');
+      return startPlatformScript(res, 'Elasticsearch down', 'scripts/observability/elasticsearch-down.sh');
     }
     return res.status(400).json({ error: 'Unknown action' });
   });
@@ -305,10 +305,10 @@ export function createApiRouter(): Router {
   router.post('/platform/floci/:action', async (req, res) => {
     const map: Record<string, { label: string; script: string; args?: string[] }> = {
       // --auto: published native image when CPU has ARM LSE; else JVM build (Pi 4 / Cortex-A72)
-      setup: { label: 'Floci setup', script: 'scripts/floci-setup.sh', args: ['--auto'] },
-      up: { label: 'Floci up', script: 'scripts/floci-up.sh' },
-      down: { label: 'Floci down', script: 'scripts/floci-down.sh' },
-      status: { label: 'Floci status', script: 'scripts/floci-status.sh' },
+      setup: { label: 'Floci setup', script: 'scripts/floci/floci-setup.sh', args: ['--auto'] },
+      up: { label: 'Floci up', script: 'scripts/floci/floci-up.sh' },
+      down: { label: 'Floci down', script: 'scripts/floci/floci-down.sh' },
+      status: { label: 'Floci status', script: 'scripts/floci/floci-status.sh' },
     };
     const entry = map[req.params.action];
     if (!entry) return res.status(400).json({ error: 'Unknown action' });
@@ -328,7 +328,7 @@ export function createApiRouter(): Router {
         processManager.stopSession(proc.id);
       }
     }
-    return startPlatformScript(res, 'Lab teardown', 'scripts/teardown.sh');
+    return startPlatformScript(res, 'Lab teardown', 'scripts/setup/teardown.sh');
   });
 
   router.get('/logs', (req, res) => {

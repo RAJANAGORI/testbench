@@ -22,11 +22,11 @@ The dashboard **proxies** all control-plane API and WebSocket traffic through po
 
 ## Quick start
 
-From the repository root (after `./scripts/setup.sh`):
+From the repository root (after `./scripts/setup/setup.sh`):
 
 ```bash
-chmod +x scripts/start-dashboard.sh
-./scripts/start-dashboard.sh
+chmod +x scripts/ui/start-dashboard.sh
+./scripts/ui/start-dashboard.sh
 ```
 
 Or run components separately:
@@ -66,7 +66,7 @@ curl http://0.0.0.0:3101/api/health
 - Display capture JSON from mock servers on the Observe tab
 - Start/stop Elasticsearch, Kibana (via existing scripts), Floci
 - Run per-scenario Floci seed/verify where configured
-- Global teardown via `scripts/teardown.sh`
+- Global teardown via `scripts/setup/teardown.sh`
 
 ## Project layout
 

@@ -15,10 +15,6 @@ By the end of this guide, you will:
 - Apply the **Mitigation Playbook** from this guide and the scenario README
 ---
 
-
-
-
-
 ## Table of Contents
 
 <div class="doc-toc">
@@ -649,9 +645,6 @@ node detection-tools/workspace-scanner.js .
 
 ---
 
-
----
-
 ## Mitigation Playbook
 
 Canonical prevention and mitigation controls (aligned with the [scenario README](../../../scenarios/12-workspace-monorepo-attack/README.md)). Lab walkthroughs above expand each control with hands-on steps.
@@ -663,6 +656,12 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 - Track workspace package changes in version control with mandatory review.
 
 ---
+
+## Code-level workflow
+
+![Scenario 12 code-level workflow: Workspace / Monorepo Attack](../../assets/diagrams/codeflow/svg/scas-codeflow-scenario-12.svg)
+
+*Code-level workflow for Scenario 12. Editable source: [`scas-codeflow-scenario-12.excalidraw`](../../assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-12.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-codeflow-diagrams.js`.*
 
 ---
 
@@ -689,9 +688,9 @@ Workspace monorepo: compromised @devcorp/utils inside the workspace is linked in
 
 ### End-to-end flow
 
-![Scenario 12 observability flow: Phase 1 collectors → Phase 2 lab steps → Phase 3 localhost exfil → optional Elasticsearch → Kibana Detections and Rules](../../assets/diagrams/scas-observability-scenario-12.svg)
+![Scenario 12 observability flow: Phase 1 collectors → Phase 2 lab steps → Phase 3 localhost exfil → optional Elasticsearch → Kibana Detections and Rules](../../assets/diagrams/observability/svg/scas-observability-scenario-12.svg)
 
-*Swimlane diagram for Scenario 12. Editable source: [`scas-observability-scenario-12.excalidraw`](../../assets/diagrams/scas-observability-scenario-12.excalidraw). Regenerate with `node scripts/generate-scenario-observability-diagrams.js`.*
+*Swimlane diagram for Scenario 12. Editable source: [`scas-observability-scenario-12.excalidraw`](../../assets/diagrams/observability/excalidraw/scas-observability-scenario-12.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-observability-diagrams.js`.*
 
 ### Sequence diagram (Phase 1–5)
 
@@ -761,8 +760,8 @@ Same Phase-2 path as the diagrams above (for skimming / accessibility).
 From the repository root:
 
 ```bash
-./scripts/elasticsearch-up.sh
-./scripts/setup-kibana-data-views.sh   # data views + saved searches for all 23 scenarios
+./scripts/observability/elasticsearch-up.sh
+./scripts/observability/setup-kibana-data-views.sh   # data views + saved searches for all 23 scenarios
 ```
 
 ### Run this scenario with live Elasticsearch forwarding

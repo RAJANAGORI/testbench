@@ -4,8 +4,8 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 SCENARIO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-# shellcheck source=../../../../scripts/floci-bridge.sh
-source "${REPO_ROOT}/scripts/floci-bridge.sh"
+# shellcheck source=../../../../scripts/floci/floci-bridge.sh
+source "${REPO_ROOT}/scripts/floci/floci-bridge.sh"
 
 SCENARIO_ID=05
 BUCKET="$(scas_floci_seed_scenario "$SCENARIO_ID")"
