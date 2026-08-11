@@ -6,12 +6,23 @@ import { SCENARIOS, getScenario } from '../registry/scenarios.js';
 import type { PlatformStatus } from '../registry/types.js';
 import { processManager } from '../process-manager.js';
 import { buildLabEnv, getRepoRoot, resolveScenarioCwd } from '../env.js';
+import {
+  dockerLabSetup,
+  dockerLabStart,
+  dockerLabStop,
+  labBackend,
+  rewriteLabUrl,
+} from '../docker-labs.js';
 
 const REPO = getRepoRoot();
 
+function platformHost(): string {
+  return process.env.SCAS_PLATFORM_HOST || '127.0.0.1';
+}
+
 async function probe(url: string): Promise<boolean> {
   try {
-    const res = await fetch(url, { signal: AbortSignal.timeout(2000) });
+    const res = await fetch(rewriteLabUrl(url), { signal: AbortSignal.timeout(2000) });
     return res.ok;
   } catch {
     return false;
@@ -75,6 +86,14 @@ export function createApiRouter(): Router {
   router.post('/scenarios/:id/setup', (req, res) => {
     const scenario = getScenario(req.params.id);
     if (!scenario) return res.status(404).json({ error: 'Scenario not found' });
+    if (labBackend() === 'docker') {
+      try {
+        const record = dockerLabSetup(scenario);
+        return res.json({ async: true, started: true, sessionId: record.id, record, backend: 'docker' });
+      } catch (err) {
+        return res.status(500).json({ error: err instanceof Error ? err.message : 'Docker setup failed' });
+      }
+    }
     const record = processManager.runCommand({
       label: `Setup ${scenario.title}`,
       command: 'bash',
@@ -83,12 +102,26 @@ export function createApiRouter(): Router {
       scenarioId: scenario.id,
       shell: false,
     });
-    res.json({ async: true, started: true, sessionId: record.id, record });
+    res.json({ async: true, started: true, sessionId: record.id, record, backend: 'host' });
   });
 
   router.post('/scenarios/:id/services/start', (req, res) => {
     const scenario = getScenario(req.params.id);
     if (!scenario) return res.status(404).json({ error: 'Scenario not found' });
+    if (labBackend() === 'docker') {
+      try {
+        const record = dockerLabStart(scenario);
+        return res.json({
+          async: true,
+          started: [record],
+          sessions: [record.id],
+          sessionId: record.id,
+          backend: 'docker',
+        });
+      } catch (err) {
+        return res.status(500).json({ error: err instanceof Error ? err.message : 'Docker start failed' });
+      }
+    }
     const started = scenario.services.map((service) =>
       processManager.startLongRunning({
         label: service.label,
@@ -106,17 +139,26 @@ export function createApiRouter(): Router {
       started,
       sessions: started.map((r) => r.id),
       sessionId: started[0]?.id,
+      backend: 'host',
     });
   });
 
   router.post('/scenarios/:id/services/stop', async (req, res) => {
     const scenario = getScenario(req.params.id);
     if (!scenario) return res.status(404).json({ error: 'Scenario not found' });
+    if (labBackend() === 'docker') {
+      try {
+        const record = dockerLabStop(scenario);
+        return res.json({ stopped: [record.id], async: true, sessionId: record.id, backend: 'docker' });
+      } catch (err) {
+        return res.status(500).json({ error: err instanceof Error ? err.message : 'Docker stop failed' });
+      }
+    }
     const stopped = processManager.stopForScenario(scenario.id);
     await Promise.all(
       scenario.ports.map((port) => runScript(resolve(REPO, 'scripts/setup/kill-port.sh'), [String(port)])),
     );
-    res.json({ stopped, async: false });
+    res.json({ stopped, async: false, backend: 'host' });
   });
 
   router.post('/scenarios/:id/steps/:stepId', (req, res) => {
@@ -140,6 +182,23 @@ export function createApiRouter(): Router {
   router.post('/scenarios/:id/run', (req, res) => {
     const scenario = getScenario(req.params.id);
     if (!scenario) return res.status(404).json({ error: 'Scenario not found' });
+
+    if (labBackend() === 'docker') {
+      const job = processManager.startJob({
+        label: `Docker lab ${scenario.title}`,
+        scenarioId: scenario.id,
+        run: async ({ log, waitFor }) => {
+          log('system', 'Docker backend — build + up (setup embedded in image)');
+          const up = dockerLabStart(scenario);
+          const result = await waitFor(up.id);
+          if (result.status !== 'completed') {
+            throw new Error(`Docker compose up failed (exit ${result.exitCode ?? 'null'})`);
+          }
+          log('system', 'Lab stack is up. Use dashboard steps or: docker compose exec victim bash');
+        },
+      });
+      return res.json({ async: true, started: true, sessionId: job.id, sessions: [job.id], backend: 'docker' });
+    }
 
     const job = processManager.startJob({
       label: `Full lab ${scenario.title}`,
@@ -199,7 +258,7 @@ export function createApiRouter(): Router {
       },
     });
 
-    res.json({ async: true, started: true, sessionId: job.id, sessions: [job.id] });
+    res.json({ async: true, started: true, sessionId: job.id, sessions: [job.id], backend: 'host' });
   });
 
   router.get('/scenarios/:id/captures', async (req, res) => {
@@ -208,7 +267,7 @@ export function createApiRouter(): Router {
     const results: Record<string, unknown> = {};
     for (const cap of scenario.captures) {
       try {
-        const response = await fetch(cap.url, { signal: AbortSignal.timeout(3000) });
+        const response = await fetch(rewriteLabUrl(cap.url), { signal: AbortSignal.timeout(3000) });
         results[cap.id] = await response.json();
       } catch (err) {
         results[cap.id] = { error: err instanceof Error ? err.message : 'Fetch failed' };
@@ -224,7 +283,10 @@ export function createApiRouter(): Router {
     for (const cap of scenario.captures) {
       if (!cap.clearUrl) continue;
       try {
-        const response = await fetch(cap.clearUrl, { method: 'DELETE', signal: AbortSignal.timeout(3000) });
+        const response = await fetch(rewriteLabUrl(cap.clearUrl), {
+          method: 'DELETE',
+          signal: AbortSignal.timeout(3000),
+        });
         results[cap.id] = await response.json();
       } catch (err) {
         results[cap.id] = { error: err instanceof Error ? err.message : 'Clear failed' };
@@ -254,16 +316,16 @@ export function createApiRouter(): Router {
     const labPorts = [3000, 3001, 3002, 3003, 3015, 3016, 3017, 3018, 3019, 3020, 3021, 3022, 3023, 4873, 4874];
     const [portHits, elasticsearchOk, kibanaOk, flociOk] = await Promise.all([
       Promise.all(labPorts.map(async (port) => ((await checkPort(port)) ? port : null))),
-      probe('http://127.0.0.1:9200'),
-      probe('http://127.0.0.1:5601/api/status'),
-      probe('http://127.0.0.1:4566/_floci/health'),
+      probe(`http://${platformHost()}:9200`),
+      probe(`http://${platformHost()}:5601/api/status`),
+      probe(`http://${platformHost()}:4566/_floci/health`),
     ]);
     const status: PlatformStatus = {
       controlPlane: { ok: true, port: Number(process.env.CONTROL_PLANE_PORT ?? 3101) },
-      elasticsearch: { ok: elasticsearchOk, url: 'http://127.0.0.1:9200' },
-      kibana: { ok: kibanaOk, url: 'http://127.0.0.1:5601' },
-      floci: { ok: flociOk, url: 'http://127.0.0.1:4566' },
-      portConflicts: portHits.filter((p): p is number => p != null),
+      elasticsearch: { ok: elasticsearchOk, url: `http://${platformHost()}:9200` },
+      kibana: { ok: kibanaOk, url: `http://${platformHost()}:5601` },
+      floci: { ok: flociOk, url: `http://${platformHost()}:4566` },
+      portConflicts: portHits.filter((p): p is number => p !== null),
     };
     res.json(status);
   });

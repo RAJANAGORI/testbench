@@ -1,0 +1,75 @@
+# Auto-generated local Docker lab — 06-sha-hulud (CDN + harvester)
+# Floci via host.docker.internal:4566
+name: scas-06-sha-hulud
+
+services:
+  mock-cdn:
+    image: node:20-alpine
+    container_name: scas-06-sha-hulud-mock-cdn
+    working_dir: /scenarios/06-sha-hulud
+    volumes:
+      - ./:/scenarios/06-sha-hulud
+      - ../_shared:/scenarios/_shared:ro
+      - ../../detection-tools:/detection-tools:ro
+    environment:
+      SCAS_ES_URL: "${SCAS_ES_URL:-http://host.docker.internal:9200}"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: ["node", "infrastructure/mock-cdn.js"]
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('http').get('http://127.0.0.1:3000/bundle.js',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 8s
+
+  credential-harvester:
+    image: node:20-alpine
+    container_name: scas-06-sha-hulud-harvester
+    working_dir: /scenarios/06-sha-hulud
+    network_mode: "service:mock-cdn"
+    volumes:
+      - ./:/scenarios/06-sha-hulud
+      - ../_shared:/scenarios/_shared:ro
+      - ../../detection-tools:/detection-tools:ro
+    command: ["node", "infrastructure/credential-harvester.js"]
+    depends_on:
+      mock-cdn:
+        condition: service_healthy
+
+  victim:
+    build:
+      context: ..
+      dockerfile: 06-sha-hulud/Dockerfile
+    container_name: scas-06-sha-hulud-victim
+    network_mode: "service:mock-cdn"
+    environment:
+      TESTBENCH_MODE: enabled
+      SCAS_FLOCI_ENABLED: "${SCAS_FLOCI_ENABLED:-1}"
+      SCAS_FLOCI_ENDPOINT: "${SCAS_FLOCI_ENDPOINT:-http://host.docker.internal:4566}"
+      AWS_ENDPOINT_URL: "${AWS_ENDPOINT_URL:-http://host.docker.internal:4566}"
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID:-test}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY:-test}"
+      AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION:-us-east-1}"
+      AWS_EC2_METADATA_DISABLED: "true"
+      SCAS_ES_URL: "${SCAS_ES_URL:-http://host.docker.internal:9200}"
+    volumes:
+      - ../../detection-tools:/lab/detection-tools:ro
+      - ../../scripts/floci:/lab/scripts/floci:ro
+    depends_on:
+      mock-cdn:
+        condition: service_healthy
+      credential-harvester:
+        condition: service_started
+    tty: true
+    stdin_open: true
+    command: ["sleep", "infinity"]

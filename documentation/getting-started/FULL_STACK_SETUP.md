@@ -2,22 +2,24 @@
 
 > [Documentation](../index.md) › [Getting started](./index.md) › Full-stack setup
 
-**From-zero** walkthrough for the **Supply Chain Attack Simulator (SCAS)** on an isolated lab machine (macOS, Linux, or WSL2). Covers the core simulator, the optional **Elasticsearch/Kibana** observability stack, and the **Floci** local-AWS emulator used by the cloud-track labs.
+Install SCAS on an isolated lab machine (macOS, Linux, or WSL2): the core labs, optional Elasticsearch/Kibana, and Floci for the cloud-track labs.
 
-**Shorter paths:** [Quick start](./QUICK_START.md) (SCAS only, ~5 min) · [Complete setup](./SETUP.md) (SCAS install detail) · [Floci integration](../guides/FLOCI_INTEGRATION.md) (cloud track only)
+**Shorter paths:** [Quick start](./QUICK_START.md) (SCAS only, ~5 min) · [Complete setup](./SETUP.md) (install detail) · [Floci integration](../guides/FLOCI_INTEGRATION.md) (cloud track only)
 
-### One-shot installer (recommended)
+### One-shot installer
 
-After cloning, Docker running, from the **repo root**:
+After cloning, with Docker running, from the **repo root**:
 
 ```bash
 chmod +x install.sh
 ./install.sh -y
 ```
 
-This is the **generic** workshop installer: prerequisites, `TESTBENCH_MODE`, npm workspaces + `detection-tools`, **Elasticsearch/Kibana**, **Floci**, lookalike harvest secrets (generated locally — see `scenarios/_shared/LOOKALIKE_SECRETS.md`), and **`.scas.env`**.
+Prefer compose labs (and optional platform) without host Node for scenarios? Use [`./docker/install.sh`](../../docker/install.sh) — see [DOCKER_LABS.md](./DOCKER_LABS.md).
 
-**External USB HDD / Raspberry Pi only:** use [`install-external.sh`](../../install-external.sh) so Docker data lands on the disk first — see [Raspberry Pi storage](./RASPBERRY_PI_STORAGE.md). Everyone else should stick to `./install.sh`.
+The workshop installer covers prerequisites, `TESTBENCH_MODE`, npm workspaces + `detection-tools`, Elasticsearch/Kibana, Floci, lookalike harvest secrets (generated locally — see `scenarios/_shared/LOOKALIKE_SECRETS.md`), and **`.scas.env`**.
+
+**USB HDD / Raspberry Pi only:** use [`install-external.sh`](../../install-external.sh) so Docker data lands on that disk first — see [Raspberry Pi storage](./RASPBERRY_PI_STORAGE.md). Everyone else can use `./install.sh`.
 
 ```bash
 source .scas.env                 # every session

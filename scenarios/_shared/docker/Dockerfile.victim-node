@@ -1,0 +1,11 @@
+# Shared Node victim base for local SCAS labs.
+# Scenario Dockerfiles may FROM this image or copy the same pattern.
+FROM node:20-slim
+
+ENV TESTBENCH_MODE=enabled \
+    NODE_ENV=development
+
+WORKDIR /lab
+
+# Scenario-specific COPY + npm install happen in each lab Dockerfile.
+CMD ["sleep", "infinity"]

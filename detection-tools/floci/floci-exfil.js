@@ -11,8 +11,13 @@ const path = require('path');
 function findUploadScript() {
   let dir = process.cwd();
   for (let i = 0; i < 12; i++) {
-    const candidate = path.join(dir, 'scripts', 'floci-upload-json.sh');
-    if (fs.existsSync(candidate)) return candidate;
+    const candidates = [
+      path.join(dir, 'scripts', 'floci', 'floci-upload-json.sh'),
+      path.join(dir, 'scripts', 'floci-upload-json.sh'),
+    ];
+    for (const candidate of candidates) {
+      if (fs.existsSync(candidate)) return candidate;
+    }
     const parent = path.dirname(dir);
     if (parent === dir) break;
     dir = parent;

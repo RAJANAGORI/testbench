@@ -1,0 +1,6 @@
+**/node_modules
+**/captured-data.json
+**/.DS_Store
+01-typosquatting/docker-compose.yml
+01-typosquatting/verify.sh
+_shared/docker/

@@ -1,84 +1,74 @@
-# Quick Start Guide
+# Quick start
 
-Get up and running with the Supply Chain Attack Testbench in 5 minutes!
+Get a lab running in about five minutes if you already have Node and know the basics.
 
-## 🚀 Fast Track Installation
+## Install
 
-### 1. Prerequisites Check
+### 1. Prerequisites
 
 ```bash
-node --version   # Should be v16+
-npm --version    # Should be v7+
+node --version   # v16+
+npm --version    # v7+
 ```
 
-If missing, install from [nodejs.org](https://nodejs.org).
+Install from [nodejs.org](https://nodejs.org) if needed.
 
-### 2. Clone and Setup
+### 2. Clone and setup
 
 ```bash
-# Clone repository
-git clone <repository-url>
-cd testbench
+git clone https://github.com/RAJANAGORI/supply-chain-attack-simulator.git
+cd supply-chain-attack-simulator
 
-# Run setup
 chmod +x scripts/setup/setup.sh
 ./scripts/setup/setup.sh
 ```
 
-### 3. Enable Testbench Mode
+Prefer Docker instead? See [DOCKER_LABS.md](./DOCKER_LABS.md).
+
+### 3. Enable testbench mode
 
 ```bash
 export TESTBENCH_MODE=enabled
 ```
 
-### 4. Start Services
+### 4. Start the mock server (Scenario 1)
 
 ```bash
-# Scenario 1: after `cd scenarios/01-typosquatting && ./setup.sh`, start this scenario's mock server:
+# After: cd scenarios/01-typosquatting && ./setup.sh
 node scenarios/01-typosquatting/infrastructure/mock-server.js &
 
-# Scenarios 2, 4, and 5 each ship their own server under that scenario (after its ./setup.sh):
+# Other scenarios ship their own server under that folder after ./setup.sh, e.g.:
 # node scenarios/02-dependency-confusion/infrastructure/mock-server.js &
-# node scenarios/04-malicious-update/infrastructure/mock-server.js &
-# node scenarios/05-build-compromise/infrastructure/mock-server.js &
 ```
 
-### 5. View Captured Data (CLI)
+### 5. View captured data
 
 ```bash
-# Check what the mock server has captured so far
 curl http://localhost:3000/captured-data
 ```
 
-## 🎯 Your First Attack Scenario
+## First scenario: typosquatting (~15 minutes)
 
-### Scenario 1: Typosquatting (15 minutes)
-
-#### Step 1: Navigate to Scenario
+### 1. Open the scenario
 
 ```bash
 cd scenarios/01-typosquatting
 ./setup.sh
 ```
 
-#### Step 2: Review the Attack
+### 2. Look at legitimate vs malicious
 
 ```bash
-# See the legitimate package
 cat legitimate/requests-lib/index.js
-
-# See the malicious package template
 cat templates/malicious-package-template.js
 ```
 
-#### Step 3: Create Malicious Package
+### 3. Build the malicious package (if setup did not already)
 
 ```bash
-# Copy template to malicious package
 mkdir -p malicious-packages/request-lib
 cp templates/malicious-package-template.js malicious-packages/request-lib/index.js
 
-# Create package.json
 cat > malicious-packages/request-lib/package.json << 'EOF'
 {
   "name": "request-lib",
@@ -89,186 +79,114 @@ cat > malicious-packages/request-lib/package.json << 'EOF'
 EOF
 ```
 
-#### Step 4: Run Victim Application
+### 4. Run the victim app
 
 ```bash
 cd victim-app
-
-# Install the typosquatted package (simulating typo)
 npm install ../malicious-packages/request-lib
-
-# Run the application
 export TESTBENCH_MODE=enabled
 npm start
 ```
 
-#### Step 5: View Exfiltrated Data
+### 5. Check exfiltrated data
 
 ```bash
-# Check what data was captured
 curl http://localhost:3000/captured-data
-
 ```
 
-🎉 **Congratulations!** You've completed your first supply chain attack!
+You should see data at the mock exfiltration endpoint.
 
-## 📊 What You Just Did
+## What you just did
 
-1. ✅ Created a malicious package that mimics a legitimate one
-2. ✅ Simulated a developer typo (`request-lib` vs `requests-lib`)
-3. ✅ Exfiltrated data to an attacker server
-4. ✅ Observed how the attack remains undetected
+1. Created a package that looks like a legitimate one
+2. Simulated a typo (`request-lib` vs `requests-lib`)
+3. Exfiltrated data to the mock attacker server
+4. Saw how quiet that can look without detection tooling
 
-## 🔍 Now Try Detection
-
-### Scan for the Malicious Package
+## Try detection
 
 ```bash
 cd ..
 node ../../detection-tools/package-scanner.js victim-app
 ```
 
-The scanner should detect:
+Expect signals around suspicious network requests and data exfiltration patterns.
 
-- Suspicious network requests
-- Data exfiltration patterns
-- Anomalous behavior
+## What next
 
-## 🎓 What's Next?
+1. [Dependency Confusion](../../scenarios/02-dependency-confusion/README.md)
+2. [Compromised Package](../../scenarios/03-compromised-package/README.md)
+3. Later: build pipelines, transitive deps, and the rest of the catalog
 
-### Continue Learning
+Tools worth knowing:
 
-1. **Scenario 2**: [Dependency Confusion](../../scenarios/02-dependency-confusion/README.md)
-   - Learn about public vs private package attacks
-   - Exploiting package resolution mechanisms
+- `detection-tools/package-scanner.js`
+- `detection-tools/network-monitor.sh`
 
-2. **Scenario 3**: [Compromised Package](../../scenarios/03-compromised-package/README.md)
-   - Account takeover simulation
-   - Forensic investigation
-   - Incident response
+More docs: [SETUP.md](SETUP.md) · [Best practices](../platform/BEST_PRACTICES.md) · [Detection & observability](../platform/DETECTION_AND_OBSERVABILITY.md)
 
-3. **Advanced Topics**:
-   - Build pipeline compromise
-   - Transitive dependency attacks
-   - Supply chain defense strategies
+## Tips
 
-### Explore Tools
-
-- **Package Scanner**: `detection-tools/package-scanner.js`
-- **Network Monitor**: `detection-tools/network-monitor.sh`
-
-### Read Documentation
-
-- [Complete Setup Guide](SETUP.md)
-- [Best Practices](../platform/BEST_PRACTICES.md)
-- [Detection & observability](../platform/DETECTION_AND_OBSERVABILITY.md)
-
-## 💡 Pro Tips
-
-### Tip 1: View Captured Data (CLI)
+**Clear captured data between runs**
 
 ```bash
-curl http://localhost:3000/captured-data
-```
-
-### Tip 2: Clean Up Between Scenarios
-
-```bash
-# Clear captured data
 curl -X DELETE http://localhost:3000/captured-data
-
 ```
 
-### Tip 3: Reset Environment
+**Reset node_modules**
 
 ```bash
-# Clear node_modules
 find . -name "node_modules" -type d -exec rm -rf {} +
 ```
 
-### Tip 4: Save Your Work
+**Save a capture**
 
 ```bash
-# Export captured data from the mock server endpoint
 curl http://localhost:3000/captured-data > my-analysis.json
 ```
 
-## 🆘 Quick Troubleshooting
+## Troubleshooting
 
-### Mock Server Not Running?
+**Mock server not up?**
 
 ```bash
-# Check if running
 curl http://localhost:3000/captured-data
-
-# If not, start the mock server for the scenario you are running (after ./setup.sh in that folder), e.g.:
+# If that fails, after ./setup.sh in the scenario folder:
 node scenarios/01-typosquatting/infrastructure/mock-server.js &
 ```
 
-### TESTBENCH_MODE Not Set?
+**TESTBENCH_MODE?**
 
 ```bash
-# Set for current session
 export TESTBENCH_MODE=enabled
-
-# Set permanently
+# optional permanent:
 echo 'export TESTBENCH_MODE=enabled' >> ~/.bashrc
 source ~/.bashrc
 ```
 
-## 📚 Learning Resources
-
-### Understand the Attacks
+## Reading
 
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
 - [npm Security Best Practices](https://docs.npmjs.com/security)
-- [Supply Chain Security Guide](https://www.cisa.gov/supply-chain)
+- [CISA supply chain security](https://www.cisa.gov/supply-chain)
+- Real incidents: event-stream (2018), ua-parser-js (2021), colors.js (2022)
+- Tools: [Socket.dev](https://socket.dev), [Snyk](https://snyk.io), [Dependabot](https://github.com/dependabot)
 
-### Real-World Cases
+## Challenges (optional)
 
-- event-stream incident (2018)
-- ua-parser-js compromise (2021)
-- colors.js sabotage (2022)
+**Beginner:** change the exfiltration target, capture more fields, try another typo name.
 
-### Tools and Frameworks
+**Intermediate:** obfuscate the payload, gate on “production”, add a delayed trigger.
 
-- [Socket.dev](https://socket.dev) - Package security
-- [Snyk](https://snyk.io) - Vulnerability scanning
-- [Dependabot](https://github.com/dependabot) - Automated updates
+**Advanced:** multi-stage attack, persistence, or your own detector.
 
-## 🎯 Challenge Yourself
+## Remember
 
-### Beginner Challenges
+This is a learning environment.
 
-1. Modify the exfiltration target
-2. Add more data to capture
-3. Create a different typosquatted package name
+- Experiment here; break things safely
+- Do not use these packages on real systems
+- Do not publish malicious code
+- Keep `TESTBENCH_MODE` for the labs
 
-### Intermediate Challenges
-
-1. Hide the malicious code better (obfuscation)
-2. Make it only activate in production
-3. Add a time-delayed trigger
-
-### Advanced Challenges
-
-1. Create a multi-stage attack
-2. Implement persistence mechanisms
-3. Build a complete detection system
-
-## ⚠️ Remember
-
-This is a **learning environment**:
-
-- ✅ Explore and experiment
-- ✅ Break things and learn
-- ✅ Try different attack vectors
-- ❌ Never use on real systems
-- ❌ Never deploy malicious code
-- ❌ Always use TESTBENCH_MODE
-
----
-
-**Now go explore and learn!** 🚀🔐
-
-For detailed instructions, see the [Complete Setup Guide](SETUP.md).
+For a fuller install, see [SETUP.md](SETUP.md) or [Full-stack setup](./FULL_STACK_SETUP.md).

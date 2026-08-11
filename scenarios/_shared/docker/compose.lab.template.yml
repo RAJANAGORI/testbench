@@ -1,0 +1,58 @@
+# SCAS local lab compose skeleton (copy + adapt per scenario).
+# Victim shares the mock-c2 network namespace so localhost:3000 exfil keeps working.
+#
+# name: scas-NN-slug
+#
+# services:
+#   mock-c2:     Node mock sink (POST /collect, GET /captured-data)
+#   victim:      Lab runtime (network_mode: service:mock-c2)
+#   mock-registry: optional — only for registry-sim labs (wrap registry-server.js)
+
+name: scas-lab-template
+
+services:
+  mock-c2:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./infrastructure/mock-server.js:/app/server.js:ro
+    command: ["node", "server.js"]
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('http').get('http://127.0.0.1:3000/captured-data',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
+
+  victim:
+    build:
+      context: ..
+      dockerfile: NN-slug/Dockerfile
+    network_mode: "service:mock-c2"
+    environment:
+      TESTBENCH_MODE: enabled
+    depends_on:
+      mock-c2:
+        condition: service_healthy
+    tty: true
+    stdin_open: true
+    command: ["sleep", "infinity"]
+
+  # Optional — enable only for labs that need a local registry sim:
+  # mock-registry:
+  #   image: node:20-alpine
+  #   working_dir: /app
+  #   volumes:
+  #     - ./infrastructure/registry-server.js:/app/registry-server.js:ro
+  #     - ./work:/app/work:ro
+  #   command: ["node", "registry-server.js"]
+  #   ports:
+  #     - "4874:4874"

@@ -1,0 +1,5 @@
+**/node_modules
+**/captured-data.json
+**/captured-credentials.json
+**/.venv
+**/.DS_Store

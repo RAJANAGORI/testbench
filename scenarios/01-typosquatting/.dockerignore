@@ -1,0 +1,7 @@
+**/node_modules
+**/captured-data.json
+**/.DS_Store
+**/docker-compose*.yml
+**/Dockerfile
+**/.dockerignore
+**/verify.sh
