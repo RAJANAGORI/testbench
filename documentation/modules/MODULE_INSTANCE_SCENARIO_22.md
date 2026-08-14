@@ -99,4 +99,4 @@ python -c "import pathlib, sysconfig; print(*sorted(pathlib.Path(sysconfig.get_p
 
 - Why is **`.pth`** harder to reason about than **import-time** malware for application developers?
 - How would you **gate** ML dependency updates differently from general library updates?
-- What is your org’s playbook for **quarantine, yank response, and consumer notification**?
+- What is your org's playbook for **quarantine, yank response, and consumer notification**?

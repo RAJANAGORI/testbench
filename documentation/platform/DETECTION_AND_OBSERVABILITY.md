@@ -78,10 +78,10 @@ export SCAS_ES_URL=http://localhost:9200
 
 ### Kibana saved searches
 
-One pair per scenario (01–23):
+One pair per scenario (01-23):
 
-- `SCAS Rules — Scenario NN`
-- `SCAS Detections — Scenario NN`
+- `SCAS Rules - Scenario NN`
+- `SCAS Detections - Scenario NN`
 
 Open **Discover** at [http://localhost:5601](http://localhost:5601).
 

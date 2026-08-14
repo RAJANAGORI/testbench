@@ -4,16 +4,16 @@ How the Supply Chain Attack Simulator (SCAS) is organized and how data flows thr
 
 ## Design principles
 
-- **CLI-only** — no web dashboard required to run labs (Kibana is optional for workshops).
-- **Education-only** — malicious behavior is gated by `TESTBENCH_MODE=enabled` and targets **127.0.0.1** only.
-- **Self-contained scenarios** — each folder under `scenarios/` is a complete lab with setup, attack, detection, and cleanup.
-- **Single documentation source** — edit under `documentation/`; `docs/` mirrors via symlinks for GitHub Pages.
+- **CLI-only** - no web dashboard required to run labs (Kibana is optional for workshops).
+- **Education-only** - malicious behavior is gated by `TESTBENCH_MODE=enabled` and targets **127.0.0.1** only.
+- **Self-contained scenarios** - each folder under `scenarios/` is a complete lab with setup, attack, detection, and cleanup.
+- **Single documentation source** - edit under `documentation/`; `docs/` mirrors via symlinks for GitHub Pages.
 
 ## Repository layout
 
 ```text
 supply-chain-attack-simulator/
-├── scenarios/              # 23 attack labs (01- … 23-)
+├── scenarios/              # 23 attack labs (01- ... 23-)
 ├── detection-tools/        # Shared scanners + Elasticsearch shippers
 ├── observability/          # Optional Docker ES + Kibana stack
 ├── documentation/          # Canonical docs (YOU ARE HERE)
@@ -92,6 +92,6 @@ Forwarding runs only when `SCAS_ES_URL` is set (see [DETECTION_AND_OBSERVABILITY
 
 ## Related docs
 
-- [OPERATIONS.md](./OPERATIONS.md) — scripts, ports, teardown
-- [DETECTION_AND_OBSERVABILITY.md](./DETECTION_AND_OBSERVABILITY.md) — scanners, Elasticsearch, Kibana
-- [scenario-guides/CATALOG.md](../scenario-guides/CATALOG.md) — all 23 labs with links
+- [OPERATIONS.md](./OPERATIONS.md) - scripts, ports, teardown
+- [DETECTION_AND_OBSERVABILITY.md](./DETECTION_AND_OBSERVABILITY.md) - scanners, Elasticsearch, Kibana
+- [scenario-guides/CATALOG.md](../scenario-guides/CATALOG.md) - all 23 labs with links

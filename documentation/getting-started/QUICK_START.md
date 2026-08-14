@@ -176,7 +176,7 @@ source ~/.bashrc
 
 **Beginner:** change the exfiltration target, capture more fields, try another typo name.
 
-**Intermediate:** obfuscate the payload, gate on “production”, add a delayed trigger.
+**Intermediate:** obfuscate the payload, gate on "production", add a delayed trigger.
 
 **Advanced:** multi-stage attack, persistence, or your own detector.
 

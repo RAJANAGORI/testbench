@@ -36,7 +36,7 @@ docker compose exec victim bash
 docker compose down -v
 ```
 
-Run **one scenario lab at a time** — many share host port 3000.
+Run **one scenario lab at a time** - many share host port 3000.
 
 ## Command Center UI (`apps/`)
 

@@ -64,7 +64,7 @@ This:
 
 ## Notes
 
-- `/run/media/...` mounts are often temporary — `install-external.sh` uses `--persist-mount` by default.
+- `/run/media/...` mounts are often temporary - `install-external.sh` uses `--persist-mount` by default.
 - Full stack still needs enough **RAM** (ES + Kibana + Floci); the disk only fixes space/SD wear.
 - Do not put disk paths or host credentials in the repo.
 
@@ -78,7 +78,7 @@ Published `floci/floci:*` images are **GraalVM native** binaries that require **
 | Pi 5 | Yes | Published image OK (`--image` / UI Setup) |
 | amd64 / Apple Silicon | Yes | Published image OK |
 
-UI **Setup** already uses `--auto`. If you previously ran Setup with `--image` on a Pi 4, re-run Setup (or `./scripts/floci/floci-setup.sh --auto`) so `FLOCI_USE_IMAGE=0` and the JVM image is built — first build is slow.
+UI **Setup** already uses `--auto`. If you previously ran Setup with `--image` on a Pi 4, re-run Setup (or `./scripts/floci/floci-setup.sh --auto`) so `FLOCI_USE_IMAGE=0` and the JVM image is built - first build is slow.
 
 ## Related
 

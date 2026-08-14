@@ -1,6 +1,6 @@
 # First lab in 10 minutes (Zero to Hero)
 
-> **Which "Zero to Hero" is this?** This is the short hands-on start — clone, set up, run a first scenario.
+> **Which "Zero to Hero" is this?** This is the short hands-on start: clone, set up, run a first scenario.
 > - Conceptual curriculum (trust-edge model, staged learning) → [Curriculum overview](../learning-path/SUPPLY_CHAIN_ATTACKS_ZERO_TO_HERO.md)
 > - All 23 step-by-step walkthroughs → [Zero-to-hero walkthroughs](../scenario-guides/zero-to-hero/index.md)
 
@@ -44,9 +44,9 @@ From zero to a running lab, with the safety controls in mind.
    Prefer starting at typosquatting? Use [Scenario 01](../../scenarios/01-typosquatting/README.md) or the [Scenario 01 walkthrough](../scenario-guides/zero-to-hero/ZERO_TO_HERO_SCENARIO_01.md).
 
 5) How to move through the labs
-   - Start with scenarios 1–3 for the basic vectors.
-   - Intermediate (7–8, 10–12, 13) for more realistic cases.
-   - Advanced (9, 11, 14, …) need more crypto, registry, or container background.
+   - Start with scenarios 1-3 for the basic vectors.
+   - Intermediate (7-8, 10-12, 13) for more realistic cases.
+   - Advanced (9, 11, 14, ...) need more crypto, registry, or container background.
    - Use `detection-tools/` and SBOMs (`npm ls --json > sbom.json`) when you practice verification.
 
 6) Contribute

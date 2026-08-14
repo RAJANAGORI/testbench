@@ -1,4 +1,4 @@
-# Full-stack setup — SCAS + Elasticsearch + Floci
+# Full-stack setup - SCAS + Elasticsearch + Floci
 
 > [Documentation](../index.md) › [Getting started](./index.md) › Full-stack setup
 
@@ -15,11 +15,11 @@ chmod +x install.sh
 ./install.sh -y
 ```
 
-Prefer compose labs (and optional platform) without host Node for scenarios? Use [`./docker/install.sh`](../../docker/install.sh) — see [DOCKER_LABS.md](./DOCKER_LABS.md).
+Prefer compose labs (and optional platform) without host Node for scenarios? Use [`./docker/install.sh`](../../docker/install.sh) - see [DOCKER_LABS.md](./DOCKER_LABS.md).
 
-The workshop installer covers prerequisites, `TESTBENCH_MODE`, npm workspaces + `detection-tools`, Elasticsearch/Kibana, Floci, lookalike harvest secrets (generated locally — see `scenarios/_shared/LOOKALIKE_SECRETS.md`), and **`.scas.env`**.
+The workshop installer covers prerequisites, `TESTBENCH_MODE`, npm workspaces + `detection-tools`, Elasticsearch/Kibana, Floci, lookalike harvest secrets (generated locally - see `scenarios/_shared/LOOKALIKE_SECRETS.md`), and **`.scas.env`**.
 
-**USB HDD / Raspberry Pi only:** use [`install-external.sh`](../../install-external.sh) so Docker data lands on that disk first — see [Raspberry Pi storage](./RASPBERRY_PI_STORAGE.md). Everyone else can use `./install.sh`.
+**USB HDD / Raspberry Pi only:** use [`install-external.sh`](../../install-external.sh) so Docker data lands on that disk first - see [Raspberry Pi storage](./RASPBERRY_PI_STORAGE.md). Everyone else can use `./install.sh`.
 
 ```bash
 source .scas.env                 # every session
@@ -52,14 +52,14 @@ Manual step-by-step remains below if you prefer to install piece by piece.
 
 ### Safety rules (non-negotiable)
 
-- Use only on an **isolated VM or lab machine** — never production.
+- Use only on an **isolated VM or lab machine** - never production.
 - All malicious behavior targets **localhost only**.
 - Set `TESTBENCH_MODE=enabled` before running attack payloads (`source .testbench.env`).
 - Do not expose ports **9200**, **5601**, or **4566** to the public internet.
 
 ---
 
-## Part 0 — Prerequisites
+## Part 0 - Prerequisites
 
 ### Software
 
@@ -95,11 +95,11 @@ docker compose version
 |-------|-----|------|
 | SCAS only | 4 GB+ | ~2 GB |
 | SCAS + Elasticsearch + Kibana | 8 GB+ | ~5 GB |
-| **Full stack** (SCAS + ES + Floci) | **12–16 GB recommended** | ~8 GB+ |
+| **Full stack** (SCAS + ES + Floci) | **12-16 GB recommended** | ~8 GB+ |
 
 ---
 
-## Part 1 — Clone and base install
+## Part 1 - Clone and base install
 
 ### Step 1: Clone the repository
 
@@ -141,7 +141,7 @@ echo '[ -f "$HOME/path/to/supply-chain-attack-simulator/.testbench.env" ] && sou
 
 ---
 
-## Part 2 — Elasticsearch + Kibana (observability)
+## Part 2 - Elasticsearch + Kibana (observability)
 
 Do this once per machine; start/stop per lab session. Full reference: [Detection & observability](../platform/DETECTION_AND_OBSERVABILITY.md).
 
@@ -163,7 +163,7 @@ This will:
 4. Load all 23 scenario `DETECT.md` runbooks into Elasticsearch
 5. Set up Kibana data views (when Kibana is ready)
 
-First run can take **2–5 minutes** while Docker pulls images.
+First run can take **2-5 minutes** while Docker pulls images.
 
 ### Step 2: Open Kibana
 
@@ -195,7 +195,7 @@ echo 'export SCAS_ES_URL=http://localhost:9200' >> .testbench.env
 source .testbench.env
 ```
 
-Without `SCAS_ES_URL`, labs still work — captures stay in local JSON files only.
+Without `SCAS_ES_URL`, labs still work - captures stay in local JSON files only.
 
 ### Step 4: Verify observability
 
@@ -207,7 +207,7 @@ Expect `PASS` for rules count and detections after shipping.
 
 ---
 
-## Part 3 — Floci (AWS emulator)
+## Part 3 - Floci (AWS emulator)
 
 Required for the optional cloud track on **all 23** scenarios (S3 mirror); extended primitives on **05, 06, 11, 14, 17, 19, 23**. Per-scenario detail: [Floci integration guide](../guides/FLOCI_INTEGRATION.md).
 
@@ -215,7 +215,7 @@ Required for the optional cloud track on **all 23** scenarios (S3 mirror); exten
 
 From **repo root**, pick one option:
 
-**Option A — Fast (recommended)**
+**Option A - Fast (recommended)**
 
 Published Docker image; no Java build.
 
@@ -223,9 +223,9 @@ Published Docker image; no Java build.
 ./scripts/floci/floci-setup.sh --image
 ```
 
-**Option B — Build from source**
+**Option B - Build from source**
 
-Clones `floci-io/floci` into `vendor/floci-aws` (~5–15 min first time).
+Clones `floci-io/floci` into `vendor/floci-aws` (~5-15 min first time).
 
 ```bash
 ./scripts/floci/floci-setup.sh
@@ -233,9 +233,9 @@ Clones `floci-io/floci` into `vendor/floci-aws` (~5–15 min first time).
 
 This creates:
 
-- `infrastructure/floci/` — Docker Compose config
-- `.floci.env` — AWS endpoint variables for labs
-- `vendor/floci-aws/` — Floci source (Option B only)
+- `infrastructure/floci/` - Docker Compose config
+- `.floci.env` - AWS endpoint variables for labs
+- `vendor/floci-aws/` - Floci source (Option B only)
 
 ### Step 2: Start Floci (each lab session)
 
@@ -255,17 +255,17 @@ echo $SCAS_FLOCI_ENABLED   # must print: 1
 
 ---
 
-## Part 4 — “Everything on” session layout
+## Part 4 - "Everything on" session layout
 
 Use **three terminals** for the full workshop stack:
 
 | Terminal | Role | Commands |
 |----------|------|----------|
-| **T1 — Infrastructure** | Long-running services | ES (if not up), Floci, scenario mock servers |
-| **T2 — Lab work** | Run attacks, npm, scripts | Scenario steps per README |
-| **T3 — Blue team** (optional) | curl, detectors, Kibana | Verification |
+| **T1 - Infrastructure** | Long-running services | ES (if not up), Floci, scenario mock servers |
+| **T2 - Lab work** | Run attacks, npm, scripts | Scenario steps per README |
+| **T3 - Blue team** (optional) | curl, detectors, Kibana | Verification |
 
-**T1 — Start everything (repo root)**
+**T1 - Start everything (repo root)**
 
 ```bash
 source .testbench.env
@@ -279,11 +279,11 @@ export SCAS_ES_URL=http://localhost:9200
 
 ---
 
-## Part 5 — Prove it works: Scenario 01 (no Floci)
+## Part 5 - Prove it works: Scenario 01 (no Floci)
 
-Best first lab — typosquatting. Mock server on port **3000** only.
+Best first lab - typosquatting. Mock server on port **3000** only.
 
-**T1 — Mock server**
+**T1 - Mock server**
 
 ```bash
 cd scenarios/01-typosquatting
@@ -293,7 +293,7 @@ node infrastructure/mock-server.js
 
 Leave this running.
 
-**T2 — Run the attack**
+**T2 - Run the attack**
 
 ```bash
 cd supply-chain-attack-simulator   # repo root
@@ -305,7 +305,7 @@ npm install ../malicious-packages/request-lib
 npm start
 ```
 
-**T3 — Verify**
+**T3 - Verify**
 
 ```bash
 curl http://localhost:3000/captured-data
@@ -319,13 +319,13 @@ node detection-tools/package-scanner.js scenarios/01-typosquatting/victim-app
 
 In Kibana → Discover → **SCAS Detections**, filter `scenario_id: "01"`.
 
-Walkthrough: [Zero to Hero — Scenario 01](../scenario-guides/zero-to-hero/ZERO_TO_HERO_SCENARIO_01.md)
+Walkthrough: [Zero to Hero - Scenario 01](../scenario-guides/zero-to-hero/ZERO_TO_HERO_SCENARIO_01.md)
 
 ---
 
-## Part 6 — Prove Floci works: Scenario 05 (build compromise)
+## Part 6 - Prove Floci works: Scenario 05 (build compromise)
 
-**T1 — Services**
+**T1 - Services**
 
 ```bash
 cd supply-chain-attack-simulator   # repo root
@@ -342,7 +342,7 @@ chmod +x infrastructure/floci/*.sh
 ./infrastructure/floci/seed.sh
 ```
 
-**T2 — Run build attack**
+**T2 - Run build attack**
 
 ```bash
 cd scenarios/05-build-compromise/compromised-build
@@ -350,7 +350,7 @@ set -a && source .env.lab 2>/dev/null || source ../../_shared/lookalike-secrets.
 npm run build
 ```
 
-**T3 — Verify both tracks**
+**T3 - Verify both tracks**
 
 ```bash
 # HTTP mock (port 3000)
@@ -367,22 +367,22 @@ More: `scenarios/05-build-compromise/FLOCI.md` · [Floci integration guide](../g
 
 ---
 
-## Part 7 — What runs where (ports)
+## Part 7 - What runs where (ports)
 
 | Port | Service |
 |------|---------|
 | 9200 | Elasticsearch |
 | 5601 | Kibana |
 | 4566 | Floci (AWS emulator) |
-| 3000–3023 | Scenario mock servers (see [`scripts/setup/ports.env`](../../scripts/setup/ports.env)) |
+| 3000-3023 | Scenario mock servers (see [`scripts/setup/ports.env`](../../scripts/setup/ports.env)) |
 
-Floci uses **4566 only** — it does not start floci-ui on 3000/3001, so it will not conflict with SCAS mock servers.
+Floci uses **4566 only** - it does not start floci-ui on 3000/3001, so it will not conflict with SCAS mock servers.
 
 Full matrix: [Operations runbook](../platform/OPERATIONS.md#port-matrix)
 
 ---
 
-## Part 8 — Stop and clean up
+## Part 8 - Stop and clean up
 
 **Stop Floci**
 
@@ -412,7 +412,7 @@ Full matrix: [Operations runbook](../platform/OPERATIONS.md#port-matrix)
 
 ---
 
-## Part 9 — Session cheat sheet
+## Part 9 - Session cheat sheet
 
 ```bash
 # === ONE-TIME ===
@@ -467,7 +467,7 @@ More: [FAQ](../platform/FAQ.md) · [Operations](../platform/OPERATIONS.md)
 1. [First lab quick start](./ZERO_TO_HERO.md)
 2. [Scenario catalog](../scenario-guides/CATALOG.md)
 3. [Detection & observability](../platform/DETECTION_AND_OBSERVABILITY.md)
-4. [Floci cloud-track scenarios](../guides/FLOCI_INTEGRATION.md) — all 23 (S3); extended 05, 06, 11, 14, 17, 19, 23
+4. [Floci cloud-track scenarios](../guides/FLOCI_INTEGRATION.md) - all 23 (S3); extended 05, 06, 11, 14, 17, 19, 23
 
 ---
 

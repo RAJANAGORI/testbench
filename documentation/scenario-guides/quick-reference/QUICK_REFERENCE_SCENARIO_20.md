@@ -1,4 +1,4 @@
-# Quick Reference — Scenario 20: Package Version Confusion
+# Quick Reference - Scenario 20: Package Version Confusion
 
 Use this as your runbook for Scenario 20 when you are teaching live or practicing quickly.
 

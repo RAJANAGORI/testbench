@@ -1,4 +1,4 @@
-# Module Instance: Scenario 23 (Trivy Supply Chain Attack — CVE-2026-33634)
+# Module Instance: Scenario 23 (Trivy Supply Chain Attack - CVE-2026-33634)
 
 Based on [MODULE_TEMPLATE.md](./MODULE_TEMPLATE.md).
 
@@ -9,7 +9,7 @@ This scenario demonstrates a **force-push tag attack** against a widely-trusted 
 - **Module ID**: `23`
 - **Title**: `Trivy Supply Chain Attack (CVE-2026-33634 simulation)`
 - **Level**: `Advanced`
-- **Estimated Time**: `60–90 minutes`
+- **Estimated Time**: `60-90 minutes`
 - **Primary Attack Surface**: `GitHub Actions CI/CD pipelines, mutable version tags, security tool trust`
 - **Prerequisites**: Node.js 16+; basic understanding of GitHub Actions and CI/CD pipelines
 
@@ -17,16 +17,16 @@ This scenario demonstrates a **force-push tag attack** against a widely-trusted 
 
 - Explain how a `pull_request_target` misconfiguration enables PAT theft (initial access vector).
 - Demonstrate that mutable git tags (`@v0.34.2`) can be silently rewritten via force-push.
-- Observe credential harvesting executing *before* the legitimate scan step — invisible in normal CI logs.
+- Observe credential harvesting executing *before* the legitimate scan step - invisible in normal CI logs.
 - Run `trivy-version-scanner.js` and `ci-workflow-auditor.js` to identify compromised references.
 - Apply SHA pinning and `step-security/harden-runner` egress controls as layered defenses.
 
 ## 3) Threat Model Snapshot
 
-- **Asset at risk**: CI/CD secrets — GitHub tokens, cloud provider keys, registry credentials, database URLs
+- **Asset at risk**: CI/CD secrets - GitHub tokens, cloud provider keys, registry credentials, database URLs
 - **Trust edge abused**: GitHub Actions version tags as a fixed reference for external action code
 - **Attacker objective**: harvest credentials from every pipeline that uses the compromised action
-- **Blast radius**: all organizations running `trivy-action@v0.34.x` between March 19–22, 2026
+- **Blast radius**: all organizations running `trivy-action@v0.34.x` between March 19-22, 2026
 
 ## 4) Lab Setup
 
@@ -39,10 +39,10 @@ export TESTBENCH_MODE=enabled
 Instructor run order:
 
 ```bash
-# Terminal A — mock C2 server
+# Terminal A - mock C2 server
 node infrastructure/mock-c2-server.js
 
-# Terminal B — victim CI pipeline
+# Terminal B - victim CI pipeline
 cd victim-ci
 export TESTBENCH_MODE=enabled
 export GITHUB_TOKEN=ghp_FAKE_FOR_LAB   # optional: makes harvest more illustrative
@@ -61,8 +61,8 @@ node detection-tools/ci-workflow-auditor.js victim-ci
 
 1. **Setup**: `./setup.sh` installs `trivy-action-like@0.69.4` (the compromised module) into `victim-ci/node_modules`.
 2. **Pipeline run**: `node run-pipeline.js` simulates a four-step GitHub Actions pipeline.
-3. **Harvest**: When Step 3 loads `require('trivy-action-like')`, the malicious `harvestAndExfiltrate()` runs — POSTing all CI env vars to the mock C2 server.
-4. **Legitimate output preserved**: `scanTarget()` runs normally afterward — the developer sees no anomaly.
+3. **Harvest**: When Step 3 loads `require('trivy-action-like')`, the malicious `harvestAndExfiltrate()` runs - POSTing all CI env vars to the mock C2 server.
+4. **Legitimate output preserved**: `scanTarget()` runs normally afterward - the developer sees no anomaly.
 5. **Exfil evidence**: `curl http://127.0.0.1:3023/captured-data` shows the stolen credential bundle.
 
 ## 6) Detection Playbook
@@ -79,7 +79,7 @@ node detection-tools/ci-workflow-auditor.js victim-ci
 
 ## 7) Mitigation Playbook
 
-- Pin all GitHub Actions to full commit SHAs — never mutable version tags.
+- Pin all GitHub Actions to full commit SHAs - never mutable version tags.
 - Update to `trivy-action@v0.35.0+` (pinned SHA) and `setup-trivy@v0.2.6+`.
 - Rotate all CI secrets exposed to pipelines after March 19 2026.
 - Add `step-security/harden-runner` with `egress-policy: audit` (or `block`) to detect/prevent unexpected network calls.

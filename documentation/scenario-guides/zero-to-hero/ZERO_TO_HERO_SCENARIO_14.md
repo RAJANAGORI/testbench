@@ -42,7 +42,7 @@ By the end of this guide, you will:
 
 ### What Is a Container Image Supply Chain Attack?
 
-A **container image supply chain attack** compromises the trust consumers place in image contents — not just known vulnerabilities, but **what actually runs when the container starts**. Attackers alter entrypoints, inject startup scripts, or embed hidden network beacons that execute before your application logic.
+A **container image supply chain attack** compromises the trust consumers place in image contents - not just known vulnerabilities, but **what actually runs when the container starts**. Attackers alter entrypoints, inject startup scripts, or embed hidden network beacons that execute before your application logic.
 
 **Typical image structure**:
 ```
@@ -118,10 +118,10 @@ Application may appear to run normally (or script runs standalone)
 
 Before we start, make sure you've completed:
 
-- ✅ Scenario 1 (Typosquatting) — basic supply chain trust concepts
+- ✅ Scenario 1 (Typosquatting) - basic supply chain trust concepts
 - ✅ Node.js 16+ installed
 - ✅ TESTBENCH_MODE enabled
-- ✅ Docker installed (optional — lab works without Docker via runtime script)
+- ✅ Docker installed (optional - lab works without Docker via runtime script)
 
 Verify your setup:
 
@@ -302,7 +302,7 @@ curl -s http://127.0.0.1:3002/captured-data
 
 ### Step 3: Static Detection First (Blue Team Preview)
 
-Open **Terminal B** — run scanner before executing attack:
+Open **Terminal B** - run scanner before executing attack:
 
 ```bash
 cd scenarios/14-container-image-supply-chain-attack
@@ -363,7 +363,7 @@ curl -s http://127.0.0.1:3002/captured-data | jq
 ```bash
 export TESTBENCH_MODE=enabled
 node images/legitimate-image/app.js
-# Benign application output only — no network beacon
+# Benign application output only - no network beacon
 ```
 
 **Key Point**: Legitimate image produces expected app behavior; compromised image prioritizes beacon at startup.
@@ -383,7 +383,7 @@ node detection-tools/image-scanner.js images/compromised-image
 - References to `host.docker.internal`
 - Known malicious entrypoint filename (`malicious-start.js`)
 
-**Exit code 2** indicates findings — integrate into CI image build gates.
+**Exit code 2** indicates findings - integrate into CI image build gates.
 
 ### Detection Method 2: Dockerfile Diff Against Baseline
 
@@ -468,7 +468,7 @@ cat images/compromised-image/malicious-start.js
 
 **Document:**
 - Network destination (`host.docker.internal:3002`, path `/capture`)
-- Safety gate (`TESTBENCH_MODE`) — lab only
+- Safety gate (`TESTBENCH_MODE`) - lab only
 - Data fields collected (`host`, `ts`)
 
 ### Investigation Step 3: Capture Timeline
@@ -589,22 +589,22 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 ## Elasticsearch + Kibana observability (optional)
 
-Scenario **14 — Container Image Supply Chain** is indexed in Elasticsearch when the observability stack is running.
+Scenario **14 - Container Image Supply Chain** is indexed in Elasticsearch when the observability stack is running.
 
 Container supply chain: compromised-image entrypoint sends build-time payload to mock-server :3002.
 
-- **Detection runbook (static)** → index `scas-rules`, document id `14` — IOCs, Sigma, YARA, sample logs from `DETECT.md`
-- **Runtime captures (dynamic)** → index `scas-detections` — one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector
+- **Detection runbook (static)** → index `scas-rules`, document id `14` - IOCs, Sigma, YARA, sample logs from `DETECT.md`
+- **Runtime captures (dynamic)** → index `scas-detections` - one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector
 
 ### How to read this diagram
 
 | Phase | What you should look for |
 |-------|--------------------------|
-| **1 — Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
-| **2 — Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
-| **3 — Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
-| **4 — Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
-| **5 — Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
+| **1 - Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
+| **2 - Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
+| **3 - Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
+| **4 - Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
+| **5 - Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
 
 > **Safety:** All network calls stay on `127.0.0.1`. Malicious logic runs only when `TESTBENCH_MODE=enabled`.
 
@@ -614,7 +614,7 @@ Container supply chain: compromised-image entrypoint sends build-time payload to
 
 *Swimlane diagram for Scenario 14. Editable source: [`scas-observability-scenario-14.excalidraw`](../../assets/diagrams/observability/excalidraw/scas-observability-scenario-14.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-observability-diagrams.js`.*
 
-### Sequence diagram (Phase 1–5)
+### Sequence diagram (Phase 1-5)
 
 Same flow as a participant sequence (expandable in the docs hub).
 
@@ -628,13 +628,13 @@ sequenceDiagram
     participant ES as Elasticsearch :9200
     participant Kibana as Kibana :5601
 
-    Note over Learner,Mock: Phase 1 — Start collectors (Terminal A)
+    Note over Learner,Mock: Phase 1 - Start collectors (Terminal A)
     Learner->>Mock: export TESTBENCH_MODE=enabled
     Learner->>Mock: export SCAS_ES_URL=http://localhost:9200 (optional)
     Learner->>Mock: node infrastructure/mock-server.js
     Mock->>Mock: Listen for exfil POST on localhost
 
-    Note over Learner,MalPkg: Phase 2 — Run the lab (Terminal B)
+    Note over Learner,MalPkg: Phase 2 - Run the lab (Terminal B)
     Learner->>Learner: export TESTBENCH_MODE=enabled
     Learner->>Learner: export SCAS_ES_URL=http://localhost:9200 (optional)
     Learner->>Victim: TESTBENCH_MODE=enabled node images/compromised-image/malicious-start.js
@@ -642,13 +642,13 @@ sequenceDiagram
     MalPkg->>MalPkg: Simulated container startup exfil stub
     Learner->>Victim: (Optional) docker run scas-compromised image
 
-    Note over MalPkg,Mock: Phase 3 — Simulated exfiltration (127.0.0.1 only)
+    Note over MalPkg,Mock: Phase 3 - Simulated exfiltration (127.0.0.1 only)
     Note over MalPkg: Malicious path gated by TESTBENCH_MODE=enabled
     MalPkg->>Mock: POST /capture JSON payload
     Mock->>Mock: Append to infrastructure/captured-data.json
     Mock-->>Learner: 200 OK (capture accepted)
 
-    Note over Mock,Kibana: Phase 4 — Optional Elasticsearch indexing
+    Note over Mock,Kibana: Phase 4 - Optional Elasticsearch indexing
     alt SCAS_ES_URL is set in Terminal A
     Mock->>ES: POST scas-detections (scenario_id=14, event_type=exfil_capture)
     ES->>ES: Store @timestamp, package, detail fields
@@ -657,11 +657,11 @@ sequenceDiagram
     end
 
     Note over ES: Runbook pre-seeded at scas-rules/_doc/14
-    Note over Learner,Kibana: Phase 5 — Blue-team review in Kibana
-    Learner->>Kibana: Open Discover → SCAS Detections — Scenario 14
+    Note over Learner,Kibana: Phase 5 - Blue-team review in Kibana
+    Learner->>Kibana: Open Discover → SCAS Detections - Scenario 14
     Kibana->>ES: Query scenario_id + sort by @timestamp desc
     ES-->>Kibana: Return capture events for this lab
-    Learner->>Kibana: Open SCAS Rules — Scenario 14
+    Learner->>Kibana: Open SCAS Rules - Scenario 14
     ES-->>Kibana: Return IOCs, Sigma, YARA from DETECT.md
     Learner->>Learner: Correlate capture detail with runbook IOCs
 ```
@@ -688,7 +688,7 @@ From the repository root:
 
 ### Run this scenario with live Elasticsearch forwarding
 
-**Terminal A — mock collector** (from `scenarios/14-container-image-supply-chain-attack`):
+**Terminal A - mock collector** (from `scenarios/14-container-image-supply-chain-attack`):
 
 ```bash
 cd scenarios/14-container-image-supply-chain-attack
@@ -697,7 +697,7 @@ export SCAS_ES_URL=http://localhost:9200
 node infrastructure/mock-server.js
 ```
 
-**Terminal B — execute the lab:**
+**Terminal B - execute the lab:**
 
 ```bash
 cd scenarios/14-container-image-supply-chain-attack
@@ -731,8 +731,8 @@ curl -s "http://localhost:9200/scas-detections/_search?pretty" \
 ### Verify in Kibana (UI)
 
 1. Open [http://localhost:5601](http://localhost:5601)
-2. **Discover** → **SCAS Detections — Scenario 14** — live capture timeline (`@timestamp`, `package.name`, `detail`)
-3. **Discover** → **SCAS Rules — Scenario 14** — compare against `iocs`, `sigma`, and `yara` fields
+2. **Discover** → **SCAS Detections - Scenario 14** - live capture timeline (`@timestamp`, `package.name`, `detail`)
+3. **Discover** → **SCAS Rules - Scenario 14** - compare against `iocs`, `sigma`, and `yara` fields
 4. Ask: *Does each capture field match an IOC or Sigma condition in the runbook?*
 
 See [observability/README.md](../../../observability/README.md) for stack details.
@@ -749,7 +749,7 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 
 ### Best Practices
 
-1. ✅ **Pin image digests** — never rely on tags alone
+1. ✅ **Pin image digests** - never rely on tags alone
 2. ✅ **Verify signatures and provenance** in CI/CD and admission control
 3. ✅ **Policy-check CMD/ENTRYPOINT** changes on critical images
 4. ✅ **Restrict outbound network** at build and runtime
@@ -789,7 +789,7 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 
 ## 📚 Additional Resources
 
-- [Dockerfile reference — CMD and ENTRYPOINT](https://docs.docker.com/engine/reference/builder/)
+- [Dockerfile reference - CMD and ENTRYPOINT](https://docs.docker.com/engine/reference/builder/)
 - [Sigstore cosign documentation](https://docs.sigstore.dev/cosign/overview/)
 - [SLSA container track](https://slsa.dev/spec/v1.0/building-levels)
 - [NIST SP 800-190 Application Container Security Guide](https://csrc.nist.gov/publications/detail/sp/800-190/final)

@@ -1,4 +1,4 @@
-# Quick Reference — Scenario 13: Package Metadata Manipulation
+# Quick Reference - Scenario 13: Package Metadata Manipulation
 
 Use this as your runbook for Scenario 13 when you are teaching live or practicing quickly.
 

@@ -143,8 +143,8 @@ bash infrastructure/build-repos.sh
 ```
 
 Creates:
-- `work/malicious-lib` — attacker-controlled submodule source
-- `work/awesome-project` — parent repo with `.gitmodules` pointing at malicious-lib
+- `work/malicious-lib` - attacker-controlled submodule source
+- `work/awesome-project` - parent repo with `.gitmodules` pointing at malicious-lib
 
 ### Step 3: Start the Mock Attacker Server
 
@@ -178,7 +178,7 @@ export TESTBENCH_MODE=enabled && npm --prefix work/victim-clone install
 1. npm runs the parent's `postinstall` script
 2. Script calls `bash libs/malicious-submodule/postinstall.sh`
 3. Submodule payload collects host info and exfiltrates to `:3000`
-4. No manual `bash postinstall.sh` needed — this is the real attack path
+4. No manual `bash postinstall.sh` needed - this is the real attack path
 
 ### Step 6: Verify Capture and Run Detection
 
@@ -343,22 +343,22 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 ## Elasticsearch + Kibana observability (optional)
 
-Scenario **10 — Git Submodule Attack** is indexed in Elasticsearch when the observability stack is running.
+Scenario **10 - Git Submodule Attack** is indexed in Elasticsearch when the observability stack is running.
 
 Git submodule attack: malicious-submodule postinstall runs when the developer initializes submodules.
 
-- **Detection runbook (static)** → index `scas-rules`, document id `10` — IOCs, Sigma, YARA, sample logs from `DETECT.md`
-- **Runtime captures (dynamic)** → index `scas-detections` — one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector
+- **Detection runbook (static)** → index `scas-rules`, document id `10` - IOCs, Sigma, YARA, sample logs from `DETECT.md`
+- **Runtime captures (dynamic)** → index `scas-detections` - one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector
 
 ### How to read this diagram
 
 | Phase | What you should look for |
 |-------|--------------------------|
-| **1 — Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
-| **2 — Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
-| **3 — Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
-| **4 — Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
-| **5 — Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
+| **1 - Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
+| **2 - Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
+| **3 - Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
+| **4 - Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
+| **5 - Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
 
 > **Safety:** All network calls stay on `127.0.0.1`. Malicious logic runs only when `TESTBENCH_MODE=enabled`.
 
@@ -368,7 +368,7 @@ Git submodule attack: malicious-submodule postinstall runs when the developer in
 
 *Swimlane diagram for Scenario 10. Editable source: [`scas-observability-scenario-10.excalidraw`](../../assets/diagrams/observability/excalidraw/scas-observability-scenario-10.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-observability-diagrams.js`.*
 
-### Sequence diagram (Phase 1–5)
+### Sequence diagram (Phase 1-5)
 
 Same flow as a participant sequence (expandable in the docs hub).
 
@@ -382,13 +382,13 @@ sequenceDiagram
     participant ES as Elasticsearch :9200
     participant Kibana as Kibana :5601
 
-    Note over Learner,Mock: Phase 1 — Start collectors (Terminal A)
+    Note over Learner,Mock: Phase 1 - Start collectors (Terminal A)
     Learner->>Mock: export TESTBENCH_MODE=enabled
     Learner->>Mock: export SCAS_ES_URL=http://localhost:9200 (optional)
     Learner->>Mock: node infrastructure/mock-server.js
     Mock->>Mock: Listen for exfil POST on localhost
 
-    Note over Learner,MalPkg: Phase 2 — Run the lab (Terminal B)
+    Note over Learner,MalPkg: Phase 2 - Run the lab (Terminal B)
     Learner->>Learner: export TESTBENCH_MODE=enabled
     Learner->>Learner: export SCAS_ES_URL=http://localhost:9200 (optional)
     Learner->>Victim: git submodule update --init (lab setup)
@@ -396,13 +396,13 @@ sequenceDiagram
     Victim->>MalPkg: Submodule hook executes bundled script
     MalPkg->>MalPkg: Collect repo / env indicators (simulated)
 
-    Note over MalPkg,Mock: Phase 3 — Simulated exfiltration (127.0.0.1 only)
+    Note over MalPkg,Mock: Phase 3 - Simulated exfiltration (127.0.0.1 only)
     Note over MalPkg: Malicious path gated by TESTBENCH_MODE=enabled
     MalPkg->>Mock: POST /collect JSON payload
     Mock->>Mock: Append to infrastructure/captured-data.json
     Mock-->>Learner: 200 OK (capture accepted)
 
-    Note over Mock,Kibana: Phase 4 — Optional Elasticsearch indexing
+    Note over Mock,Kibana: Phase 4 - Optional Elasticsearch indexing
     alt SCAS_ES_URL is set in Terminal A
     Mock->>ES: POST scas-detections (scenario_id=10, event_type=exfil_capture)
     ES->>ES: Store @timestamp, package, detail fields
@@ -411,11 +411,11 @@ sequenceDiagram
     end
 
     Note over ES: Runbook pre-seeded at scas-rules/_doc/10
-    Note over Learner,Kibana: Phase 5 — Blue-team review in Kibana
-    Learner->>Kibana: Open Discover → SCAS Detections — Scenario 10
+    Note over Learner,Kibana: Phase 5 - Blue-team review in Kibana
+    Learner->>Kibana: Open Discover → SCAS Detections - Scenario 10
     Kibana->>ES: Query scenario_id + sort by @timestamp desc
     ES-->>Kibana: Return capture events for this lab
-    Learner->>Kibana: Open SCAS Rules — Scenario 10
+    Learner->>Kibana: Open SCAS Rules - Scenario 10
     ES-->>Kibana: Return IOCs, Sigma, YARA from DETECT.md
     Learner->>Learner: Correlate capture detail with runbook IOCs
 ```
@@ -442,7 +442,7 @@ From the repository root:
 
 ### Run this scenario with live Elasticsearch forwarding
 
-**Terminal A — mock collector** (from `scenarios/10-git-submodule-attack`):
+**Terminal A - mock collector** (from `scenarios/10-git-submodule-attack`):
 
 ```bash
 cd scenarios/10-git-submodule-attack
@@ -451,7 +451,7 @@ export SCAS_ES_URL=http://localhost:9200
 node infrastructure/mock-server.js
 ```
 
-**Terminal B — execute the lab:**
+**Terminal B - execute the lab:**
 
 ```bash
 cd scenarios/10-git-submodule-attack
@@ -485,8 +485,8 @@ curl -s "http://localhost:9200/scas-detections/_search?pretty" \
 ### Verify in Kibana (UI)
 
 1. Open [http://localhost:5601](http://localhost:5601)
-2. **Discover** → **SCAS Detections — Scenario 10** — live capture timeline (`@timestamp`, `package.name`, `detail`)
-3. **Discover** → **SCAS Rules — Scenario 10** — compare against `iocs`, `sigma`, and `yara` fields
+2. **Discover** → **SCAS Detections - Scenario 10** - live capture timeline (`@timestamp`, `package.name`, `detail`)
+3. **Discover** → **SCAS Rules - Scenario 10** - compare against `iocs`, `sigma`, and `yara` fields
 4. Ask: *Does each capture field match an IOC or Sigma condition in the runbook?*
 
 See [observability/README.md](../../../observability/README.md) for stack details.

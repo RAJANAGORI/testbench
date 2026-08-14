@@ -1,4 +1,4 @@
-# Quick Reference — Scenario 17: Multi-Stage Attack Chain
+# Quick Reference - Scenario 17: Multi-Stage Attack Chain
 
 Use this as your runbook for Scenario 17 when you are teaching live or practicing quickly.
 

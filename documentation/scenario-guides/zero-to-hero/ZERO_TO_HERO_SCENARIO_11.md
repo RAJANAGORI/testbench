@@ -101,7 +101,7 @@ Once configured, **every `npm install` resolves through the mirror**. If the mir
 ```
 
 **Notice the changes**:
-- Same name, version, and author — passes casual review
+- Same name, version, and author - passes casual review
 - Hidden `postinstall` script added in mirror copy only
 - Description tag differs (visible in this lab; often absent in real attacks)
 
@@ -119,7 +119,7 @@ npm install triggers postinstall scripts
         ↓
 Sensitive files (.npmrc, .env) exfiltrated
         ↓
-Application still runs — compromise stays hidden
+Application still runs - compromise stays hidden
 ```
 
 ### Why Mirror Poisoning Is Dangerous
@@ -137,7 +137,7 @@ Application still runs — compromise stays hidden
 - **Credential theft**: Postinstall scripts harvest `.npmrc` tokens and environment secrets
 - **Backdoor installation**: Malicious packages maintain API compatibility while exfiltrating data
 
-**Key insight**: Mirrors exist to improve reliability — but they also concentrate trust. Compromise the mirror, compromise the organization.
+**Key insight**: Mirrors exist to improve reliability - but they also concentrate trust. Compromise the mirror, compromise the organization.
 
 ---
 
@@ -145,9 +145,9 @@ Application still runs — compromise stays hidden
 
 Before we start, make sure you've completed:
 
-- ✅ Scenario 1 (Typosquatting) — understanding basic package trust failures
-- ✅ Scenario 2 (Dependency Confusion) — understanding package resolution
-- ✅ Scenario 7 (Transitive Dependencies) — understanding dependency chains
+- ✅ Scenario 1 (Typosquatting) - understanding basic package trust failures
+- ✅ Scenario 2 (Dependency Confusion) - understanding package resolution
+- ✅ Scenario 7 (Transitive Dependencies) - understanding dependency chains
 - ✅ Node.js 16+ and npm installed
 - ✅ TESTBENCH_MODE enabled
 
@@ -217,8 +217,8 @@ export TESTBENCH_MODE=enabled
 ```
 
 **Packages in this lab**:
-- **`enterprise-utils@1.0.0`** — utility functions; poisoned copy exfiltrates hostname, username, and sensitive files
-- **`secure-lib@2.0.0`** — crypto helpers; poisoned copy sends beacon on install
+- **`enterprise-utils@1.0.0`** - utility functions; poisoned copy exfiltrates hostname, username, and sensitive files
+- **`secure-lib@2.0.0`** - crypto helpers; poisoned copy sends beacon on install
 
 ---
 
@@ -237,7 +237,7 @@ registry=http://internal-mirror.enterprisecorp.local:4873
 always-auth=false
 ```
 
-**Notice**: The app uses `registry=http://localhost:4873/` in `.npmrc` — npm resolves **all** packages through the poisoned mirror server (`registry-server.js`), not `file:` paths.
+**Notice**: The app uses `registry=http://localhost:4873/` in `.npmrc` - npm resolves **all** packages through the poisoned mirror server (`registry-server.js`), not `file:` paths.
 
 ### Step 2: Examine Corporate Application Dependencies
 
@@ -279,7 +279,7 @@ cat legitimate-packages/secure-lib/package.json
 **What you'll see:**
 - No lifecycle scripts
 - Clean utility/crypto code in `index.js`
-- Same names and versions as mirror copies — metadata alone won't reveal compromise
+- Same names and versions as mirror copies - metadata alone won't reveal compromise
 
 ### Step 5: Read the Compromised Mirror README
 
@@ -321,13 +321,13 @@ cat compromised-mirror/enterprise-utils/postinstall.js
 
 ### Step 3: Start the Poisoned Registry Mirror
 
-**Terminal A** — mock C2 (from scenario root):
+**Terminal A** - mock C2 (from scenario root):
 
 ```bash
 node infrastructure/mock-server.js
 ```
 
-**Terminal B** — poisoned registry (speaks npm protocol on port **4873**):
+**Terminal B** - poisoned registry (speaks npm protocol on port **4873**):
 
 ```bash
 node infrastructure/registry-server.js
@@ -377,7 +377,7 @@ npm start
 - Utility and crypto functions work as expected
 - Prompt to check mock server for exfiltrated data
 
-**Key Point**: The app behaves correctly — developers may not notice the compromise until blue-team review.
+**Key Point**: The app behaves correctly - developers may not notice the compromise until blue-team review.
 
 ### Step 6: Verify Captured Evidence
 
@@ -644,7 +644,7 @@ node detection-tools/mirror-validator.js compromised-mirror legitimate-packages
 
 Canonical prevention and mitigation controls (aligned with the [scenario README](../../../scenarios/11-registry-mirror-poisoning/README.md)). Lab walkthroughs above expand each control with hands-on steps.
 
-- Secure mirror access — limit who can publish or modify mirror storage.
+- Secure mirror access - limit who can publish or modify mirror storage.
 - Audit mirror configuration and cached packages on a schedule.
 - Verify mirror packages match upstream registry digests.
 - Implement strict access controls and MFA on mirror admin paths.
@@ -660,22 +660,22 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 ## Elasticsearch + Kibana observability (optional)
 
-Scenario **11 — Registry Mirror Poisoning** is indexed in Elasticsearch when the observability stack is running.
+Scenario **11 - Registry Mirror Poisoning** is indexed in Elasticsearch when the observability stack is running.
 
 Registry mirror poisoning: corporate-app installs from compromised-mirror instead of legitimate-packages.
 
-- **Detection runbook (static)** → index `scas-rules`, document id `11` — IOCs, Sigma, YARA, sample logs from `DETECT.md`
-- **Runtime captures (dynamic)** → index `scas-detections` — one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector
+- **Detection runbook (static)** → index `scas-rules`, document id `11` - IOCs, Sigma, YARA, sample logs from `DETECT.md`
+- **Runtime captures (dynamic)** → index `scas-detections` - one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector
 
 ### How to read this diagram
 
 | Phase | What you should look for |
 |-------|--------------------------|
-| **1 — Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
-| **2 — Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
-| **3 — Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
-| **4 — Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
-| **5 — Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
+| **1 - Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
+| **2 - Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
+| **3 - Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
+| **4 - Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
+| **5 - Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
 
 > **Safety:** All network calls stay on `127.0.0.1`. Malicious logic runs only when `TESTBENCH_MODE=enabled`.
 
@@ -685,7 +685,7 @@ Registry mirror poisoning: corporate-app installs from compromised-mirror instea
 
 *Swimlane diagram for Scenario 11. Editable source: [`scas-observability-scenario-11.excalidraw`](../../assets/diagrams/observability/excalidraw/scas-observability-scenario-11.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-observability-diagrams.js`.*
 
-### Sequence diagram (Phase 1–5)
+### Sequence diagram (Phase 1-5)
 
 Same flow as a participant sequence (expandable in the docs hub).
 
@@ -699,13 +699,13 @@ sequenceDiagram
     participant ES as Elasticsearch :9200
     participant Kibana as Kibana :5601
 
-    Note over Learner,Mock: Phase 1 — Start collectors (Terminal A)
+    Note over Learner,Mock: Phase 1 - Start collectors (Terminal A)
     Learner->>Mock: export TESTBENCH_MODE=enabled
     Learner->>Mock: export SCAS_ES_URL=http://localhost:9200 (optional)
     Learner->>Mock: node infrastructure/mock-server.js
     Mock->>Mock: Listen for exfil POST on localhost
 
-    Note over Learner,MalPkg: Phase 2 — Run the lab (Terminal B)
+    Note over Learner,MalPkg: Phase 2 - Run the lab (Terminal B)
     Learner->>Learner: export TESTBENCH_MODE=enabled
     Learner->>Learner: export SCAS_ES_URL=http://localhost:9200 (optional)
     Learner->>Victim: npm install (uses poisoned internal mirror path)
@@ -713,13 +713,13 @@ sequenceDiagram
     Learner->>Victim: npm start
     MalPkg->>MalPkg: Poisoned mirror package executes
 
-    Note over MalPkg,Mock: Phase 3 — Simulated exfiltration (127.0.0.1 only)
+    Note over MalPkg,Mock: Phase 3 - Simulated exfiltration (127.0.0.1 only)
     Note over MalPkg: Malicious path gated by TESTBENCH_MODE=enabled
     MalPkg->>Mock: POST /collect JSON payload
     Mock->>Mock: Append to infrastructure/captured-data.json
     Mock-->>Learner: 200 OK (capture accepted)
 
-    Note over Mock,Kibana: Phase 4 — Optional Elasticsearch indexing
+    Note over Mock,Kibana: Phase 4 - Optional Elasticsearch indexing
     alt SCAS_ES_URL is set in Terminal A
     Mock->>ES: POST scas-detections (scenario_id=11, event_type=exfil_capture)
     ES->>ES: Store @timestamp, package, detail fields
@@ -728,11 +728,11 @@ sequenceDiagram
     end
 
     Note over ES: Runbook pre-seeded at scas-rules/_doc/11
-    Note over Learner,Kibana: Phase 5 — Blue-team review in Kibana
-    Learner->>Kibana: Open Discover → SCAS Detections — Scenario 11
+    Note over Learner,Kibana: Phase 5 - Blue-team review in Kibana
+    Learner->>Kibana: Open Discover → SCAS Detections - Scenario 11
     Kibana->>ES: Query scenario_id + sort by @timestamp desc
     ES-->>Kibana: Return capture events for this lab
-    Learner->>Kibana: Open SCAS Rules — Scenario 11
+    Learner->>Kibana: Open SCAS Rules - Scenario 11
     ES-->>Kibana: Return IOCs, Sigma, YARA from DETECT.md
     Learner->>Learner: Correlate capture detail with runbook IOCs
 ```
@@ -759,7 +759,7 @@ From the repository root:
 
 ### Run this scenario with live Elasticsearch forwarding
 
-**Terminal A — mock collector** (from `scenarios/11-registry-mirror-poisoning`):
+**Terminal A - mock collector** (from `scenarios/11-registry-mirror-poisoning`):
 
 ```bash
 cd scenarios/11-registry-mirror-poisoning
@@ -768,7 +768,7 @@ export SCAS_ES_URL=http://localhost:9200
 node infrastructure/mock-server.js
 ```
 
-**Terminal B — execute the lab:**
+**Terminal B - execute the lab:**
 
 ```bash
 cd scenarios/11-registry-mirror-poisoning
@@ -804,8 +804,8 @@ curl -s "http://localhost:9200/scas-detections/_search?pretty" \
 ### Verify in Kibana (UI)
 
 1. Open [http://localhost:5601](http://localhost:5601)
-2. **Discover** → **SCAS Detections — Scenario 11** — live capture timeline (`@timestamp`, `package.name`, `detail`)
-3. **Discover** → **SCAS Rules — Scenario 11** — compare against `iocs`, `sigma`, and `yara` fields
+2. **Discover** → **SCAS Detections - Scenario 11** - live capture timeline (`@timestamp`, `package.name`, `detail`)
+3. **Discover** → **SCAS Rules - Scenario 11** - compare against `iocs`, `sigma`, and `yara` fields
 4. Ask: *Does each capture field match an IOC or Sigma condition in the runbook?*
 
 See [observability/README.md](../../../observability/README.md) for stack details.
@@ -822,13 +822,13 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 
 ### Best Practices
 
-1. ✅ **Verify upstream** — reconcile mirror digests with npmjs.com on a schedule
-2. ✅ **Monitor mirror** — alert on unexpected package modifications
-3. ✅ **Secure access** — treat mirror admin paths as production-critical
-4. ✅ **Regular audits** — diff mirror tree against upstream baselines
-5. ✅ **Integrity checks** — enforce checksum verification in CI
-6. ✅ **Backup strategy** — maintain known-good mirror snapshots
-7. ✅ **Incident plan** — practice mirror disable and rebuild procedures
+1. ✅ **Verify upstream** - reconcile mirror digests with npmjs.com on a schedule
+2. ✅ **Monitor mirror** - alert on unexpected package modifications
+3. ✅ **Secure access** - treat mirror admin paths as production-critical
+4. ✅ **Regular audits** - diff mirror tree against upstream baselines
+5. ✅ **Integrity checks** - enforce checksum verification in CI
+6. ✅ **Backup strategy** - maintain known-good mirror snapshots
+7. ✅ **Incident plan** - practice mirror disable and rebuild procedures
 
 ---
 
@@ -838,7 +838,7 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 
 2. **Upstream simulation**: Add a third directory `npmjs-upstream/` and extend the validator to support three-way comparison (mirror vs internal cache vs upstream).
 
-3. **Scope blast radius**: Map which other repos in a fictional org would be affected if `enterprise-utils` is poisoned — document dependency graphs.
+3. **Scope blast radius**: Map which other repos in a fictional org would be affected if `enterprise-utils` is poisoned - document dependency graphs.
 
 4. **Detection tuning**: Adapt the Sigma rule from `DETECT.md` to your organization's SIEM field names and test with sample logs.
 
@@ -862,8 +862,8 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 - ✅ Use ONLY in isolated test environments
 - ✅ Run `./setup.sh` before following paths that reference generated directories
 - ✅ All malicious code requires `TESTBENCH_MODE=enabled`
-- ✅ Exfiltration targets **127.0.0.1:3000** only — no real external C2
-- ✅ Mirrors are simulated — do not point production `.npmrc` at lab artifacts
+- ✅ Exfiltration targets **127.0.0.1:3000** only - no real external C2
+- ✅ Mirrors are simulated - do not point production `.npmrc` at lab artifacts
 
 ---
 

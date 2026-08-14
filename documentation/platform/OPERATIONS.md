@@ -76,14 +76,14 @@ Source of truth: [`scripts/setup/ports.env`](../../scripts/setup/ports.env)
 
 | Port | Used by |
 |------|---------|
-| 3000 | Scenarios 01–05, 07–12 (default mock-server) |
+| 3000 | Scenarios 01-05, 07-12 (default mock-server) |
 | 3001 | Scenario 06 (credential harvester), 13 (mock-server) |
 | 3002 | Scenario 14 (container mock), 06 (GitHub Actions sim) |
 | 3003 | Scenario 06 (replication simulator) |
-| 3015–3022 | Scenarios 15–22 (dedicated mock servers) |
+| 3015-3022 | Scenarios 15-22 (dedicated mock servers) |
 | 9200 | Elasticsearch (optional) |
 | 5601 | Kibana (optional) |
-| 4566 | Floci AWS emulator (optional; all scenarios — S3 universal; extended on 05, 06, 11, 14, 17, 19, 23) |
+| 4566 | Floci AWS emulator (optional; all scenarios - S3 universal; extended on 05, 06, 11, 14, 17, 19, 23) |
 
 Free a port after a lab:
 

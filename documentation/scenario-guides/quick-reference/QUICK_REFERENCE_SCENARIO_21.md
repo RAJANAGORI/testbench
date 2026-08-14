@@ -1,4 +1,4 @@
-# Quick Reference — Scenario 21: Axios-style compromised npm release
+# Quick Reference - Scenario 21: Axios-style compromised npm release
 
 Use this as your runbook for Scenario 21 when you are teaching live or practicing quickly.
 

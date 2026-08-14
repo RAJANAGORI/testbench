@@ -13,7 +13,7 @@ documentation/assets/diagrams/
   README.md
 ```
 
-Embed SVG only, e.g. `![…](../assets/diagrams/platform/svg/scas-e2e-lab-flow.svg)`.
+Embed SVG only, e.g. `![...](../assets/diagrams/platform/svg/scas-e2e-lab-flow.svg)`.
 
 ## Platform (hand-authored)
 
@@ -27,14 +27,14 @@ Embed SVG only, e.g. `![…](../assets/diagrams/platform/svg/scas-e2e-lab-flow.s
 
 ## Observability (23 unique zero-to-hero guides)
 
-- `scas-observability-scenario-01` … `23`
+- `scas-observability-scenario-01` ... `23`
 - Generator: [`scripts/diagrams/generate-scenario-observability-diagrams.js`](../../../scripts/diagrams/generate-scenario-observability-diagrams.js)
-- Section injector: [`detection-tools/es/generate-observability-section.js`](../../../detection-tools/es/generate-observability-section.js) — **SVG + Mermaid sequenceDiagram**
+- Section injector: [`detection-tools/es/generate-observability-section.js`](../../../detection-tools/es/generate-observability-section.js) - **SVG + Mermaid sequenceDiagram**
 
 ## Codeflow (23 unique zero-to-hero guides)
 
-- `scas-codeflow-scenario-01` … `23`
-- Generator: [`scripts/diagrams/generate-scenario-codeflow-diagrams.js`](../../../scripts/diagrams/generate-scenario-codeflow-diagrams.js) — **SVG only** under `## Code-level workflow`
+- `scas-codeflow-scenario-01` ... `23`
+- Generator: [`scripts/diagrams/generate-scenario-codeflow-diagrams.js`](../../../scripts/diagrams/generate-scenario-codeflow-diagrams.js) - **SVG only** under `## Code-level workflow`
 
 ```bash
 node scripts/diagrams/generate-scenario-observability-diagrams.js

@@ -38,10 +38,10 @@ export TESTBENCH_MODE=enabled
 ## 🎯 Attack Execution
 
 ```bash
-# Terminal A — mock C2
+# Terminal A - mock C2
 node infrastructure/mock-server.js
 
-# Terminal B — verify BOTH packages pass crypto (key compromise demo)
+# Terminal B - verify BOTH packages pass crypto (key compromise demo)
 node infrastructure/verify-signature.js legitimate-package/secure-utils
 node infrastructure/verify-signature.js compromised-package/secure-utils
 
@@ -67,7 +67,7 @@ cat scenarios/09-package-signing-bypass/DETECT.md
 ## 🛡️ Forensic Investigation
 
 ```bash
-# Compare signatures — same key, different content hash
+# Compare signatures - same key, different content hash
 diff <(jq -S . legitimate-package/secure-utils/package.sig) \
      <(jq -S . compromised-package/secure-utils/package.sig)
 
@@ -115,7 +115,7 @@ curl -X DELETE http://localhost:3000/captured-data
 | Problem | Solution |
 |---------|----------|
 | Public key not found | Re-run `./setup.sh` or `node infrastructure/keygen.js` |
-| Both packages show VALID | Expected — demonstrates key compromise; use behavioural scanner |
+| Both packages show VALID | Expected - demonstrates key compromise; use behavioural scanner |
 | No capture | `export TESTBENCH_MODE=enabled` before `npm install`; mock server on :3000 |
 | package.sig missing | `node infrastructure/sign-package.js <pkg-dir>` |
 

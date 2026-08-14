@@ -2,7 +2,7 @@
 
 Welcome! This guide will take you from zero knowledge to successfully completing the LiteLLM-style PyPI compromise scenario. We'll go step by step, explaining everything along the way.
 
-**Note**: This lab uses a **fictional** package name `litellm_like` and **127.0.0.1:3022** HTTP only. It models import-time vs `.pth` startup execution patterns inspired by real PyPI incidents—no credential theft or external exfiltration.
+**Note**: This lab uses a **fictional** package name `litellm_like` and **127.0.0.1:3022** HTTP only. It models import-time vs `.pth` startup execution patterns inspired by real PyPI incidents-no credential theft or external exfiltration.
 
 ## 📚 What You'll Learn
 
@@ -60,7 +60,7 @@ Python's `site` module processes `*.pth` files in `site-packages` at **interpret
 import litellm_like_pth_hook
 ```
 
-That means **every** `python` invocation in that venv loads the hook—even `python -c "print(1)"`.
+That means **every** `python` invocation in that venv loads the hook-even `python -c "print(1)"`.
 
 ### Visual Example
 
@@ -71,7 +71,7 @@ python-packages/
 └── v1_82_8/    # Installs zzz_testbench_litellm_like.pth → litellm_like_pth_hook.py
 
 victim-app/
-├── .venv/                  # Required — isolated Python environment
+├── .venv/                  # Required - isolated Python environment
 ├── run_victim.py           # import litellm_like (path A)
 ├── .testbench-litellm-import.json   # Marker from 1.82.7
 └── .testbench-litellm-pth.json      # Marker from 1.82.8
@@ -88,7 +88,7 @@ infrastructure/
 4. **Persistence feel**: Stays in site-packages until venv rebuild
 5. **Harder EDR correlation**: No obvious `import litellm_like` in process logs
 
-### Import-Time vs `.pth` — Detection Asymmetry
+### Import-Time vs `.pth` - Detection Asymmetry
 
 **Import-time (`1.82.7`)**:
 - Visible in import traces, dependency scanners that analyze package code
@@ -105,7 +105,7 @@ infrastructure/
 - Community advisories (GHSA) documenting import vs startup hook variants
 - Vendor analyses linked from [GitHub issue #4](https://github.com/RAJANAGORI/supply-chain-attack-simulator/issues/4)
 
-**The Attack Chain (Path B — `.pth`)**:
+**The Attack Chain (Path B - `.pth`)**:
 ```
 pip install litellm_like==1.82.8  (TESTBENCH_MODE=enabled)
     └── Installs zzz_testbench_litellm_like.pth in site-packages
@@ -132,7 +132,7 @@ pip --version
 echo $TESTBENCH_MODE  # Should output: enabled
 ```
 
-**Important**: This scenario **requires a venv**. Setup creates `victim-app/.venv` — always activate before pip install or python commands.
+**Important**: This scenario **requires a venv**. Setup creates `victim-app/.venv` - always activate before pip install or python commands.
 
 ---
 
@@ -164,7 +164,7 @@ chmod +x setup.sh
 
 | Path | Version | Behavior |
 |------|---------|----------|
-| `python-packages/v1_82_6` | `1.82.6` | Clean — no malicious behavior |
+| `python-packages/v1_82_6` | `1.82.6` | Clean - no malicious behavior |
 | `python-packages/v1_82_7` | `1.82.7` | Import trigger in `__init__.py` |
 | `python-packages/v1_82_8` | `1.82.8` | Adds `.pth` hook at install time |
 
@@ -183,7 +183,7 @@ chmod +x setup.sh
 cat python-packages/v1_82_6/litellm_like/__init__.py
 ```
 
-**What you'll see**: Normal package initialization — no testbench triggers.
+**What you'll see**: Normal package initialization - no testbench triggers.
 
 ### Step 2: Examine Import-Time Payload (1.82.7)
 
@@ -216,7 +216,7 @@ cat python-packages/v1_82_8/litellm_like_pth_hook.py
 cat victim-app/run_victim.py
 ```
 
-**What it does**: Imports `litellm_like` — triggers **1.82.7** path only.
+**What it does**: Imports `litellm_like` - triggers **1.82.7** path only.
 
 ```bash
 ls -la victim-app/.venv/bin/activate
@@ -237,7 +237,7 @@ python -c "import sys; print(sys.prefix)"
 
 **Never do this in the lab**:
 ```bash
-# BAD — installs into system Python
+# BAD - installs into system Python
 # pip install ../python-packages/v1_82_7
 ```
 
@@ -319,7 +319,7 @@ export TESTBENCH_MODE=enabled
 pip install ../python-packages/v1_82_8
 ```
 
-**Critical**: `TESTBENCH_MODE=enabled` **during install** — hook `.pth` is only added when install runs with flag set.
+**Critical**: `TESTBENCH_MODE=enabled` **during install** - hook `.pth` is only added when install runs with flag set.
 
 #### Step 5: Trigger Without Importing Package
 
@@ -540,7 +540,7 @@ python detection-tools/litellm_pth_scanner.py
 3. **Vetting critical AI/ML deps**: Manual review for `__init__.py` side effects and `.pth`
 4. **Scan site-packages in CI**: Run `.pth` scanner after every `pip install`
 5. **Separate venvs per project**: Never share site-packages across apps
-6. **Rotate secrets**: PyPI tokens, API keys (real incidents — lab has no secrets)
+6. **Rotate secrets**: PyPI tokens, API keys (real incidents - lab has no secrets)
 
 ```bash
 # Example pinned install
@@ -575,22 +575,22 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 ## Elasticsearch + Kibana observability (optional)
 
-Scenario **22 — LiteLLM-style PyPI Compromise** is indexed in Elasticsearch when the observability stack is running.
+Scenario **22 - LiteLLM-style PyPI Compromise** is indexed in Elasticsearch when the observability stack is running.
 
 LiteLLM-style PyPI: litellm_like exfil on import (1.82.7) or via .pth at interpreter startup (1.82.8).
 
-- **Detection runbook (static)** → index `scas-rules`, document id `22` — IOCs, Sigma, YARA, sample logs from `DETECT.md`
-- **Runtime captures (dynamic)** → index `scas-detections` — one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector
+- **Detection runbook (static)** → index `scas-rules`, document id `22` - IOCs, Sigma, YARA, sample logs from `DETECT.md`
+- **Runtime captures (dynamic)** → index `scas-detections` - one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector
 
 ### How to read this diagram
 
 | Phase | What you should look for |
 |-------|--------------------------|
-| **1 — Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
-| **2 — Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
-| **3 — Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
-| **4 — Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
-| **5 — Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
+| **1 - Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
+| **2 - Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
+| **3 - Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
+| **4 - Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
+| **5 - Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
 
 > **Safety:** All network calls stay on `127.0.0.1`. Malicious logic runs only when `TESTBENCH_MODE=enabled`.
 
@@ -600,7 +600,7 @@ LiteLLM-style PyPI: litellm_like exfil on import (1.82.7) or via .pth at interpr
 
 *Swimlane diagram for Scenario 22. Editable source: [`scas-observability-scenario-22.excalidraw`](../../assets/diagrams/observability/excalidraw/scas-observability-scenario-22.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-observability-diagrams.js`.*
 
-### Sequence diagram (Phase 1–5)
+### Sequence diagram (Phase 1-5)
 
 Same flow as a participant sequence (expandable in the docs hub).
 
@@ -614,13 +614,13 @@ sequenceDiagram
     participant ES as Elasticsearch :9200
     participant Kibana as Kibana :5601
 
-    Note over Learner,Mock: Phase 1 — Start collectors (Terminal A)
+    Note over Learner,Mock: Phase 1 - Start collectors (Terminal A)
     Learner->>Mock: export TESTBENCH_MODE=enabled
     Learner->>Mock: export SCAS_ES_URL=http://localhost:9200 (optional)
     Learner->>Mock: python3 infrastructure/mock_server.py
     Mock->>Mock: Listen for exfil POST on localhost
 
-    Note over Learner,MalPkg: Phase 2 — Run the lab (Terminal B)
+    Note over Learner,MalPkg: Phase 2 - Run the lab (Terminal B)
     Learner->>Learner: export TESTBENCH_MODE=enabled
     Learner->>Learner: export SCAS_ES_URL=http://localhost:9200 (optional)
     Learner->>Victim: pip install ../python-packages/v1_82_7 (or v1_82_8)
@@ -628,13 +628,13 @@ sequenceDiagram
     Victim->>MalPkg: Import hook or .pth loads litellm_like payload
     MalPkg->>MalPkg: Write .testbench-litellm-*.json markers
 
-    Note over MalPkg,Mock: Phase 3 — Simulated exfiltration (127.0.0.1 only)
+    Note over MalPkg,Mock: Phase 3 - Simulated exfiltration (127.0.0.1 only)
     Note over MalPkg: Malicious path gated by TESTBENCH_MODE=enabled
     MalPkg->>Mock: POST /collect JSON payload
     Mock->>Mock: Append to infrastructure/captured-data.json
     Mock-->>Learner: 200 OK (capture accepted)
 
-    Note over Mock,Kibana: Phase 4 — Optional Elasticsearch indexing
+    Note over Mock,Kibana: Phase 4 - Optional Elasticsearch indexing
     alt SCAS_ES_URL is set in Terminal A
     Mock->>ES: POST scas-detections (scenario_id=22, event_type=exfil_capture)
     ES->>ES: Store @timestamp, package, detail fields
@@ -643,11 +643,11 @@ sequenceDiagram
     end
 
     Note over ES: Runbook pre-seeded at scas-rules/_doc/22
-    Note over Learner,Kibana: Phase 5 — Blue-team review in Kibana
-    Learner->>Kibana: Open Discover → SCAS Detections — Scenario 22
+    Note over Learner,Kibana: Phase 5 - Blue-team review in Kibana
+    Learner->>Kibana: Open Discover → SCAS Detections - Scenario 22
     Kibana->>ES: Query scenario_id + sort by @timestamp desc
     ES-->>Kibana: Return capture events for this lab
-    Learner->>Kibana: Open SCAS Rules — Scenario 22
+    Learner->>Kibana: Open SCAS Rules - Scenario 22
     ES-->>Kibana: Return IOCs, Sigma, YARA from DETECT.md
     Learner->>Learner: Correlate capture detail with runbook IOCs
 ```
@@ -674,7 +674,7 @@ From the repository root:
 
 ### Run this scenario with live Elasticsearch forwarding
 
-**Terminal A — mock collector** (from `scenarios/22-litellm-pypi-compromise`):
+**Terminal A - mock collector** (from `scenarios/22-litellm-pypi-compromise`):
 
 ```bash
 cd scenarios/22-litellm-pypi-compromise
@@ -683,7 +683,7 @@ export SCAS_ES_URL=http://localhost:9200
 python3 infrastructure/mock_server.py
 ```
 
-**Terminal B — execute the lab:**
+**Terminal B - execute the lab:**
 
 ```bash
 cd scenarios/22-litellm-pypi-compromise
@@ -717,8 +717,8 @@ curl -s "http://localhost:9200/scas-detections/_search?pretty" \
 ### Verify in Kibana (UI)
 
 1. Open [http://localhost:5601](http://localhost:5601)
-2. **Discover** → **SCAS Detections — Scenario 22** — live capture timeline (`@timestamp`, `package.name`, `detail`)
-3. **Discover** → **SCAS Rules — Scenario 22** — compare against `iocs`, `sigma`, and `yara` fields
+2. **Discover** → **SCAS Detections - Scenario 22** - live capture timeline (`@timestamp`, `package.name`, `detail`)
+3. **Discover** → **SCAS Rules - Scenario 22** - compare against `iocs`, `sigma`, and `yara` fields
 4. Ask: *Does each capture field match an IOC or Sigma condition in the runbook?*
 
 See [observability/README.md](../../../observability/README.md) for stack details.
@@ -735,15 +735,15 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 
 ### Best Practices
 
-1. ✅ **Use dedicated venvs** — rebuild from locked requirements after incidents
-2. ✅ **Scan `site-packages/*.pth`** — treat new files as high severity
-3. ✅ **Pin versions and hashes** — no blind `pip install -U` in CI
-4. ✅ **Review `__init__.py`** — flag network I/O at import time
+1. ✅ **Use dedicated venvs** - rebuild from locked requirements after incidents
+2. ✅ **Scan `site-packages/*.pth`** - treat new files as high severity
+3. ✅ **Pin versions and hashes** - no blind `pip install -U` in CI
+4. ✅ **Review `__init__.py`** - flag network I/O at import time
 5. ✅ **Monitor all Python invocations** in CI, not just app entrypoints
 6. ✅ **Rotate credentials** after confirmed PyPI compromise advisories
 7. ✅ **Mirror/vet critical packages** through internal PyPI proxy
 
-### Import-Time vs `.pth` — Which Is Harder to Detect?
+### Import-Time vs `.pth` - Which Is Harder to Detect?
 
 **`.pth` startup** is generally harder in enterprise Python fleets because:
 - No import statement appears in application source
@@ -778,9 +778,9 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 
 ## 📚 Additional Resources
 
-- [GitHub issue #4 — scenario inspiration](https://github.com/RAJANAGORI/supply-chain-attack-simulator/issues/4)
-- [Python site module — `.pth` files](https://docs.python.org/3/library/site.html)
-- [PEP 668 — externally managed environments](https://peps.python.org/pep-0668/)
+- [GitHub issue #4 - scenario inspiration](https://github.com/RAJANAGORI/supply-chain-attack-simulator/issues/4)
+- [Python site module - `.pth` files](https://docs.python.org/3/library/site.html)
+- [PEP 668 - externally managed environments](https://peps.python.org/pep-0668/)
 - Scenario README: `scenarios/22-litellm-pypi-compromise/README.md`
 - Detection runbook: `scenarios/22-litellm-pypi-compromise/DETECT.md`
 - Quick reference: `documentation/scenario-guides/quick-reference/QUICK_REFERENCE_SCENARIO_22.md`
@@ -792,14 +792,14 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 **IMPORTANT**: This scenario is for **educational purposes only**.
 
 - ✅ Use ONLY in isolated test environments
-- ✅ Fictional `litellm_like` package — not the real LiteLLM project
+- ✅ Fictional `litellm_like` package - not the real LiteLLM project
 - ✅ All malicious behavior requires `TESTBENCH_MODE=enabled`
-- ✅ Exfiltration targets **127.0.0.1:3022** only — no real external C2
-- ✅ Always use the provided `.venv` — never install test packages into system Python
+- ✅ Exfiltration targets **127.0.0.1:3022** only - no real external C2
+- ✅ Always use the provided `.venv` - never install test packages into system Python
 - ✅ Do not reuse patterns against systems you do not own
 
 ---
 
-**Remember**: Python supply-chain defense requires site-packages filesystem monitoring—not just import analysis. Rebuild venvs, scan `.pth` files, and pin your AI stack!
+**Remember**: Python supply-chain defense requires site-packages filesystem monitoring - not just import analysis. Rebuild venvs, scan `.pth` files, and pin your AI stack!
 
 🔐 Happy Learning!

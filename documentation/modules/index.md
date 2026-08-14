@@ -7,7 +7,7 @@ Per-scenario instructor cards and the reusable module schema.
 | [MODULE_TEMPLATE.md](./MODULE_TEMPLATE.md) | Reusable module schema for writing or teaching a scenario |
 | [MODULE_INSTANCES_INDEX.md](./MODULE_INSTANCES_INDEX.md) | Index of all 23 module cards by difficulty |
 
-## Module cards (01–23)
+## Module cards (01-23)
 
 | # | Scenario | Card |
 |---|----------|------|

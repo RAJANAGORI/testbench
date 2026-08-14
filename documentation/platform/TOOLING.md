@@ -1,6 +1,6 @@
 # Tooling & doc maintenance
 
-Every maintainer-facing script in [`scripts/`](../../scripts/), grouped by purpose, plus the documentation build and content-sync lifecycle. This is the **canonical reference** for repository tooling — other docs link here instead of repeating command lists.
+Every maintainer-facing script in [`scripts/`](../../scripts/), grouped by purpose, plus the documentation build and content-sync lifecycle. This is the **canonical reference** for repository tooling - other docs link here instead of repeating command lists.
 
 > **Audience:** contributors and maintainers. Learners running labs only need [Operations](./OPERATIONS.md) and the [scenario catalog](../scenario-guides/CATALOG.md).
 
@@ -12,18 +12,18 @@ Every maintainer-facing script in [`scripts/`](../../scripts/), grouped by purpo
 
 | Script | Purpose |
 |--------|---------|
-| [`install.sh`](../../install.sh) | **Generic one-shot full stack** — prereqs, npm, ES/Kibana, Floci; writes `.scas.env` (workshops) |
-| [`install-external.sh`](../../install-external.sh) | **Optional** external-disk wrapper — storage on USB HDD/SSD, then calls `install.sh` |
+| [`install.sh`](../../install.sh) | **Generic one-shot full stack** - prereqs, npm, ES/Kibana, Floci; writes `.scas.env` (workshops) |
+| [`install-external.sh`](../../install-external.sh) | **Optional** external-disk wrapper - storage on USB HDD/SSD, then calls `install.sh` |
 | [`scripts/setup/setup-external-storage.sh`](../../scripts/setup/setup-external-storage.sh) | Low-level: Docker `data-root` + repo/npm cache onto an external disk (no stack install) |
 | [`scripts/setup/setup.sh`](../../scripts/setup/setup.sh) | Repo-wide setup; creates `.testbench.env` |
 | [`scripts/setup/teardown.sh`](../../scripts/setup/teardown.sh) | Kill scenario ports, remove captures & `node_modules` |
 | [`scripts/setup/kill-port.sh`](../../scripts/setup/kill-port.sh) | Free one port, or `--all` ports from `ports.env` |
 | [`scripts/smoke/smoke-all-scenarios.sh`](../../scripts/smoke/smoke-all-scenarios.sh) | End-to-end smoke test across all 23 scenarios |
-| [`scripts/docs/check-info-consistency.js`](../../scripts/docs/check-info-consistency.js) | **CI harness** — fail if public lab counts / indexes / ranges drift from on-disk `scenarios/NN-*` |
-| [`scripts/diagrams/check-diagram-assets.js`](../../scripts/diagrams/check-diagram-assets.js) | **CI harness** — Excalidraw/SVG drawing contract (`scripts/lib/diagram-specs.js`); also in [Smoke](../../.github/workflows/smoke.yml) + path-filtered [Diagrams](../../.github/workflows/diagrams.yml) |
-| [`scripts/lib/diagram-specs.js`](../../scripts/lib/diagram-specs.js) | Canonical nodes/edges/labels for diagrams — edit before redrawing |
+| [`scripts/docs/check-info-consistency.js`](../../scripts/docs/check-info-consistency.js) | **CI harness** - fail if public lab counts / indexes / ranges drift from on-disk `scenarios/NN-*` |
+| [`scripts/diagrams/check-diagram-assets.js`](../../scripts/diagrams/check-diagram-assets.js) | **CI harness** - Excalidraw/SVG drawing contract (`scripts/lib/diagram-specs.js`); also in [Smoke](../../.github/workflows/smoke.yml) + path-filtered [Diagrams](../../.github/workflows/diagrams.yml) |
+| [`scripts/lib/diagram-specs.js`](../../scripts/lib/diagram-specs.js) | Canonical nodes/edges/labels for diagrams - edit before redrawing |
 | [`scripts/diagrams/generate-scenario-observability-diagrams.js`](../../scripts/diagrams/generate-scenario-observability-diagrams.js) | Generate unique `scas-observability-scenario-NN.{excalidraw,svg}` for all 23 labs (CI regenerates and fails on drift) |
-| [`scripts/diagrams/generate-scenario-codeflow-diagrams.js`](../../scripts/diagrams/generate-scenario-codeflow-diagrams.js) | Generate dense `scas-codeflow-scenario-NN.{excalidraw,svg}` for all 23 labs (Panel A–E code-level workflow) |
+| [`scripts/diagrams/generate-scenario-codeflow-diagrams.js`](../../scripts/diagrams/generate-scenario-codeflow-diagrams.js) | Generate dense `scas-codeflow-scenario-NN.{excalidraw,svg}` for all 23 labs (Panel A-E code-level workflow) |
 | [`scripts/setup/ports.env`](../../scripts/setup/ports.env) | Source-of-truth port allow-list (see [Operations → port matrix](./OPERATIONS.md#port-matrix)) |
 
 ### Observability (Elasticsearch + Kibana)
@@ -57,12 +57,12 @@ Keeps scenario docs, table-of-contents blocks, and mitigation playbooks consiste
 | Script | Purpose |
 |--------|---------|
 | [`scripts/docs/inject-markdown-toc.js`](../../scripts/docs/inject-markdown-toc.js) | Regenerate the **Table of Contents** in zero-to-hero guides, scenario READMEs, and quick-reference cards. Targets: `all`, `readme`, `quick-ref`, `zero-to-hero` |
-| [`scripts/docs/sync-mitigation-gaps.js`](../../scripts/docs/sync-mitigation-gaps.js) | Sync `## Mitigation` (DETECT.md) and README playbooks for scenarios 01–06 from canonical data |
+| [`scripts/docs/sync-mitigation-gaps.js`](../../scripts/docs/sync-mitigation-gaps.js) | Sync `## Mitigation` (DETECT.md) and README playbooks for scenarios 01-06 from canonical data |
 | [`scripts/docs/inject-zero-to-hero-mitigation-playbooks.js`](../../scripts/docs/inject-zero-to-hero-mitigation-playbooks.js) | Insert `## Mitigation Playbook` into a zero-to-hero guide (idempotent) |
 | [`scripts/docs/inject-zero-to-hero-toc.js`](../../scripts/docs/inject-zero-to-hero-toc.js) | Deprecated wrapper → `inject-markdown-toc.js zero-to-hero` |
 | [`scripts/docs/restore-docs-symlinks.sh`](../../scripts/docs/restore-docs-symlinks.sh) | Restore `docs/` → `documentation/` symlinks after accidental local materialize |
 | [`scripts/lib/markdown-toc.js`](../../scripts/lib/markdown-toc.js) | Shared TOC/slug helpers (consumed by the inject scripts) |
-| [`scripts/lib/mitigation-playbooks.js`](../../scripts/lib/mitigation-playbooks.js) | **Canonical mitigation bullets** per scenario — edit here first |
+| [`scripts/lib/mitigation-playbooks.js`](../../scripts/lib/mitigation-playbooks.js) | **Canonical mitigation bullets** per scenario - edit here first |
 | [`scripts/docs/materialize-docs-for-pages.sh`](../../scripts/docs/materialize-docs-for-pages.sh) | Copy Markdown into `docs/_sources/` for GitHub Pages (guide.html fetch; no bare `.md` URLs) |
 
 ### Content & publishing
@@ -95,7 +95,7 @@ Canonical mitigation content lives in [`scripts/lib/mitigation-playbooks.js`](..
 # 1. Edit canonical bullets (if mitigations changed)
 #    scripts/lib/mitigation-playbooks.js
 
-# 2. Sync DETECT.md mitigation + README playbooks (scenarios 01–06)
+# 2. Sync DETECT.md mitigation + README playbooks (scenarios 01-06)
 node scripts/docs/sync-mitigation-gaps.js
 
 # 3. Insert the Mitigation Playbook into any new zero-to-hero guide
@@ -107,7 +107,7 @@ node scripts/docs/inject-markdown-toc.js all
 # 5. After adding/removing a scenario (or changing public counts):
 #    update README, AUTHORS, docs/index.html, docs/docs-manifest.json,
 #    CATALOG + zero-to-hero / quick-ref / modules indexes, observability
-#    “N runbooks” / “2N saved searches”, playbooks, control-plane registry —
+#    "N runbooks" / "2N saved searches", playbooks, control-plane registry -
 #    then verify:
 node scripts/docs/check-info-consistency.js
 
@@ -149,9 +149,9 @@ The site under [`docs/`](../../docs/) is GitHub Pages. Content folders are **sym
 When adding or moving a documentation file, update in lockstep:
 
 1. The relevant section `index.md` (and [`documentation/index.md`](../index.md) map if a new section).
-2. [`docs/docs-manifest.json`](../../docs/docs-manifest.json) — add the page to the right group.
+2. [`docs/docs-manifest.json`](../../docs/docs-manifest.json) - add the page to the right group.
 3. Regenerate the sitemap: `node scripts/docs/generate-sitemap.js` → [`docs/sitemap.xml`](../../docs/sitemap.xml).
-4. [`scripts/docs/materialize-docs-for-pages.sh`](../../scripts/docs/materialize-docs-for-pages.sh) — add the folder if it's a new top-level section.
+4. [`scripts/docs/materialize-docs-for-pages.sh`](../../scripts/docs/materialize-docs-for-pages.sh) - add the folder if it's a new top-level section.
 
 Per-page SEO in the docs reader (`guide.html`) is updated at runtime by [`docs/assets/js/docs-app.js`](../../docs/assets/js/docs-app.js) (title, description, canonical, Open Graph, Twitter). Landing-page SEO lives in [`docs/index.html`](../../docs/index.html).
 
@@ -159,7 +159,7 @@ Per-page SEO in the docs reader (`guide.html`) is updated at runtime by [`docs/a
 
 ## Related
 
-- [Operations](./OPERATIONS.md) — day-two lab workflow, ports, troubleshooting
-- [Detection & observability](./DETECTION_AND_OBSERVABILITY.md) — blue-team + Elasticsearch
-- [CONTRIBUTING](../../CONTRIBUTING.md) — contribution workflow and DCO
+- [Operations](./OPERATIONS.md) - day-two lab workflow, ports, troubleshooting
+- [Detection & observability](./DETECTION_AND_OBSERVABILITY.md) - blue-team + Elasticsearch
+- [CONTRIBUTING](../../CONTRIBUTING.md) - contribution workflow and DCO
 - [↑ Documentation index](../index.md)

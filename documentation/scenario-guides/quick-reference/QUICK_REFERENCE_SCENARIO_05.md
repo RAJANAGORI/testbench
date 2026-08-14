@@ -39,7 +39,7 @@ export TESTBENCH_MODE=enabled
 ## 🎯 Attack Execution
 
 ```bash
-# 1. Start mock server (from scenario root — run ./setup.sh first)
+# 1. Start mock server (from scenario root - run ./setup.sh first)
 node infrastructure/mock-server.js &
 
 # 2. Run legitimate build
@@ -103,7 +103,7 @@ gpg --verify dist/app.js.asc
 
 ```text
 scenarios/05-build-compromise/
-├── infrastructure/mock-server.js  # After ./setup.sh — exfil receiver
+├── infrastructure/mock-server.js  # After ./setup.sh - exfil receiver
 ├── legitimate-build/          # Legitimate build configuration
 │   ├── build.sh               # Clean build script
 │   └── dist/                  # Clean artifacts

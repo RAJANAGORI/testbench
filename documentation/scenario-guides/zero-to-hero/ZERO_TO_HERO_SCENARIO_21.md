@@ -48,7 +48,7 @@ Maintainer-account compromises on popular npm packages have shown a recurring pa
 1. Attacker publishes a **patch semver** (e.g. `1.14.0` → `1.14.1`) that looks routine
 2. The patch adds an **unexpected transitive dependency** the parent never used before
 3. The transitive runs a **`postinstall`** script during `npm install`
-4. The script beacons home, steals credentials, or drops persistence — then may **hide evidence**
+4. The script beacons home, steals credentials, or drops persistence - then may **hide evidence**
 
 This lab models that pattern with fictional names and **127.0.0.1:3021** beacons only.
 
@@ -121,8 +121,8 @@ victim-app/
 
 Before we start, make sure you've completed:
 
-- ✅ Scenario 4 (Postinstall Scripts) — Install-time execution
-- ✅ Scenario 7 (Transitive Dependencies) — Nested dependency trees
+- ✅ Scenario 4 (Postinstall Scripts) - Install-time execution
+- ✅ Scenario 7 (Transitive Dependencies) - Nested dependency trees
 - ✅ Node.js 16+ and npm installed
 - ✅ TESTBENCH_MODE enabled
 
@@ -209,7 +209,7 @@ cat packages/plain-crypto-js-like/postinstall.js
 2. POSTs JSON to `http://localhost:3021/beacon`
 3. Overwrites installed `package.json` with `package.clean.json` (decoy)
 
-**Forensic note**: `INIT_CWD` is set by npm to the directory where `npm install` was invoked — critical for timeline reconstruction.
+**Forensic note**: `INIT_CWD` is set by npm to the directory where `npm install` was invoked - critical for timeline reconstruction.
 
 ```bash
 cat packages/plain-crypto-js-like/package.clean.json
@@ -285,7 +285,7 @@ grep INIT_CWD packages/plain-crypto-js-like/postinstall.js
 4. `plain-crypto-js-like` postinstall runs during install
 5. Beacon hits **localhost:3021/beacon**; marker file written
 6. Decoy manifest replaces transitive `package.json`
-7. `npm start` runs app — which never imported the transitive
+7. `npm start` runs app - which never imported the transitive
 
 ### Step 2: Start the Mock Collector
 
@@ -363,7 +363,7 @@ diff packages/plain-crypto-js-like/package.json \
      node_modules/plain-crypto-js-like/package.json || true
 ```
 
-**Key Point**: Disk forensics must include lockfile, npm logs, and marker files — not just current `package.json`.
+**Key Point**: Disk forensics must include lockfile, npm logs, and marker files - not just current `package.json`.
 
 ### Step 7: Offline Install Mode (Optional)
 
@@ -373,7 +373,7 @@ For air-gapped CI that still installs deps but skips beacon:
 TESTBENCH_OFFLINE=1 npm install axios-like@file:../packages/axios-like-1.14.1.tgz
 ```
 
-Postinstall exits early — useful for testing install graph without network markers.
+Postinstall exits early - useful for testing install graph without network markers.
 
 ---
 
@@ -481,7 +481,7 @@ npm ls --all 2>/dev/null | grep -E "axios-like|plain-crypto"
 ```
 
 **Questions:**
-- Who introduced `plain-crypto-js-like` — direct or transitive?
+- Who introduced `plain-crypto-js-like` - direct or transitive?
 - Which parent version pulled it in?
 - Was it bundled or resolved from registry?
 
@@ -559,12 +559,12 @@ npm start
 
 ### Response Step 3: Long-term Defenses
 
-1. **Pin exact versions** — avoid caret auto-upgrade on critical HTTP/crypto libs
-2. **Lockfile-only CI** — `npm ci` with `--ignore-scripts` where safe, then targeted script audit
-3. **Trusted publishing / provenance** — verify attestations when available
-4. **Patch review** — treat patch bumps on high-download packages as security reviews
-5. **Lifecycle monitoring** — alert on postinstall network from nested deps
-6. **Org-wide lockfile hunt** — search for IOC package names from advisories
+1. **Pin exact versions** - avoid caret auto-upgrade on critical HTTP/crypto libs
+2. **Lockfile-only CI** - `npm ci` with `--ignore-scripts` where safe, then targeted script audit
+3. **Trusted publishing / provenance** - verify attestations when available
+4. **Patch review** - treat patch bumps on high-download packages as security reviews
+5. **Lifecycle monitoring** - alert on postinstall network from nested deps
+6. **Org-wide lockfile hunt** - search for IOC package names from advisories
 
 ```bash
 node detection-tools/axios-compromise-detector.js victim-app
@@ -592,22 +592,22 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 ## Elasticsearch + Kibana observability (optional)
 
-Scenario **21 — Axios-style Compromised Release** is indexed in Elasticsearch when the observability stack is running.
+Scenario **21 - Axios-style Compromised Release** is indexed in Elasticsearch when the observability stack is running.
 
 Axios-style release: axios-like@1.14.1 bundles a transitive with postinstall; beacon goes to /beacon.
 
-- **Detection runbook (static)** → index `scas-rules`, document id `21` — IOCs, Sigma, YARA, sample logs from `DETECT.md`
-- **Runtime captures (dynamic)** → index `scas-detections` — one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector
+- **Detection runbook (static)** → index `scas-rules`, document id `21` - IOCs, Sigma, YARA, sample logs from `DETECT.md`
+- **Runtime captures (dynamic)** → index `scas-detections` - one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector
 
 ### How to read this diagram
 
 | Phase | What you should look for |
 |-------|--------------------------|
-| **1 — Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
-| **2 — Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
-| **3 — Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
-| **4 — Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
-| **5 — Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
+| **1 - Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
+| **2 - Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
+| **3 - Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
+| **4 - Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
+| **5 - Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
 
 > **Safety:** All network calls stay on `127.0.0.1`. Malicious logic runs only when `TESTBENCH_MODE=enabled`.
 
@@ -617,7 +617,7 @@ Axios-style release: axios-like@1.14.1 bundles a transitive with postinstall; be
 
 *Swimlane diagram for Scenario 21. Editable source: [`scas-observability-scenario-21.excalidraw`](../../assets/diagrams/observability/excalidraw/scas-observability-scenario-21.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-observability-diagrams.js`.*
 
-### Sequence diagram (Phase 1–5)
+### Sequence diagram (Phase 1-5)
 
 Same flow as a participant sequence (expandable in the docs hub).
 
@@ -631,13 +631,13 @@ sequenceDiagram
     participant ES as Elasticsearch :9200
     participant Kibana as Kibana :5601
 
-    Note over Learner,Mock: Phase 1 — Start collectors (Terminal A)
+    Note over Learner,Mock: Phase 1 - Start collectors (Terminal A)
     Learner->>Mock: export TESTBENCH_MODE=enabled
     Learner->>Mock: export SCAS_ES_URL=http://localhost:9200 (optional)
     Learner->>Mock: node infrastructure/mock-server.js
     Mock->>Mock: Listen for exfil POST on localhost
 
-    Note over Learner,MalPkg: Phase 2 — Run the lab (Terminal B)
+    Note over Learner,MalPkg: Phase 2 - Run the lab (Terminal B)
     Learner->>Learner: export TESTBENCH_MODE=enabled
     Learner->>Learner: export SCAS_ES_URL=http://localhost:9200 (optional)
     Learner->>Victim: npm install axios-like@file:../packages/axios-like-1.14.1.tgz
@@ -645,13 +645,13 @@ sequenceDiagram
     Learner->>Victim: npm start (parent never imports transitive directly)
     MalPkg->>MalPkg: Write .testbench-axios-ioc.json + beacon payload
 
-    Note over MalPkg,Mock: Phase 3 — Simulated exfiltration (127.0.0.1 only)
+    Note over MalPkg,Mock: Phase 3 - Simulated exfiltration (127.0.0.1 only)
     Note over MalPkg: Malicious path gated by TESTBENCH_MODE=enabled
     MalPkg->>Mock: POST /beacon JSON payload
     Mock->>Mock: Append to infrastructure/captured beacon JSON
     Mock-->>Learner: 200 OK (capture accepted)
 
-    Note over Mock,Kibana: Phase 4 — Optional Elasticsearch indexing
+    Note over Mock,Kibana: Phase 4 - Optional Elasticsearch indexing
     alt SCAS_ES_URL is set in Terminal A
     Mock->>ES: POST scas-detections (scenario_id=21, event_type=exfil_capture)
     ES->>ES: Store @timestamp, package, detail fields
@@ -660,11 +660,11 @@ sequenceDiagram
     end
 
     Note over ES: Runbook pre-seeded at scas-rules/_doc/21
-    Note over Learner,Kibana: Phase 5 — Blue-team review in Kibana
-    Learner->>Kibana: Open Discover → SCAS Detections — Scenario 21
+    Note over Learner,Kibana: Phase 5 - Blue-team review in Kibana
+    Learner->>Kibana: Open Discover → SCAS Detections - Scenario 21
     Kibana->>ES: Query scenario_id + sort by @timestamp desc
     ES-->>Kibana: Return capture events for this lab
-    Learner->>Kibana: Open SCAS Rules — Scenario 21
+    Learner->>Kibana: Open SCAS Rules - Scenario 21
     ES-->>Kibana: Return IOCs, Sigma, YARA from DETECT.md
     Learner->>Learner: Correlate capture detail with runbook IOCs
 ```
@@ -691,7 +691,7 @@ From the repository root:
 
 ### Run this scenario with live Elasticsearch forwarding
 
-**Terminal A — mock collector** (from `scenarios/21-axios-compromised-release-attack`):
+**Terminal A - mock collector** (from `scenarios/21-axios-compromised-release-attack`):
 
 ```bash
 cd scenarios/21-axios-compromised-release-attack
@@ -700,7 +700,7 @@ export SCAS_ES_URL=http://localhost:9200
 node infrastructure/mock-server.js
 ```
 
-**Terminal B — execute the lab:**
+**Terminal B - execute the lab:**
 
 ```bash
 cd scenarios/21-axios-compromised-release-attack
@@ -734,8 +734,8 @@ curl -s "http://localhost:9200/scas-detections/_search?pretty" \
 ### Verify in Kibana (UI)
 
 1. Open [http://localhost:5601](http://localhost:5601)
-2. **Discover** → **SCAS Detections — Scenario 21** — live capture timeline (`@timestamp`, `package.name`, `detail`)
-3. **Discover** → **SCAS Rules — Scenario 21** — compare against `iocs`, `sigma`, and `yara` fields
+2. **Discover** → **SCAS Detections - Scenario 21** - live capture timeline (`@timestamp`, `package.name`, `detail`)
+3. **Discover** → **SCAS Rules - Scenario 21** - compare against `iocs`, `sigma`, and `yara` fields
 4. Ask: *Does each capture field match an IOC or Sigma condition in the runbook?*
 
 See [observability/README.md](../../../observability/README.md) for stack details.
@@ -762,7 +762,7 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 
 ### Real-World Impact
 
-- **axios/axios incident discussion** — community pattern for unexpected transitives
+- **axios/axios incident discussion** - community pattern for unexpected transitives
 - **Detection time**: Often hours to days via registry advisories + lockfile hunts
 - **Blast radius**: Any project with semver range accepting poisoned patch
 
@@ -779,7 +779,7 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 - Write a Sigma rule mapping this lab's markers to production field names
 
 ### Exercise 3: Control Prioritization
-- Rank: trusted publishing, lockfile policy, script blocking — which is strongest for this attack class?
+- Rank: trusted publishing, lockfile policy, script blocking - which is strongest for this attack class?
 - Defend your ranking in one paragraph
 
 ### Exercise 4: Anti-Forensics Resistance
@@ -791,7 +791,7 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 ## 📚 Additional Resources
 
 - [axios/axios incident discussion (GitHub)](https://github.com/axios/axios/issues/10604)
-- [GitHub issue #3 — scenario inspiration](https://github.com/RAJANAGORI/supply-chain-attack-simulator/issues/3)
+- [GitHub issue #3 - scenario inspiration](https://github.com/RAJANAGORI/supply-chain-attack-simulator/issues/3)
 - [npm bundledDependencies](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#bundleddependencies)
 - Scenario README: `scenarios/21-axios-compromised-release-attack/README.md`
 - Detection runbook: `scenarios/21-axios-compromised-release-attack/DETECT.md`
@@ -804,9 +804,9 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 **IMPORTANT**: This scenario is for **educational purposes only**.
 
 - ✅ Use ONLY in isolated test environments
-- ✅ Fictional package names — do not confuse with real `axios` or `crypto-js`
+- ✅ Fictional package names - do not confuse with real `axios` or `crypto-js`
 - ✅ All malicious behavior requires `TESTBENCH_MODE=enabled`
-- ✅ Beacons target **127.0.0.1:3021/beacon** only — no real external C2
+- ✅ Beacons target **127.0.0.1:3021/beacon** only - no real external C2
 - ✅ Do not point payloads at non-localhost endpoints
 
 ---

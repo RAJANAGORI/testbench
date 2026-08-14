@@ -36,13 +36,13 @@ export TESTBENCH_MODE=enabled
 Three terminals (or background A + B):
 
 ```bash
-# Terminal A — mock C2 (port 3000)
+# Terminal A - mock C2 (port 3000)
 node infrastructure/mock-server.js
 
-# Terminal B — fake public registry (port 4874)
+# Terminal B - fake public registry (port 4874)
 node infrastructure/registry-server.js
 
-# Terminal C — victim
+# Terminal C - victim
 cat corporate-app/.npmrc          # @techcorp:registry → localhost:4874 (misconfigured!)
 cd corporate-app
 rm -rf node_modules package-lock.json
@@ -66,7 +66,7 @@ cat scenarios/02-dependency-confusion/DETECT.md
 ## 🛡️ Prevention Commands
 
 ```bash
-# Fix .npmrc — point @techcorp scope at INTERNAL registry only
+# Fix .npmrc - point @techcorp scope at INTERNAL registry only
 cat > corporate-app/.npmrc << 'EOF'
 @techcorp:registry=https://internal-registry.techcorp.local/
 registry=https://registry.npmjs.org/
@@ -120,6 +120,6 @@ curl -X DELETE http://localhost:3000/captured-data
 
 - **Dependency Confusion**: Scoped internal name published to public/attacker registry with higher semver
 - **Registry race**: npm picks `999.999.999` over internal `1.x` when scope routing is wrong
-- **postinstall**: Exfiltration fires at install time — no `npm start` required
+- **postinstall**: Exfiltration fires at install time - no `npm start` required
 - **Detection**: Anomalous semver, wrong `resolved` registry, postinstall in scoped internal packages
 - **Prevention**: `@scope:registry` to internal host only; lock files; CI registry validation

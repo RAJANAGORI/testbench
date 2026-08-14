@@ -1,8 +1,8 @@
-# Supply Chain Attack Simulator — Documentation
+# Supply Chain Attack Simulator - Documentation
 
 Guides for learners, blue-team practice, and instructors.
 
-Canonical Markdown lives in **`documentation/`**. The [`docs/`](../docs/) folder is the GitHub Pages site (`index.html`, [`guide.html`](../docs/guide.html)) and **symlinks** back here — edit this tree, not `docs/`.
+Canonical Markdown lives in **`documentation/`**. The [`docs/`](../docs/) folder is the GitHub Pages site (`index.html`, [`guide.html`](../docs/guide.html)) and **symlinks** back here - edit this tree, not `docs/`.
 
 **Browse on the web:** [Documentation hub (`guide.html`)](../docs/guide.html)
 
@@ -10,7 +10,7 @@ Canonical Markdown lives in **`documentation/`**. The [`docs/`](../docs/) folder
 
 ## Start by role
 
-| You are… | Start here | Then |
+| You are... | Start here | Then |
 |----------|------------|------|
 | New to SCAS | [Full-stack setup](./getting-started/FULL_STACK_SETUP.md) | [Scenario 01 walkthrough](./scenario-guides/zero-to-hero/ZERO_TO_HERO_SCENARIO_01.md) |
 | Experienced developer | [Quick start](./getting-started/QUICK_START.md) · [Docker labs](./getting-started/DOCKER_LABS.md) (`./docker/install.sh`) | [Scenario catalog](./scenario-guides/CATALOG.md) |
@@ -56,7 +56,7 @@ documentation/
 ├── README.md                 Thin pointer for GitHub folder view → this index
 ├── getting-started/          Onboarding: full-stack setup, first lab, quick start
 ├── scenario-guides/
-│   ├── CATALOG.md            All 23 scenarios — full link matrix
+│   ├── CATALOG.md            All 23 scenarios - full link matrix
 │   ├── zero-to-hero/         23 learner walkthroughs (TOC + Mitigation Playbook)
 │   └── quick-reference/      23 command cheat sheets (TOC)
 ├── platform/                 Architecture, operations, detection, tooling, FAQ
@@ -74,7 +74,7 @@ This test bench has **intentionally vulnerable code** for education only.
 
 - Use **only** in isolated environments (a VM is a good idea).
 - Always `export TESTBENCH_MODE=enabled` before labs.
-- Exfiltration targets **localhost only** — never publish malicious samples.
+- Exfiltration targets **localhost only** - never publish malicious samples.
 
 See [FAQ](./platform/FAQ.md) and [SECURITY](../SECURITY.md).
 
@@ -88,4 +88,4 @@ When scenario behavior changes, update the docs with the shared tooling. Script 
 
 ---
 
-Documentation © 2024–2026 **Raja Nagori**, licensed [CC BY-NC-ND 4.0](../DOCUMENTATION-CC-BY-NC-ND.md). Software is [MIT](../LICENSE). See [LEGAL](../LEGAL.md) and [ATTRIBUTION](../ATTRIBUTION.md).
+Documentation © 2024-2026 **Raja Nagori**, licensed [CC BY-NC-ND 4.0](../DOCUMENTATION-CC-BY-NC-ND.md). Software is [MIT](../LICENSE). See [LEGAL](../LEGAL.md) and [ATTRIBUTION](../ATTRIBUTION.md).

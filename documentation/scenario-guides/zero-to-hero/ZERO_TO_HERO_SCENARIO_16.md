@@ -42,7 +42,7 @@ By the end of this guide, you will:
 
 ### What Is Package Cache Poisoning?
 
-**Package cache poisoning** occurs when a malicious or tampered artifact is stored in a package manager's cache (or internal mirror cache). Subsequent installs may **reuse the poisoned copy** even after upstream registry fixes the package — because the installer trusts the local cache as a fast path to "known" content.
+**Package cache poisoning** occurs when a malicious or tampered artifact is stored in a package manager's cache (or internal mirror cache). Subsequent installs may **reuse the poisoned copy** even after upstream registry fixes the package - because the installer trusts the local cache as a fast path to "known" content.
 
 **Cache layer in install flow**:
 ```
@@ -92,9 +92,9 @@ First install writes poisoned artifact to cache
         ↓
 Developer deletes node_modules and reinstalls
         ↓
-Poisoned cache entry reused — compromise repeats
+Poisoned cache entry reused - compromise repeats
         ↓
-Upstream registry may already be "fixed" — cache still serves malware
+Upstream registry may already be "fixed" - cache still serves malware
         ↓
 Exfiltration to attacker server (localhost:3016 in this lab)
 ```
@@ -122,8 +122,8 @@ Exfiltration to attacker server (localhost:3016 in this lab)
 
 Before we start, make sure you've completed:
 
-- ✅ Scenario 1 (Typosquatting) — basic dependency trust
-- ✅ Scenario 2 (Dependency Confusion) — resolution and integrity concepts
+- ✅ Scenario 1 (Typosquatting) - basic dependency trust
+- ✅ Scenario 2 (Dependency Confusion) - resolution and integrity concepts
 - ✅ Node.js 16+ and npm installed
 - ✅ TESTBENCH_MODE enabled
 
@@ -222,7 +222,7 @@ cat victim-app/scripts/install-from-cache.js
 1. Resolves paths: `cache/cache-lib` (source) → `node_modules/cache-lib` (destination)
 2. Removes existing `node_modules/cache-lib`
 3. Recursively copies poisoned cache content
-4. `require('cache-lib')` immediately — triggers malicious load
+4. `require('cache-lib')` immediately - triggers malicious load
 
 **This simulates**: Package manager copying from poisoned cache on every install.
 
@@ -242,7 +242,7 @@ cat victim-app/package.json
 }
 ```
 
-Every `npm install` re-runs cache copy — persistence is intentional.
+Every `npm install` re-runs cache copy - persistence is intentional.
 
 ```bash
 cat victim-app/index.js
@@ -253,7 +253,7 @@ Victim app uses the library normally after poisoned install completes.
 ### Step 4: Understand Persistence Mechanics
 
 ```bash
-# The poison lives HERE — not in node_modules alone
+# The poison lives HERE - not in node_modules alone
 ls -la cache/cache-lib/
 ```
 
@@ -272,10 +272,10 @@ ls -la cache/cache-lib/
 
 **Attack Timeline**:
 1. Poisoned artifact stored in `cache/cache-lib`
-2. Developer runs first `npm install` — postinstall copies poisoned module
+2. Developer runs first `npm install` - postinstall copies poisoned module
 3. Developer deletes `node_modules` thinking environment is clean
 4. Second `npm install` copies same poisoned content again
-5. Developer runs app with TESTBENCH_MODE — exfiltration fires
+5. Developer runs app with TESTBENCH_MODE - exfiltration fires
 
 ### Step 2: Start the Mock Attacker Server
 
@@ -328,7 +328,7 @@ npm install
 - Same poisoned cache source copied again
 - Compromise persists without any registry fetch
 
-**Key Point**: Two installs, same poisoned source — this is the core lesson.
+**Key Point**: Two installs, same poisoned source - this is the core lesson.
 
 ### Step 5: Trigger Runtime Exfiltration
 
@@ -348,7 +348,7 @@ npm start
 curl -s http://127.0.0.1:3016/captured-data | jq
 ```
 
-**Alternative — read capture file:**
+**Alternative - read capture file:**
 ```bash
 cat ../infrastructure/captured-data.json | jq '.captures[-1]'
 ```
@@ -480,10 +480,10 @@ cat infrastructure/captured-data.json | jq '.captures[] | {timestamp, stage: .da
 ```
 
 **Build Timeline:**
-- T0: First `npm install` — cache copy
+- T0: First `npm install` - cache copy
 - T1: `node_modules` deleted
-- T2: Second `npm install` — cache copy again
-- T3: `npm start` with TESTBENCH_MODE — exfiltration
+- T2: Second `npm install` - cache copy again
+- T3: `npm start` with TESTBENCH_MODE - exfiltration
 
 ### Investigation Step 4: Scope Assessment
 
@@ -496,7 +496,7 @@ cat infrastructure/captured-data.json | jq '.captures[] | {timestamp, stage: .da
 
 ```bash
 diff cache/cache-lib/index.js victim-app/node_modules/cache-lib/index.js
-# Expected: no diff — direct copy proves cache origin
+# Expected: no diff - direct copy proves cache origin
 ```
 
 ---
@@ -529,7 +529,7 @@ npm cache clean --force
 ```bash
 cd victim-app
 rm -rf node_modules package-lock.json
-# After cache purge — reinstall from trusted registry/mirror only
+# After cache purge - reinstall from trusted registry/mirror only
 npm install
 ```
 
@@ -545,7 +545,7 @@ node detection-tools/cache-poisoning-detector.js .
 
 **Implement Multiple Layers**:
 
-1. **Cache purge in incident response** — mandatory after registry compromise
+1. **Cache purge in incident response** - mandatory after registry compromise
 
 2. **Lockfile + integrity verification**:
    ```bash
@@ -554,7 +554,7 @@ node detection-tools/cache-poisoning-detector.js .
 
 3. **Separate dev vs production cache trust boundaries**
 
-4. **CI cache key hygiene** — invalidate on security incidents
+4. **CI cache key hygiene** - invalidate on security incidents
 
 5. **Monitor postinstall and cache path mutations**
 
@@ -587,22 +587,22 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 ## Elasticsearch + Kibana observability (optional)
 
-Scenario **16 — Package Cache Poisoning** is indexed in Elasticsearch when the observability stack is running.
+Scenario **16 - Package Cache Poisoning** is indexed in Elasticsearch when the observability stack is running.
 
 Cache poisoning: repeated npm install reuses poisoned cache-lib artifact from cache/.
 
-- **Detection runbook (static)** → index `scas-rules`, document id `16` — IOCs, Sigma, YARA, sample logs from `DETECT.md`
-- **Runtime captures (dynamic)** → index `scas-detections` — one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector
+- **Detection runbook (static)** → index `scas-rules`, document id `16` - IOCs, Sigma, YARA, sample logs from `DETECT.md`
+- **Runtime captures (dynamic)** → index `scas-detections` - one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector
 
 ### How to read this diagram
 
 | Phase | What you should look for |
 |-------|--------------------------|
-| **1 — Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
-| **2 — Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
-| **3 — Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
-| **4 — Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
-| **5 — Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
+| **1 - Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
+| **2 - Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
+| **3 - Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
+| **4 - Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
+| **5 - Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
 
 > **Safety:** All network calls stay on `127.0.0.1`. Malicious logic runs only when `TESTBENCH_MODE=enabled`.
 
@@ -612,7 +612,7 @@ Cache poisoning: repeated npm install reuses poisoned cache-lib artifact from ca
 
 *Swimlane diagram for Scenario 16. Editable source: [`scas-observability-scenario-16.excalidraw`](../../assets/diagrams/observability/excalidraw/scas-observability-scenario-16.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-observability-diagrams.js`.*
 
-### Sequence diagram (Phase 1–5)
+### Sequence diagram (Phase 1-5)
 
 Same flow as a participant sequence (expandable in the docs hub).
 
@@ -626,27 +626,27 @@ sequenceDiagram
     participant ES as Elasticsearch :9200
     participant Kibana as Kibana :5601
 
-    Note over Learner,Mock: Phase 1 — Start collectors (Terminal A)
+    Note over Learner,Mock: Phase 1 - Start collectors (Terminal A)
     Learner->>Mock: export TESTBENCH_MODE=enabled
     Learner->>Mock: export SCAS_ES_URL=http://localhost:9200 (optional)
     Learner->>Mock: node infrastructure/mock-server.js
     Mock->>Mock: Listen for exfil POST on localhost
 
-    Note over Learner,MalPkg: Phase 2 — Run the lab (Terminal B)
+    Note over Learner,MalPkg: Phase 2 - Run the lab (Terminal B)
     Learner->>Learner: export TESTBENCH_MODE=enabled
     Learner->>Learner: export SCAS_ES_URL=http://localhost:9200 (optional)
-    Learner->>Victim: npm install (first pass — seeds poisoned cache-lib)
+    Learner->>Victim: npm install (first pass - seeds poisoned cache-lib)
     Learner->>Victim: rm node_modules && npm install again (cache hit)
     Victim->>MalPkg: Load cache-lib from poisoned local cache/
-    Learner->>Victim: npm start — same bad bits reinstalled
+    Learner->>Victim: npm start - same bad bits reinstalled
 
-    Note over MalPkg,Mock: Phase 3 — Simulated exfiltration (127.0.0.1 only)
+    Note over MalPkg,Mock: Phase 3 - Simulated exfiltration (127.0.0.1 only)
     Note over MalPkg: Malicious path gated by TESTBENCH_MODE=enabled
     MalPkg->>Mock: POST /collect JSON payload
     Mock->>Mock: Append to infrastructure/captured-data.json
     Mock-->>Learner: 200 OK (capture accepted)
 
-    Note over Mock,Kibana: Phase 4 — Optional Elasticsearch indexing
+    Note over Mock,Kibana: Phase 4 - Optional Elasticsearch indexing
     alt SCAS_ES_URL is set in Terminal A
     Mock->>ES: POST scas-detections (scenario_id=16, event_type=exfil_capture)
     ES->>ES: Store @timestamp, package, detail fields
@@ -655,11 +655,11 @@ sequenceDiagram
     end
 
     Note over ES: Runbook pre-seeded at scas-rules/_doc/16
-    Note over Learner,Kibana: Phase 5 — Blue-team review in Kibana
-    Learner->>Kibana: Open Discover → SCAS Detections — Scenario 16
+    Note over Learner,Kibana: Phase 5 - Blue-team review in Kibana
+    Learner->>Kibana: Open Discover → SCAS Detections - Scenario 16
     Kibana->>ES: Query scenario_id + sort by @timestamp desc
     ES-->>Kibana: Return capture events for this lab
-    Learner->>Kibana: Open SCAS Rules — Scenario 16
+    Learner->>Kibana: Open SCAS Rules - Scenario 16
     ES-->>Kibana: Return IOCs, Sigma, YARA from DETECT.md
     Learner->>Learner: Correlate capture detail with runbook IOCs
 ```
@@ -670,10 +670,10 @@ Same Phase-2 path as the diagrams above (for skimming / accessibility).
 
 | # | From | To | Action |
 |---|------|----|--------|
-| 1 | Learner | Victim | npm install (first pass — seeds poisoned cache-lib) |
+| 1 | Learner | Victim | npm install (first pass - seeds poisoned cache-lib) |
 | 2 | Learner | Victim | rm node_modules && npm install again (cache hit) |
 | 3 | Victim | MalPkg | Load cache-lib from poisoned local cache/ |
-| 4 | Learner | Victim | npm start — same bad bits reinstalled |
+| 4 | Learner | Victim | npm start - same bad bits reinstalled |
 
 ### Prerequisites
 
@@ -686,7 +686,7 @@ From the repository root:
 
 ### Run this scenario with live Elasticsearch forwarding
 
-**Terminal A — mock collector** (from `scenarios/16-package-cache-poisoning`):
+**Terminal A - mock collector** (from `scenarios/16-package-cache-poisoning`):
 
 ```bash
 cd scenarios/16-package-cache-poisoning
@@ -695,7 +695,7 @@ export SCAS_ES_URL=http://localhost:9200
 node infrastructure/mock-server.js
 ```
 
-**Terminal B — execute the lab:**
+**Terminal B - execute the lab:**
 
 ```bash
 cd scenarios/16-package-cache-poisoning
@@ -729,8 +729,8 @@ curl -s "http://localhost:9200/scas-detections/_search?pretty" \
 ### Verify in Kibana (UI)
 
 1. Open [http://localhost:5601](http://localhost:5601)
-2. **Discover** → **SCAS Detections — Scenario 16** — live capture timeline (`@timestamp`, `package.name`, `detail`)
-3. **Discover** → **SCAS Rules — Scenario 16** — compare against `iocs`, `sigma`, and `yara` fields
+2. **Discover** → **SCAS Detections - Scenario 16** - live capture timeline (`@timestamp`, `package.name`, `detail`)
+3. **Discover** → **SCAS Rules - Scenario 16** - compare against `iocs`, `sigma`, and `yara` fields
 4. Ask: *Does each capture field match an IOC or Sigma condition in the runbook?*
 
 See [observability/README.md](../../../observability/README.md) for stack details.
@@ -787,7 +787,7 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 ## 📚 Additional Resources
 
 - [npm cache documentation](https://docs.npmjs.com/cli/v9/commands/npm-cache)
-- [npm ci — clean install](https://docs.npmjs.com/cli/v9/commands/npm-ci)
+- [npm ci - clean install](https://docs.npmjs.com/cli/v9/commands/npm-ci)
 - [Supply chain levels for software artifacts (SLSA)](https://slsa.dev/)
 - Scenario README: `scenarios/16-package-cache-poisoning/README.md`
 - Detection runbook: `scenarios/16-package-cache-poisoning/DETECT.md`

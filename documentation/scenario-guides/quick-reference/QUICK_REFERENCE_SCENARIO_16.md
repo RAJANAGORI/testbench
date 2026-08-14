@@ -1,4 +1,4 @@
-# Quick Reference — Scenario 16: Package Cache Poisoning
+# Quick Reference - Scenario 16: Package Cache Poisoning
 
 Use this as your runbook for Scenario 16 when you are teaching live or practicing quickly.
 

@@ -1,6 +1,6 @@
-# Quick Reference — Scenario 11: Registry Mirror Poisoning
+# Quick Reference - Scenario 11: Registry Mirror Poisoning
 
-> Run `./setup.sh` first — it packs poisoned tarballs and writes `work/registry-meta.json`.
+> Run `./setup.sh` first - it packs poisoned tarballs and writes `work/registry-meta.json`.
 
 
 
@@ -32,13 +32,13 @@ export TESTBENCH_MODE=enabled
 Three terminals:
 
 ```bash
-# Terminal A — mock C2 (:3000)
+# Terminal A - mock C2 (:3000)
 node infrastructure/mock-server.js
 
-# Terminal B — poisoned registry mirror (:4873)
+# Terminal B - poisoned registry mirror (:4873)
 node infrastructure/registry-server.js
 
-# Terminal C — victim
+# Terminal C - victim
 diff -r legitimate-packages/ compromised-mirror/
 cd corporate-app
 rm -rf node_modules package-lock.json

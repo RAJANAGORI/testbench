@@ -1,4 +1,4 @@
-# Quick Reference — Scenario 22: LiteLLM-style PyPI compromise
+# Quick Reference - Scenario 22: LiteLLM-style PyPI compromise
 
 Use this as your runbook for Scenario 22 when you are teaching live or practicing quickly.
 

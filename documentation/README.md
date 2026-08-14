@@ -1,4 +1,4 @@
-# Supply Chain Attack Simulator — Documentation
+# Supply Chain Attack Simulator - Documentation
 
 This folder is the **canonical source of truth** for all SCAS documentation.
 
@@ -16,8 +16,8 @@ This folder is the **canonical source of truth** for all SCAS documentation.
 
 ## How publishing works
 
-Markdown here is canonical. The [`docs/`](../docs/) directory is the GitHub Pages site and **symlinks** into this tree — edit here, not in `docs/`. Before deploy, symlinks are materialized into real files (see [Tooling & doc maintenance](./platform/TOOLING.md#documentation-build--publishing)).
+Markdown here is canonical. The [`docs/`](../docs/) directory is the GitHub Pages site and **symlinks** into this tree - edit here, not in `docs/`. Before deploy, symlinks are materialized into real files (see [Tooling & doc maintenance](./platform/TOOLING.md#documentation-build--publishing)).
 
 ---
 
-Documentation © 2024–2026 **Raja Nagori**, licensed [CC BY-NC-ND 4.0](../DOCUMENTATION-CC-BY-NC-ND.md). Software is [MIT](../LICENSE). See [LEGAL](../LEGAL.md) and [ATTRIBUTION](../ATTRIBUTION.md).
+Documentation © 2024-2026 **Raja Nagori**, licensed [CC BY-NC-ND 4.0](../DOCUMENTATION-CC-BY-NC-ND.md). Software is [MIT](../LICENSE). See [LEGAL](../LEGAL.md) and [ATTRIBUTION](../ATTRIBUTION.md).

@@ -1,4 +1,4 @@
-# Quick Reference — Scenario 14: Container Image Supply Chain Attack
+# Quick Reference - Scenario 14: Container Image Supply Chain Attack
 
 Use this as your runbook for Scenario 14 when you are teaching live or practicing quickly.
 
