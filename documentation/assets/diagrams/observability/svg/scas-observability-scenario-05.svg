@@ -99,7 +99,7 @@
 <text class="small" x="568" y="581">→</text>
 <rect x="584" y="568" width="78" height="18" rx="6" fill="#ea580c"/>
 <text class="chip" x="623" y="581" text-anchor="middle">Victim</text>
-<text class="mono" x="482" y="596">npm start — runs trojanized bundle</text>
+<text class="mono" x="482" y="596">npm start - runs trojanized bundle</text>
 <path class="arrow" d="M364 288 L420 288"/>
 <rect class="edge-pill" x="366" y="258" width="52" height="22" rx="11"/>
 <text class="edge-label" x="392" y="273" text-anchor="middle">then</text>

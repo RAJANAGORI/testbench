@@ -79,7 +79,7 @@
 <text class="small" x="568" y="373">→</text>
 <rect x="584" y="360" width="78" height="18" rx="6" fill="#ea580c"/>
 <text class="chip" x="623" y="373" text-anchor="middle">Victim</text>
-<text class="mono" x="482" y="388">npm start — generates incomplete SBOM</text>
+<text class="mono" x="482" y="388">npm start - generates incomplete SBOM</text>
 <path class="arrow" d="M788 408 L788 456"/>
 <rect class="box" x="436" y="456" width="704" height="56" rx="10" fill="#fff7ed" stroke="#ea580c" filter="url(#soft)"/>
 <circle cx="460" cy="484" r="12" fill="#ea580c"/>

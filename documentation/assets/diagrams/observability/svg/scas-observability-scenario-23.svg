@@ -91,7 +91,7 @@
 <text class="small" x="568" y="493">→</text>
 <rect x="584" y="480" width="78" height="18" rx="6" fill="#16a34a"/>
 <text class="chip" x="623" y="493" text-anchor="middle">Mock</text>
-<text class="mono" x="482" y="508">POST http://127.0.0.1:3023/collect — CI env vars harvested</text>
+<text class="mono" x="482" y="508">POST http://127.0.0.1:3023/collect - CI env vars harvested</text>
 <path class="arrow" d="M788 528 L788 576"/>
 <rect class="box" x="436" y="576" width="704" height="56" rx="10" fill="#fff7ed" stroke="#ea580c" filter="url(#soft)"/>
 <circle cx="460" cy="604" r="12" fill="#ea580c"/>
@@ -101,7 +101,7 @@
 <text class="small" x="568" y="597">→</text>
 <rect x="584" y="584" width="78" height="18" rx="6" fill="#ea580c"/>
 <text class="chip" x="623" y="597" text-anchor="middle">Victim</text>
-<text class="mono" x="482" y="612">scanTarget() runs — pipeline output appears normal</text>
+<text class="mono" x="482" y="612">scanTarget() runs - pipeline output appears normal</text>
 <path class="arrow" d="M364 304 L420 304"/>
 <rect class="edge-pill" x="366" y="274" width="52" height="22" rx="11"/>
 <text class="edge-label" x="392" y="289" text-anchor="middle">then</text>
