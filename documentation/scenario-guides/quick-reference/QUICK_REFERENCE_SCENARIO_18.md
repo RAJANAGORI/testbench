@@ -1,4 +1,4 @@
-# Quick Reference — Scenario 18: Package Manager Plugin Attack
+# Quick Reference - Scenario 18: Package Manager Plugin Attack
 
 Use this as your runbook for Scenario 18 when you are teaching live or practicing quickly.
 

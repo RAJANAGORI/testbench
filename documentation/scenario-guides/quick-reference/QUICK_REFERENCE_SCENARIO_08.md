@@ -48,7 +48,7 @@ cat package.json
 cat package-lock.json | head -50
 
 cd ../victim-app
-cat package.json  # Includes evil-utils as file: — review unexpected local deps
+cat package.json  # Includes evil-utils as file: - review unexpected local deps
 cat package-lock.json | grep -A 10 "evil-utils"  # Resolved path + install metadata
 
 # 2. Start mock server

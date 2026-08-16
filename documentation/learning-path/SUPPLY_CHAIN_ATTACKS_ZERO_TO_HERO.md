@@ -1,6 +1,6 @@
 # Supply Chain Attacks: Zero to Hero (Curriculum Overview)
 
-> **Which "Zero to Hero" is this?** This is the **conceptual curriculum** — the trust-edge mental model and staged learning progression for instructors and self-learners.
+> **Which "Zero to Hero" is this?** This is the **conceptual curriculum** - the trust-edge mental model and staged learning progression for instructors and self-learners.
 > - Just want to **run your first lab**? → [First lab in 10 minutes](../getting-started/ZERO_TO_HERO.md)
 > - Want the **23 step-by-step lab walkthroughs**? → [Zero-to-hero walkthroughs](../scenario-guides/zero-to-hero/index.md)
 

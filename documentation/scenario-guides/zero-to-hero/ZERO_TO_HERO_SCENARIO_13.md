@@ -46,13 +46,13 @@ By the end of this guide, you will:
 
 **Common metadata fields**:
 ```
-name          — package identifier
-version       — release version
-repository    — claimed source code location
-author        — claimed maintainer identity
-homepage      — project website
-dist          — tarball URL, shasum, integrity hash
-scripts       — lifecycle hooks (postinstall, preinstall, etc.)
+name          - package identifier
+version       - release version
+repository    - claimed source code location
+author        - claimed maintainer identity
+homepage      - project website
+dist          - tarball URL, shasum, integrity hash
+scripts       - lifecycle hooks (postinstall, preinstall, etc.)
 ```
 
 ### Why Metadata Matters
@@ -131,7 +131,7 @@ Data exfiltrated to attacker server (localhost:3001 in this lab)
 - **Integrity drift**: `dist.integrity` does not match downloaded tarball
 - **Typos in metadata**: Subtle URL changes (`github.com` vs `github.co`) hide malicious publishes
 
-**Key insight**: Metadata is not code — but misplaced trust in metadata is a direct path to executing malicious code.
+**Key insight**: Metadata is not code - but misplaced trust in metadata is a direct path to executing malicious code.
 
 ---
 
@@ -139,8 +139,8 @@ Data exfiltrated to attacker server (localhost:3001 in this lab)
 
 Before we start, make sure you've completed:
 
-- ✅ Scenario 1 (Typosquatting) — understanding basic package trust failures
-- ✅ Scenario 2 (Dependency Confusion) — understanding package resolution
+- ✅ Scenario 1 (Typosquatting) - understanding basic package trust failures
+- ✅ Scenario 2 (Dependency Confusion) - understanding package resolution
 - ✅ Node.js 16+ and npm installed
 - ✅ TESTBENCH_MODE enabled
 
@@ -231,7 +231,7 @@ cat legitimate-packages/clean-utils/package.json
 }
 ```
 
-**Notice**: No lifecycle scripts — this is the trusted baseline.
+**Notice**: No lifecycle scripts - this is the trusted baseline.
 
 ### Step 2: Review Legitimate Code
 
@@ -255,10 +255,10 @@ cat compromised-packages/clean-utils/package.json
 **What you'll see:**
 - Version `1.0.1` (looks like a routine patch)
 - Repository URL changed to `https://malicious-mirror.example/clean-utils.git`
-- Author string unchanged (social engineering — looks familiar)
+- Author string unchanged (social engineering - looks familiar)
 - New `postinstall` script referencing `postinstall.js`
 
-**Key Point**: The author field matches the legitimate package — only careful metadata validation reveals the repository drift.
+**Key Point**: The author field matches the legitimate package - only careful metadata validation reveals the repository drift.
 
 ### Step 4: Inspect the Malicious Postinstall
 
@@ -284,7 +284,7 @@ const clean = require('clean-utils');
 console.log('Normalized:', clean.normalizeWhitespace('  hello   world  '));
 ```
 
-The victim app appears benign — it simply uses utility functions. The compromise executes during install, not during normal app logic.
+The victim app appears benign - it simply uses utility functions. The compromise executes during install, not during normal app logic.
 
 ---
 
@@ -314,7 +314,7 @@ node infrastructure/mock-server.js
 - Starts HTTP server on `127.0.0.1:3001`
 - Accepts `POST /capture` with exfiltrated JSON
 - Stores captures in `infrastructure/captured-data.json`
-- Safe — only listens on localhost
+- Safe - only listens on localhost
 
 **Verify it's running:**
 ```bash
@@ -367,7 +367,7 @@ curl -s http://127.0.0.1:3001/captured-data | jq
 - Timestamp of execution
 - Note field identifying the simulation (`metadata-manipulation-sim`)
 
-**Alternative — read capture file directly:**
+**Alternative - read capture file directly:**
 ```bash
 cat ../infrastructure/captured-data.json | jq
 ```
@@ -504,7 +504,7 @@ cat victim-app/node_modules/clean-utils/postinstall.js
 **Document:**
 - Network destinations (localhost:3001, path `/capture`)
 - Data collected (hostname, timestamp)
-- Safety gate (`TESTBENCH_MODE`) — present in lab, absent in real attacks
+- Safety gate (`TESTBENCH_MODE`) - present in lab, absent in real attacks
 
 ### Investigation Step 3: Capture Timeline
 
@@ -541,7 +541,7 @@ The metadata validator also checks simulated tarball integrity:
 node detection-tools/metadata-validator.js victim-app/node_modules/clean-utils
 ```
 
-If `dist.integrity` is present and mismatched, the validator reports **tarball integrity mismatch** — a strong indicator the published artifact differs from expected content.
+If `dist.integrity` is present and mismatched, the validator reports **tarball integrity mismatch** - a strong indicator the published artifact differs from expected content.
 
 ---
 
@@ -569,7 +569,7 @@ rm -f victim-app/package-lock.json
 cd victim-app
 npm install ../legitimate-packages/clean-utils
 node detection-tools/metadata-validator.js node_modules/clean-utils
-# Run from scenario root for validator path above — adjust as needed
+# Run from scenario root for validator path above - adjust as needed
 ```
 
 Or from scenario root after reinstall:
@@ -631,22 +631,22 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 ## Elasticsearch + Kibana observability (optional)
 
-Scenario **13 — Package Metadata Manipulation** is indexed in Elasticsearch when the observability stack is running.
+Scenario **13 - Package Metadata Manipulation** is indexed in Elasticsearch when the observability stack is running.
 
 Metadata manipulation: clean-utils package.json spoof misleads install; mock listens on :3001 /capture.
 
-- **Detection runbook (static)** → index `scas-rules`, document id `13` — IOCs, Sigma, YARA, sample logs from `DETECT.md`
-- **Runtime captures (dynamic)** → index `scas-detections` — one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector
+- **Detection runbook (static)** → index `scas-rules`, document id `13` - IOCs, Sigma, YARA, sample logs from `DETECT.md`
+- **Runtime captures (dynamic)** → index `scas-detections` - one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector
 
 ### How to read this diagram
 
 | Phase | What you should look for |
 |-------|--------------------------|
-| **1 — Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
-| **2 — Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
-| **3 — Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
-| **4 — Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
-| **5 — Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
+| **1 - Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
+| **2 - Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
+| **3 - Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
+| **4 - Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
+| **5 - Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
 
 > **Safety:** All network calls stay on `127.0.0.1`. Malicious logic runs only when `TESTBENCH_MODE=enabled`.
 
@@ -656,7 +656,7 @@ Metadata manipulation: clean-utils package.json spoof misleads install; mock lis
 
 *Swimlane diagram for Scenario 13. Editable source: [`scas-observability-scenario-13.excalidraw`](../../assets/diagrams/observability/excalidraw/scas-observability-scenario-13.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-observability-diagrams.js`.*
 
-### Sequence diagram (Phase 1–5)
+### Sequence diagram (Phase 1-5)
 
 Same flow as a participant sequence (expandable in the docs hub).
 
@@ -670,13 +670,13 @@ sequenceDiagram
     participant ES as Elasticsearch :9200
     participant Kibana as Kibana :5601
 
-    Note over Learner,Mock: Phase 1 — Start collectors (Terminal A)
+    Note over Learner,Mock: Phase 1 - Start collectors (Terminal A)
     Learner->>Mock: export TESTBENCH_MODE=enabled
     Learner->>Mock: export SCAS_ES_URL=http://localhost:9200 (optional)
     Learner->>Mock: node infrastructure/mock-server.js
     Mock->>Mock: Listen for exfil POST on localhost
 
-    Note over Learner,MalPkg: Phase 2 — Run the lab (Terminal B)
+    Note over Learner,MalPkg: Phase 2 - Run the lab (Terminal B)
     Learner->>Learner: export TESTBENCH_MODE=enabled
     Learner->>Learner: export SCAS_ES_URL=http://localhost:9200 (optional)
     Learner->>Victim: npm install ../compromised-packages/clean-utils
@@ -684,13 +684,13 @@ sequenceDiagram
     Learner->>Victim: node index.js
     MalPkg->>MalPkg: Metadata-matched package executes hidden logic
 
-    Note over MalPkg,Mock: Phase 3 — Simulated exfiltration (127.0.0.1 only)
+    Note over MalPkg,Mock: Phase 3 - Simulated exfiltration (127.0.0.1 only)
     Note over MalPkg: Malicious path gated by TESTBENCH_MODE=enabled
     MalPkg->>Mock: POST /capture JSON payload
     Mock->>Mock: Append to infrastructure/captured-data.json
     Mock-->>Learner: 200 OK (capture accepted)
 
-    Note over Mock,Kibana: Phase 4 — Optional Elasticsearch indexing
+    Note over Mock,Kibana: Phase 4 - Optional Elasticsearch indexing
     alt SCAS_ES_URL is set in Terminal A
     Mock->>ES: POST scas-detections (scenario_id=13, event_type=exfil_capture)
     ES->>ES: Store @timestamp, package, detail fields
@@ -699,11 +699,11 @@ sequenceDiagram
     end
 
     Note over ES: Runbook pre-seeded at scas-rules/_doc/13
-    Note over Learner,Kibana: Phase 5 — Blue-team review in Kibana
-    Learner->>Kibana: Open Discover → SCAS Detections — Scenario 13
+    Note over Learner,Kibana: Phase 5 - Blue-team review in Kibana
+    Learner->>Kibana: Open Discover → SCAS Detections - Scenario 13
     Kibana->>ES: Query scenario_id + sort by @timestamp desc
     ES-->>Kibana: Return capture events for this lab
-    Learner->>Kibana: Open SCAS Rules — Scenario 13
+    Learner->>Kibana: Open SCAS Rules - Scenario 13
     ES-->>Kibana: Return IOCs, Sigma, YARA from DETECT.md
     Learner->>Learner: Correlate capture detail with runbook IOCs
 ```
@@ -730,7 +730,7 @@ From the repository root:
 
 ### Run this scenario with live Elasticsearch forwarding
 
-**Terminal A — mock collector** (from `scenarios/13-package-metadata-manipulation`):
+**Terminal A - mock collector** (from `scenarios/13-package-metadata-manipulation`):
 
 ```bash
 cd scenarios/13-package-metadata-manipulation
@@ -739,7 +739,7 @@ export SCAS_ES_URL=http://localhost:9200
 node infrastructure/mock-server.js
 ```
 
-**Terminal B — execute the lab:**
+**Terminal B - execute the lab:**
 
 ```bash
 cd scenarios/13-package-metadata-manipulation
@@ -773,8 +773,8 @@ curl -s "http://localhost:9200/scas-detections/_search?pretty" \
 ### Verify in Kibana (UI)
 
 1. Open [http://localhost:5601](http://localhost:5601)
-2. **Discover** → **SCAS Detections — Scenario 13** — live capture timeline (`@timestamp`, `package.name`, `detail`)
-3. **Discover** → **SCAS Rules — Scenario 13** — compare against `iocs`, `sigma`, and `yara` fields
+2. **Discover** → **SCAS Detections - Scenario 13** - live capture timeline (`@timestamp`, `package.name`, `detail`)
+3. **Discover** → **SCAS Rules - Scenario 13** - compare against `iocs`, `sigma`, and `yara` fields
 4. Ask: *Does each capture field match an IOC or Sigma condition in the runbook?*
 
 See [observability/README.md](../../../observability/README.md) for stack details.
@@ -849,7 +849,7 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 - ✅ Use ONLY in isolated test environments
 - ✅ Never deploy malicious code to production
 - ✅ All malicious code requires `TESTBENCH_MODE=enabled`
-- ✅ Exfiltration targets `127.0.0.1:3001` only — no real external C2
+- ✅ Exfiltration targets `127.0.0.1:3001` only - no real external C2
 - ✅ Do not publish manipulated packages to public registries
 
 ---

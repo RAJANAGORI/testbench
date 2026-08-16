@@ -41,7 +41,7 @@ By the end of this guide, you will:
 
 ### What Is Version Confusion?
 
-**Version confusion** occurs when a package manager's resolver selects an **unintended version**—often the **highest** semver match—because of loose ranges, weak registry policy, or attacker-published absurd versions.
+**Version confusion** occurs when a package manager's resolver selects an **unintended version**-often the **highest** semver match-because of loose ranges, weak registry policy, or attacker-published absurd versions.
 
 **Classic pattern in this lab**:
 ```
@@ -71,7 +71,7 @@ When a range like `*` or a loose caret allows any version, the resolver typicall
 | **Range trigger** | `*`, loose semver | Missing scope + public typosquat |
 | **Attacker action** | Publish `999.x` version | Publish same name on public registry |
 
-Both abuse **trust in the resolver**—but the root cause and fix differ.
+Both abuse **trust in the resolver**-but the root cause and fix differ.
 
 ### Visual Example
 
@@ -119,8 +119,8 @@ npm install / npm start
 
 Before we start, make sure you've completed:
 
-- ✅ Scenario 1 (Typosquatting) — Package naming attacks
-- ✅ Scenario 2 (Dependency Confusion) — Registry precedence
+- ✅ Scenario 1 (Typosquatting) - Package naming attacks
+- ✅ Scenario 2 (Dependency Confusion) - Registry precedence
 - ✅ Node.js 16+ and npm installed
 - ✅ TESTBENCH_MODE enabled
 
@@ -186,8 +186,8 @@ ls -la registry/version-confuser-lib/
 ```
 
 **Expected directories:**
-- `1.0.1` — legitimate release
-- `999.999.999` — attacker-controlled high version
+- `1.0.1` - legitimate release
+- `999.999.999` - attacker-controlled high version
 
 ### Step 2: Compare Benign vs Malicious Packages
 
@@ -347,7 +347,7 @@ curl -s http://localhost:3020/captured-data | jq
 cat ../infrastructure/captured-data.json | jq '.captures[-1]'
 ```
 
-### Step 6: Simulate Mitigation — Pin Exact Version (Optional)
+### Step 6: Simulate Mitigation - Pin Exact Version (Optional)
 
 Conceptually, pinning `1.0.1` would prevent the attack:
 
@@ -357,7 +357,7 @@ Conceptually, pinning `1.0.1` would prevent the attack:
 }
 ```
 
-In this lab the resolver simulation always picks highest from registry folders—but the **lesson** applies directly to real npm semver ranges.
+In this lab the resolver simulation always picks highest from registry folders-but the **lesson** applies directly to real npm semver ranges.
 
 ---
 
@@ -405,7 +405,7 @@ ls ../registry/version-confuser-lib/
 
 ```bash
 # After npm install, lockfile should freeze resolution
-test -f package-lock.json && echo "Lockfile present" || echo "NO LOCKFILE — risky"
+test -f package-lock.json && echo "Lockfile present" || echo "NO LOCKFILE - risky"
 ```
 
 **Policy**: CI must use `npm ci` and fail if lockfile missing or outdated.
@@ -524,12 +524,12 @@ export TESTBENCH_MODE=enabled
 
 ### Response Step 3: Long-term Defenses
 
-1. **Pin exact versions** for critical dependencies — no `*` or unbounded carets
-2. **Enforce lockfiles** — `npm ci` only in CI; reject installs without lockfile
-3. **Registry firewall** — block absurd semver from untrusted publishers
-4. **Scoped private packages** — explicit registry mapping for internal names
-5. **Version jump alerts** — flag major or numeric anomalies (e.g. `999.x`)
-6. **Human review** — require approval for dependency version bumps above threshold
+1. **Pin exact versions** for critical dependencies - no `*` or unbounded carets
+2. **Enforce lockfiles** - `npm ci` only in CI; reject installs without lockfile
+3. **Registry firewall** - block absurd semver from untrusted publishers
+4. **Scoped private packages** - explicit registry mapping for internal names
+5. **Version jump alerts** - flag major or numeric anomalies (e.g. `999.x`)
+6. **Human review** - require approval for dependency version bumps above threshold
 
 ```bash
 # CI gate example
@@ -558,22 +558,22 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 ## Elasticsearch + Kibana observability (optional)
 
-Scenario **20 — Package Version Confusion** is indexed in Elasticsearch when the observability stack is running.
+Scenario **20 - Package Version Confusion** is indexed in Elasticsearch when the observability stack is running.
 
 Version confusion: semver picks version-confuser-lib 999.999.999 over the expected 1.x release.
 
-- **Detection runbook (static)** → index `scas-rules`, document id `20` — IOCs, Sigma, YARA, sample logs from `DETECT.md`
-- **Runtime captures (dynamic)** → index `scas-detections` — one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector
+- **Detection runbook (static)** → index `scas-rules`, document id `20` - IOCs, Sigma, YARA, sample logs from `DETECT.md`
+- **Runtime captures (dynamic)** → index `scas-detections` - one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector
 
 ### How to read this diagram
 
 | Phase | What you should look for |
 |-------|--------------------------|
-| **1 — Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
-| **2 — Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
-| **3 — Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
-| **4 — Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
-| **5 — Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
+| **1 - Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
+| **2 - Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
+| **3 - Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
+| **4 - Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
+| **5 - Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
 
 > **Safety:** All network calls stay on `127.0.0.1`. Malicious logic runs only when `TESTBENCH_MODE=enabled`.
 
@@ -583,7 +583,7 @@ Version confusion: semver picks version-confuser-lib 999.999.999 over the expect
 
 *Swimlane diagram for Scenario 20. Editable source: [`scas-observability-scenario-20.excalidraw`](../../assets/diagrams/observability/excalidraw/scas-observability-scenario-20.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-observability-diagrams.js`.*
 
-### Sequence diagram (Phase 1–5)
+### Sequence diagram (Phase 1-5)
 
 Same flow as a participant sequence (expandable in the docs hub).
 
@@ -597,13 +597,13 @@ sequenceDiagram
     participant ES as Elasticsearch :9200
     participant Kibana as Kibana :5601
 
-    Note over Learner,Mock: Phase 1 — Start collectors (Terminal A)
+    Note over Learner,Mock: Phase 1 - Start collectors (Terminal A)
     Learner->>Mock: export TESTBENCH_MODE=enabled
     Learner->>Mock: export SCAS_ES_URL=http://localhost:9200 (optional)
     Learner->>Mock: node infrastructure/mock-server.js
     Mock->>Mock: Listen for exfil POST on localhost
 
-    Note over Learner,MalPkg: Phase 2 — Run the lab (Terminal B)
+    Note over Learner,MalPkg: Phase 2 - Run the lab (Terminal B)
     Learner->>Learner: export TESTBENCH_MODE=enabled
     Learner->>Learner: export SCAS_ES_URL=http://localhost:9200 (optional)
     Learner->>Victim: npm install (registry/ layout serves many versions)
@@ -611,13 +611,13 @@ sequenceDiagram
     Learner->>Victim: npm start
     MalPkg->>MalPkg: Malicious high-version package executes
 
-    Note over MalPkg,Mock: Phase 3 — Simulated exfiltration (127.0.0.1 only)
+    Note over MalPkg,Mock: Phase 3 - Simulated exfiltration (127.0.0.1 only)
     Note over MalPkg: Malicious path gated by TESTBENCH_MODE=enabled
     MalPkg->>Mock: POST /collect JSON payload
     Mock->>Mock: Append to infrastructure/captured-data.json
     Mock-->>Learner: 200 OK (capture accepted)
 
-    Note over Mock,Kibana: Phase 4 — Optional Elasticsearch indexing
+    Note over Mock,Kibana: Phase 4 - Optional Elasticsearch indexing
     alt SCAS_ES_URL is set in Terminal A
     Mock->>ES: POST scas-detections (scenario_id=20, event_type=exfil_capture)
     ES->>ES: Store @timestamp, package, detail fields
@@ -626,11 +626,11 @@ sequenceDiagram
     end
 
     Note over ES: Runbook pre-seeded at scas-rules/_doc/20
-    Note over Learner,Kibana: Phase 5 — Blue-team review in Kibana
-    Learner->>Kibana: Open Discover → SCAS Detections — Scenario 20
+    Note over Learner,Kibana: Phase 5 - Blue-team review in Kibana
+    Learner->>Kibana: Open Discover → SCAS Detections - Scenario 20
     Kibana->>ES: Query scenario_id + sort by @timestamp desc
     ES-->>Kibana: Return capture events for this lab
-    Learner->>Kibana: Open SCAS Rules — Scenario 20
+    Learner->>Kibana: Open SCAS Rules - Scenario 20
     ES-->>Kibana: Return IOCs, Sigma, YARA from DETECT.md
     Learner->>Learner: Correlate capture detail with runbook IOCs
 ```
@@ -657,7 +657,7 @@ From the repository root:
 
 ### Run this scenario with live Elasticsearch forwarding
 
-**Terminal A — mock collector** (from `scenarios/20-package-version-confusion`):
+**Terminal A - mock collector** (from `scenarios/20-package-version-confusion`):
 
 ```bash
 cd scenarios/20-package-version-confusion
@@ -666,7 +666,7 @@ export SCAS_ES_URL=http://localhost:9200
 node infrastructure/mock-server.js
 ```
 
-**Terminal B — execute the lab:**
+**Terminal B - execute the lab:**
 
 ```bash
 cd scenarios/20-package-version-confusion
@@ -700,8 +700,8 @@ curl -s "http://localhost:9200/scas-detections/_search?pretty" \
 ### Verify in Kibana (UI)
 
 1. Open [http://localhost:5601](http://localhost:5601)
-2. **Discover** → **SCAS Detections — Scenario 20** — live capture timeline (`@timestamp`, `package.name`, `detail`)
-3. **Discover** → **SCAS Rules — Scenario 20** — compare against `iocs`, `sigma`, and `yara` fields
+2. **Discover** → **SCAS Detections - Scenario 20** - live capture timeline (`@timestamp`, `package.name`, `detail`)
+3. **Discover** → **SCAS Rules - Scenario 20** - compare against `iocs`, `sigma`, and `yara` fields
 4. Ask: *Does each capture field match an IOC or Sigma condition in the runbook?*
 
 See [observability/README.md](../../../observability/README.md) for stack details.
@@ -711,7 +711,7 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 ### Why Version Confusion Is Dangerous
 
 1. **Resolver trust**: Teams assume semver picks "reasonable" versions
-2. **Silent malicious upgrade**: No typosquat needed—same name, higher number
+2. **Silent malicious upgrade**: No typosquat needed-same name, higher number
 3. **Automation amplification**: CI nightly installs spread bad resolution fast
 4. **Detection difficulty**: Installed package name looks correct
 5. **Combined with confusion**: Public/private registry issues compound semver abuse
@@ -721,10 +721,10 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 1. ✅ **Pin exact versions** for production-critical deps
 2. ✅ **Commit and enforce lockfiles** with `npm ci`
 3. ✅ **Scope internal packages** to private registries explicitly
-4. ✅ **Alert on semver anomalies** — first-seen maintainers, `999.x` jumps
-5. ✅ **Review dependency PRs** — treat version bumps as security events
-6. ✅ **Registry controls** — block publishing above policy max without approval
-7. ✅ **Distinguish attack types** — version vs dependency confusion need different controls
+4. ✅ **Alert on semver anomalies** - first-seen maintainers, `999.x` jumps
+5. ✅ **Review dependency PRs** - treat version bumps as security events
+6. ✅ **Registry controls** - block publishing above policy max without approval
+7. ✅ **Distinguish attack types** - version vs dependency confusion need different controls
 
 ### Real-World Impact
 
@@ -769,7 +769,7 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 - ✅ Use ONLY in isolated test environments
 - ✅ Never publish malicious high-version packages to real registries
 - ✅ All malicious behavior requires `TESTBENCH_MODE=enabled`
-- ✅ Exfiltration targets **127.0.0.1:3020** only — no real external C2
+- ✅ Exfiltration targets **127.0.0.1:3020** only - no real external C2
 - ✅ Version confusion is simulated with a local registry layout
 
 ---

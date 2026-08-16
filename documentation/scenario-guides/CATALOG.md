@@ -1,4 +1,4 @@
-# Scenario catalog (01–23)
+# Scenario catalog (01-23)
 
 Complete index of every lab. Use this table as the fastest way to jump to **runtime instructions**, **blue-team runbooks**, **learner walkthroughs**, and **instructor modules**.
 
@@ -37,14 +37,14 @@ All **23** scenarios support optional dual-write to Floci S3 (`source .floci.env
 | Scenario | Extra listeners | Notes |
 |----------|-----------------|-------|
 | 06 | Mock CDN `:3000`, GitHub Actions sim `:3002`, replication sim `:3003` | Primary exfil via `credential-harvester.js` on **3001** → `captured-credentials.json` |
-| 11 | — | Run `./setup.sh` first — generates `corporate-app/` and `compromised-mirror/` |
-| 14 | — | Optional Docker flow; default lab uses `malicious-start.js` |
-| 22 | — | Python mock server (`mock_server.py`); requires venv in `victim-app/` |
-| 23 | — | Node.js mock C2 server (`mock-c2-server.js`, port 3023); compromised module installed via local `file:` path during `setup.sh` |
+| 11 | - | Run `./setup.sh` first - generates `corporate-app/` and `compromised-mirror/` |
+| 14 | - | Optional Docker flow; default lab uses `malicious-start.js` |
+| 22 | - | Python mock server (`mock_server.py`); requires venv in `victim-app/` |
+| 23 | - | Node.js mock C2 server (`mock-c2-server.js`, port 3023); compromised module installed via local `file:` path during `setup.sh` |
 
 ## Suggested learning order
 
-See [SCENARIO_LEARNING_PATH.md](../learning-path/SCENARIO_LEARNING_PATH.md). Minimum foundation: **01 → 02 → 03** before advanced labs. Complete **01–05** before **06 (Shai-Hulud)**.
+See [SCENARIO_LEARNING_PATH.md](../learning-path/SCENARIO_LEARNING_PATH.md). Minimum foundation: **01 → 02 → 03** before advanced labs. Complete **01-05** before **06 (Shai-Hulud)**.
 
 ## Port cleanup
 

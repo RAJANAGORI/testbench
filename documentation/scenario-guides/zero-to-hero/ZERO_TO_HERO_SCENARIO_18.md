@@ -41,7 +41,7 @@ By the end of this guide, you will:
 
 ### What Is a Package Manager Plugin?
 
-A **package manager plugin** is code that hooks into the install lifecycle—before, during, or after dependencies are resolved and written to disk. Ecosystems like npm, Yarn, pnpm, and others support extension points where custom logic can run with **project-level permissions**.
+A **package manager plugin** is code that hooks into the install lifecycle-before, during, or after dependencies are resolved and written to disk. Ecosystems like npm, Yarn, pnpm, and others support extension points where custom logic can run with **project-level permissions**.
 
 **Example hook surface**:
 ```
@@ -112,7 +112,7 @@ Developer runs npm install
     └── Active plugin hook executes
             ├── Injects marker into target-lib
             ├── POSTs evidence to localhost:3018
-            └── App continues normally — easy to miss!
+            └── App continues normally - easy to miss!
 ```
 
 ---
@@ -121,8 +121,8 @@ Developer runs npm install
 
 Before we start, make sure you've completed:
 
-- ✅ Scenario 1 (Typosquatting) — Understanding basic package attacks
-- ✅ Scenario 4 (Postinstall Scripts) — Understanding install-time execution
+- ✅ Scenario 1 (Typosquatting) - Understanding basic package attacks
+- ✅ Scenario 4 (Postinstall Scripts) - Understanding install-time execution
 - ✅ Node.js 16+ and npm installed
 - ✅ TESTBENCH_MODE enabled
 
@@ -268,7 +268,7 @@ cat ../packages/target-lib/package.json
 **What you'll see:**
 - Clean, legitimate utility code
 - No malicious behavior in the package itself
-- The **plugin** tampers with it—not the package author
+- The **plugin** tampers with it - not the package author
 
 ---
 
@@ -287,7 +287,7 @@ cat ../packages/target-lib/package.json
 
 ### Step 2: Start the Mock Attacker Server
 
-**Terminal A** — from scenario root:
+**Terminal A** - from scenario root:
 
 ```bash
 cd scenarios/18-package-manager-plugin-attack
@@ -299,7 +299,7 @@ node infrastructure/mock-server.js
 - Starts HTTP server on **localhost:3018**
 - Listens for POST `/collect`
 - Appends captures to `infrastructure/captured-data.json`
-- Safe — only works on localhost!
+- Safe - only works on localhost!
 
 **Verify it's running** (new terminal):
 
@@ -322,7 +322,7 @@ npm start
 **What happens:**
 1. `index.js` loads `plugin-active.js` → resolves to `malicious-plugin`
 2. `run-plugin-install.js` copies `target-lib` into `node_modules`
-3. `installHook` runs — writes marker and POSTs exfil payload
+3. `installHook` runs - writes marker and POSTs exfil payload
 4. Console shows "Plugin simulation completed."
 
 ### Step 4: Observe the Attack
@@ -357,7 +357,7 @@ grep -r "installHook" ../plugins/malicious-plugin/
 grep -r "3018" ../plugins/malicious-plugin/
 ```
 
-**Key Point**: The victim application never directly imports malicious code—the **plugin hook** is the attack vector.
+**Key Point**: The victim application never directly imports malicious code-the **plugin hook** is the attack vector.
 
 ### Step 6: Switch to Legitimate Plugin (Optional Comparison)
 
@@ -368,7 +368,7 @@ rm -rf node_modules
 npm start
 ```
 
-**Notice**: No marker file, no captures — same install flow, safe plugin.
+**Notice**: No marker file, no captures - same install flow, safe plugin.
 
 Restore malicious plugin for detection exercises:
 
@@ -603,22 +603,22 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 ## Elasticsearch + Kibana observability (optional)
 
-Scenario **18 — Package Manager Plugin Attack** is indexed in Elasticsearch when the observability stack is running.
+Scenario **18 - Package Manager Plugin Attack** is indexed in Elasticsearch when the observability stack is running.
 
 Plugin attack: malicious-plugin hooks npm install for target-lib inside victim-app.
 
-- **Detection runbook (static)** → index `scas-rules`, document id `18` — IOCs, Sigma, YARA, sample logs from `DETECT.md`
-- **Runtime captures (dynamic)** → index `scas-detections` — one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector
+- **Detection runbook (static)** → index `scas-rules`, document id `18` - IOCs, Sigma, YARA, sample logs from `DETECT.md`
+- **Runtime captures (dynamic)** → index `scas-detections` - one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector
 
 ### How to read this diagram
 
 | Phase | What you should look for |
 |-------|--------------------------|
-| **1 — Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
-| **2 — Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
-| **3 — Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
-| **4 — Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
-| **5 — Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
+| **1 - Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
+| **2 - Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
+| **3 - Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
+| **4 - Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
+| **5 - Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
 
 > **Safety:** All network calls stay on `127.0.0.1`. Malicious logic runs only when `TESTBENCH_MODE=enabled`.
 
@@ -628,7 +628,7 @@ Plugin attack: malicious-plugin hooks npm install for target-lib inside victim-a
 
 *Swimlane diagram for Scenario 18. Editable source: [`scas-observability-scenario-18.excalidraw`](../../assets/diagrams/observability/excalidraw/scas-observability-scenario-18.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-observability-diagrams.js`.*
 
-### Sequence diagram (Phase 1–5)
+### Sequence diagram (Phase 1-5)
 
 Same flow as a participant sequence (expandable in the docs hub).
 
@@ -642,13 +642,13 @@ sequenceDiagram
     participant ES as Elasticsearch :9200
     participant Kibana as Kibana :5601
 
-    Note over Learner,Mock: Phase 1 — Start collectors (Terminal A)
+    Note over Learner,Mock: Phase 1 - Start collectors (Terminal A)
     Learner->>Mock: export TESTBENCH_MODE=enabled
     Learner->>Mock: export SCAS_ES_URL=http://localhost:9200 (optional)
     Learner->>Mock: node infrastructure/mock-server.js
     Mock->>Mock: Listen for exfil POST on localhost
 
-    Note over Learner,MalPkg: Phase 2 — Run the lab (Terminal B)
+    Note over Learner,MalPkg: Phase 2 - Run the lab (Terminal B)
     Learner->>Learner: export TESTBENCH_MODE=enabled
     Learner->>Learner: export SCAS_ES_URL=http://localhost:9200 (optional)
     Learner->>Victim: npm start (plugin registered in .npmrc / config)
@@ -656,13 +656,13 @@ sequenceDiagram
     MalPkg->>MalPkg: Modify / observe target-lib resolution (simulated)
     Learner->>Victim: Observe capture + plugin logs
 
-    Note over MalPkg,Mock: Phase 3 — Simulated exfiltration (127.0.0.1 only)
+    Note over MalPkg,Mock: Phase 3 - Simulated exfiltration (127.0.0.1 only)
     Note over MalPkg: Malicious path gated by TESTBENCH_MODE=enabled
     MalPkg->>Mock: POST /collect JSON payload
     Mock->>Mock: Append to infrastructure/captured-data.json
     Mock-->>Learner: 200 OK (capture accepted)
 
-    Note over Mock,Kibana: Phase 4 — Optional Elasticsearch indexing
+    Note over Mock,Kibana: Phase 4 - Optional Elasticsearch indexing
     alt SCAS_ES_URL is set in Terminal A
     Mock->>ES: POST scas-detections (scenario_id=18, event_type=exfil_capture)
     ES->>ES: Store @timestamp, package, detail fields
@@ -671,11 +671,11 @@ sequenceDiagram
     end
 
     Note over ES: Runbook pre-seeded at scas-rules/_doc/18
-    Note over Learner,Kibana: Phase 5 — Blue-team review in Kibana
-    Learner->>Kibana: Open Discover → SCAS Detections — Scenario 18
+    Note over Learner,Kibana: Phase 5 - Blue-team review in Kibana
+    Learner->>Kibana: Open Discover → SCAS Detections - Scenario 18
     Kibana->>ES: Query scenario_id + sort by @timestamp desc
     ES-->>Kibana: Return capture events for this lab
-    Learner->>Kibana: Open SCAS Rules — Scenario 18
+    Learner->>Kibana: Open SCAS Rules - Scenario 18
     ES-->>Kibana: Return IOCs, Sigma, YARA from DETECT.md
     Learner->>Learner: Correlate capture detail with runbook IOCs
 ```
@@ -702,7 +702,7 @@ From the repository root:
 
 ### Run this scenario with live Elasticsearch forwarding
 
-**Terminal A — mock collector** (from `scenarios/18-package-manager-plugin-attack`):
+**Terminal A - mock collector** (from `scenarios/18-package-manager-plugin-attack`):
 
 ```bash
 cd scenarios/18-package-manager-plugin-attack
@@ -711,7 +711,7 @@ export SCAS_ES_URL=http://localhost:9200
 node infrastructure/mock-server.js
 ```
 
-**Terminal B — execute the lab:**
+**Terminal B - execute the lab:**
 
 ```bash
 cd scenarios/18-package-manager-plugin-attack
@@ -745,8 +745,8 @@ curl -s "http://localhost:9200/scas-detections/_search?pretty" \
 ### Verify in Kibana (UI)
 
 1. Open [http://localhost:5601](http://localhost:5601)
-2. **Discover** → **SCAS Detections — Scenario 18** — live capture timeline (`@timestamp`, `package.name`, `detail`)
-3. **Discover** → **SCAS Rules — Scenario 18** — compare against `iocs`, `sigma`, and `yara` fields
+2. **Discover** → **SCAS Detections - Scenario 18** - live capture timeline (`@timestamp`, `package.name`, `detail`)
+3. **Discover** → **SCAS Rules - Scenario 18** - compare against `iocs`, `sigma`, and `yara` fields
 4. Ask: *Does each capture field match an IOC or Sigma condition in the runbook?*
 
 See [observability/README.md](../../../observability/README.md) for stack details.
@@ -763,13 +763,13 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 
 ### Best Practices
 
-1. ✅ **Allowlist plugins** — Only approved, signed plugin sources
-2. ✅ **Review hook code** — Same rigor as build scripts and CI pipelines
-3. ✅ **Run installs in isolation** — Ephemeral CI runners with network controls
-4. ✅ **Verify node_modules integrity** — Checksums, policy tools, diff against lockfile
-5. ✅ **Monitor install-time behavior** — Network and filesystem telemetry during `npm install`
-6. ✅ **Version-control plugin config** — Audit changes to `.npmrc` and plugin pointers
-7. ✅ **Incident plan** — Document response for unauthorized plugin introduction
+1. ✅ **Allowlist plugins** - Only approved, signed plugin sources
+2. ✅ **Review hook code** - Same rigor as build scripts and CI pipelines
+3. ✅ **Run installs in isolation** - Ephemeral CI runners with network controls
+4. ✅ **Verify node_modules integrity** - Checksums, policy tools, diff against lockfile
+5. ✅ **Monitor install-time behavior** - Network and filesystem telemetry during `npm install`
+6. ✅ **Version-control plugin config** - Audit changes to `.npmrc` and plugin pointers
+7. ✅ **Incident plan** - Document response for unauthorized plugin introduction
 
 ### Real-World Impact
 
@@ -806,7 +806,7 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 
 ## 📚 Additional Resources
 
-- [npm documentation — scripts and lifecycle](https://docs.npmjs.com/cli/v10/using-npm/scripts)
+- [npm documentation - scripts and lifecycle](https://docs.npmjs.com/cli/v10/using-npm/scripts)
 - [OWASP Software Supply Chain Security](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
 - Scenario README: `scenarios/18-package-manager-plugin-attack/README.md`
 - Detection runbook: `scenarios/18-package-manager-plugin-attack/DETECT.md`
@@ -821,11 +821,11 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 - ✅ Use ONLY in isolated test environments
 - ✅ Never deploy malicious plugin code to production
 - ✅ All malicious behavior requires `TESTBENCH_MODE=enabled`
-- ✅ Exfiltration targets **127.0.0.1:3018** only — no real external C2
+- ✅ Exfiltration targets **127.0.0.1:3018** only - no real external C2
 - ✅ Plugin hooks are simulated for educational purposes
 
 ---
 
-**Remember**: Package manager plugins are high-trust code. Treat every hook like production infrastructure—and allowlist, review, and monitor them accordingly!
+**Remember**: Package manager plugins are high-trust code. Treat every hook like production infrastructure-and allowlist, review, and monitor them accordingly!
 
 🔐 Happy Learning!

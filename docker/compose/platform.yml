@@ -1,0 +1,6 @@
+# Optional wrapper: include existing platform compose files.
+# Prefer ./docker/install.sh (uses scripts/observability + scripts/floci).
+
+include:
+  - path: ../observability/docker-compose.yml
+  - path: ../infrastructure/floci/docker-compose.image.yml

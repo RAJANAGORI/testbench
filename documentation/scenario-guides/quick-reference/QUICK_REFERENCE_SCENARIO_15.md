@@ -1,4 +1,4 @@
-# Quick Reference — Scenario 15: Developer Tool Compromise
+# Quick Reference - Scenario 15: Developer Tool Compromise
 
 Use this as your runbook for Scenario 15 when you are teaching live or practicing quickly.
 

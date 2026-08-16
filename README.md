@@ -1,6 +1,6 @@
-# Supply Chain Attack Test Bench 🔐
+# Supply Chain Attack Test Bench
 
-A comprehensive cybersecurity learning platform for understanding, practicing, and defending against supply chain attacks.
+Local labs for learning how software supply chain attacks work — and how to spot and stop them.
 
 [![Smoke](https://github.com/RAJANAGORI/supply-chain-attack-simulator/actions/workflows/smoke.yml/badge.svg)](https://github.com/RAJANAGORI/supply-chain-attack-simulator/actions/workflows/smoke.yml)
 
@@ -8,78 +8,73 @@ A comprehensive cybersecurity learning platform for understanding, practicing, a
 
 ## Start here
 
-Pick **one** path; everything else links out so you are not stuck in a long README.
+Pick one path. The rest of the docs are linked so you do not have to read this whole file.
 
 | You are… | Do this |
 |----------|---------|
-| **New to the project** | `./install.sh -y` (SCAS + ES + Floci) · [Full-stack setup](documentation/getting-started/FULL_STACK_SETUP.md) · or `./START_HERE.sh` |
-| **Pi / USB HDD host** | Optional: [`install-external.sh`](install-external.sh) then same stack — [Pi storage](documentation/getting-started/RASPBERRY_PI_STORAGE.md) |
-| **Prefer a browser UI** | [Dashboard](documentation/platform/DASHBOARD.md) — `./scripts/ui/start-dashboard.sh` (localhost only) |
-| **Planning teaching or a curriculum** | Use the [Scenario learning path](documentation/learning-path/SCENARIO_LEARNING_PATH.md) (beginner → intermediate → advanced) |
-| **Comfortable with npm, shells, and isolated VMs** | [Quick Start](#quick-start-experienced-users) below, then open the README inside each scenario folder |
+| New to the project | `./install.sh -y` (SCAS + ES + Floci) · [Full-stack setup](documentation/getting-started/FULL_STACK_SETUP.md) · or `./START_HERE.sh` |
+| Prefer Docker | `./docker/install.sh` · [Docker labs](documentation/getting-started/DOCKER_LABS.md) |
+| Pi / USB HDD host | Optional: [`install-external.sh`](install-external.sh) — [Pi storage](documentation/getting-started/RASPBERRY_PI_STORAGE.md) |
+| Prefer a browser UI | [Dashboard](documentation/platform/DASHBOARD.md) — `./scripts/ui/start-dashboard.sh` (localhost only) |
+| Teaching or building a curriculum | [Scenario learning path](documentation/learning-path/SCENARIO_LEARNING_PATH.md) |
+| Already comfortable with npm and VMs | [Quick start](#quick-start-experienced-users) below, then open each scenario’s README |
 
-**Safety:** This repo is for **education in isolated environments only**. Read [Safety & ethics](#safety--ethics) before running anything.
+**Safety:** Education only, in isolated environments. Read [Safety & ethics](#safety--ethics) before you run anything.
 
-## Overview
+## What this is
 
-This test bench provides hands-on scenarios for supply chain attacks—among the most critical risks in modern software development. Learners set up intentionally vulnerable environments, walk through attacks, practice detection, and implement defenses. The default runtime is **CLI-only**; an optional [localhost dashboard](documentation/platform/DASHBOARD.md) is available.
+Twenty-three small labs under `scenarios/` (`01-` through `23-`). Each one walks through an attack, shows how you might detect it, and points at mitigations. You mostly work from the CLI; there is an optional [localhost dashboard](documentation/platform/DASHBOARD.md) if you want a UI.
 
-**At a glance**
+Guides and learning paths live in [`documentation/`](documentation/index.md). Malicious bits only run when you opt in (for example `TESTBENCH_MODE=enabled`), and exfiltration stays aimed at localhost — see [Security notice](#security-notice).
 
-- **23** self-contained labs under `scenarios/` (numbered folders `01-` … `23-`)
-- Each lab includes attack mechanics, detection ideas, mitigations, and references where relevant
-- Canonical guides and learning paths live in [`documentation/`](documentation/index.md)
-- Malicious samples are gated (for example `TESTBENCH_MODE=enabled`) and designed for localhost-style exercises—see [Security notice](#security-notice)
+## Themes (not a full catalog)
 
-## What you'll learn (themes)
+The labs cover a few broad areas:
 
-Instead of listing every technique here, the labs group into a few themes:
+- Package and registry abuse — typosquatting, dependency confusion, mirrors, lockfiles, caches, workspaces
+- Broken trust — bad updates, signing gaps, submodules, SBOM tricks
+- Build and delivery — pipelines, containers, multi-stage chains
+- Developer tools — plugins, self-spreading patterns ([`06-sha-hulud/`](scenarios/06-sha-hulud/)), IDE/CLI-style risks
+- Incident-style sims — Axios-like npm and LiteLLM-like PyPI patterns (fake packages, localhost only; [#3](https://github.com/RAJANAGORI/supply-chain-attack-simulator/issues/3), [#4](https://github.com/RAJANAGORI/supply-chain-attack-simulator/issues/4))
+- Defense — detection tooling and hardening, threaded through the scenarios
 
-- **Package and registry abuse** — typosquatting, dependency and version confusion, mirrors, metadata, lockfiles, caches, workspaces
-- **Compromise of trust** — hijacked or malicious updates, signing bypass, submodules, SBOM gaps
-- **Build, CI/CD, and delivery** — pipeline tampering, container images, multi-stage chains
-- **Developer toolchain** — plugins, “Shai-Hulud” / self-spreading patterns, IDE–CLI style risks ([scenario folder `06-sha-hulud/`](scenarios/06-sha-hulud/) uses the short name **sha-hulud** on disk)
-- **Realistic simulations** — Axios-style npm and LiteLLM-style PyPI patterns (fictional packages, localhost-only; see issues [#3](https://github.com/RAJANAGORI/supply-chain-attack-simulator/issues/3) and [#4](https://github.com/RAJANAGORI/supply-chain-attack-simulator/issues/4))
-- **Defense** — detection tooling, hardening patterns, and defensive workflows across scenarios
-
-For a **full numbered list** with paths and skills, see [Scenario walkthroughs](documentation/reference/SCENARIOS.md).
+For the full numbered list, see [Scenario walkthroughs](documentation/reference/SCENARIOS.md).
 
 ## Prerequisites
 
-- **Operating system**: Linux, macOS, or Windows with WSL2
-- **Software**: Python 3.8+, Node.js 16+, Git
-- **Knowledge**: Basic familiarity with package managers (npm, pip, and similar)
-- **Runtime model**: CLI-only (no dashboard or web UI required)
+- Linux, macOS, or Windows with WSL2
+- Python 3.8+, Node.js 16+, Git (Docker if you use the full stack or Docker labs)
+- Basic comfort with npm/pip is enough to start
 
 ## Project structure
 
 ```
 supply-chain-attack-simulator/
-├── scenarios/                  # Attack scenario labs (01- … 23-)
-├── vulnerable-apps/             # Optional sample vulnerable Node.js app (scenario 03)
-├── malicious-packages/          # Example malicious packages (for learning)
-├── detection-tools/             # Security scanning and detection tools
-├── observability/               # Optional Elasticsearch + Kibana stack (issue #22)
-├── .github/ISSUE_TEMPLATE/      # GitHub issue forms
-├── documentation/               # Canonical Markdown: guides, learning path, modules
-├── docs/                        # GitHub Pages (HTML + assets/); symlinks → documentation/
-└── scripts/                     # Setup and utility scripts
+├── scenarios/                  # Labs 01–23
+├── vulnerable-apps/            # Optional sample app (scenario 03)
+├── malicious-packages/         # Example packages for learning
+├── detection-tools/            # Scanners and helpers
+├── observability/              # Optional Elasticsearch + Kibana
+├── docker/                     # Docker install hub
+├── documentation/              # Canonical guides
+├── docs/                       # GitHub Pages (symlinks → documentation/)
+└── scripts/                    # Setup and utilities
 ```
 
-## Quick Start (experienced users)
+## Quick start (experienced users)
 
-### 1. Clone and enter the repo
+### 1. Clone the repo
 
 ```bash
 git clone https://github.com/RAJANAGORI/supply-chain-attack-simulator.git
 cd supply-chain-attack-simulator
 ```
 
-Use your own fork or mirror URL if you did not clone from GitHub.
+Use your own fork URL if that is what you cloned.
 
-### 2. Run the installer
+### 2. Install
 
-**Full stack** (SCAS + Elasticsearch/Kibana + Floci — Docker required):
+Full stack (SCAS + Elasticsearch/Kibana + Floci — needs Docker):
 
 ```bash
 chmod +x install.sh
@@ -87,14 +82,19 @@ chmod +x install.sh
 source .scas.env
 ```
 
-**Core only** (labs without Docker services):
+Labs only, no Docker services:
 
 ```bash
 ./install.sh -y --core-only
-# or: chmod +x scripts/setup/setup.sh && ./scripts/setup/setup.sh
 ```
 
-### 3. Run Scenario 1 (example CLI flow)
+Docker-first path:
+
+```bash
+./docker/install.sh
+```
+
+### 3. Run Scenario 1 (CLI)
 
 ```bash
 cd scenarios/01-typosquatting
@@ -109,21 +109,17 @@ curl http://localhost:3000/captured-data
 
 You should see captured exercise data from the mock exfiltration endpoint (exact shape is described in `scenarios/01-typosquatting/README.md`).
 
-### 4. Clean up the scenario port
+### 4. Clean up
 
 ```bash
 ./scripts/setup/kill-port.sh 3000
-```
-
-Or clean up all testbench processes and local scenario artifacts:
-
-```bash
+# or everything:
 ./scripts/setup/teardown.sh
 ```
 
 ## Scenario index
 
-Open each folder’s **README** for objectives, duration, and step-by-step steps. Levels follow [documentation/reference/SCENARIOS.md](documentation/reference/SCENARIOS.md).
+Each folder’s README has the steps. Levels match [documentation/reference/SCENARIOS.md](documentation/reference/SCENARIOS.md).
 
 | # | Lab | Level |
 |---|-----|--------|
@@ -151,107 +147,83 @@ Open each folder’s **README** for objectives, duration, and step-by-step steps
 | 22 | [LiteLLM-style PyPI compromise (simulation)](scenarios/22-litellm-pypi-compromise/) | Advanced |
 | 23 | [Trivy supply chain attack (simulation)](scenarios/23-trivy-supply-chain-attack/) | Advanced |
 
-## Defense & detection
+## Defense and detection
 
-Each scenario includes:
+Every scenario ships a `DETECT.md` with IOCs, sample logs, and rule-style snippets, plus notes on mitigation in the README.
 
-- Detection techniques and tools
-- Mitigation strategies
-- Prevention-oriented practices
-- Real-world case studies where relevant
-- A blue-team runbook at `scenarios/<scenario>/DETECT.md` with IOCs, sample logs, Sigma-style rules, and YARA-like text matches
-
-### Optional Elasticsearch + Kibana track
-
-For workshops, you can index all detection runbooks and runtime events into a local Docker stack (roadmap issue [#22](https://github.com/RAJANAGORI/supply-chain-attack-simulator/issues/22)):
+For workshops, you can send runbooks and events into a local Elasticsearch stack ([#22](https://github.com/RAJANAGORI/supply-chain-attack-simulator/issues/22)):
 
 ```bash
 ./scripts/observability/elasticsearch-up.sh
-export SCAS_ES_URL=http://localhost:9200   # opt-in live capture forwarding
+export SCAS_ES_URL=http://localhost:9200
 ```
 
-See [observability/README.md](observability/README.md) for Kibana data views, shippers, and smoke checks.
+See [observability/README.md](observability/README.md).
 
 ## Safety & ethics
 
-**IMPORTANT**: This test bench is for **educational purposes only**.
+This repo is for learning. Keep it that way.
 
-- Use **only** in isolated environments
-- Never deploy malicious code to public repositories
-- Do not test on systems you do not own
-- Follow responsible disclosure practices
+- Run it only in isolated environments
+- Do not publish these packages to public registries
+- Do not point it at systems you do not own
+- Be careful with anything that looks like a real credential
 
-All malicious packages in this test bench are:
-
-- Clearly labeled as educational
-- Designed to work only in the test environment
-- Intended not to cause real harm when used as documented
+The samples are labeled as educational, gated for the testbench, and written so they should not do real damage when used as documented.
 
 ## Security notice
 
-This repository contains intentionally vulnerable code and malicious package examples for educational purposes. Safeguards reduce accidental misuse:
+There is intentionally bad code here. Safeguards include:
 
-- Environment variable checks (for example `TESTBENCH_MODE=enabled`)
-- Localhost-oriented operations
-- Clear warning messages
+- `TESTBENCH_MODE=enabled` (and similar) before malicious paths run
+- Localhost-oriented exfiltration and mocks
+- Clear warnings in the labs
 - No real credential harvesting
 
 ## Documentation
 
-Authoritative Markdown lives under **`documentation/`** — start at the **[documentation index](documentation/index.md)** (master source of truth).
-
-**Browse on the web:** [Documentation hub](docs/guide.html) — sequential Zero to Hero guides (01→23), setup, detection, and FAQ rendered from the same Markdown files.
+Start at the **[documentation index](documentation/index.md)**. Same files render on the web via the [Documentation hub](docs/guide.html).
 
 | Doc | Purpose |
 |-----|---------|
-| [Documentation index](documentation/index.md) | Master navigation hub — start here |
-| [Scenario catalog](documentation/scenario-guides/CATALOG.md) | All 23 labs — README, DETECT, guides, modules |
-| [Full-stack setup](documentation/getting-started/FULL_STACK_SETUP.md) | Workshop install — SCAS + Elasticsearch + Floci |
-| [First lab in 10 minutes](documentation/getting-started/ZERO_TO_HERO.md) | Guided start if you are new |
-| [SCAS-only setup](documentation/getting-started/SETUP.md) | Core installation and prerequisites |
-| [Scenario learning path](documentation/learning-path/SCENARIO_LEARNING_PATH.md) | Beginner / intermediate / advanced tracks |
-| [Architecture](documentation/platform/ARCHITECTURE.md) | Platform design |
-| [Operations](documentation/platform/OPERATIONS.md) | Lab workflow, ports, teardown |
-| [Detection & observability](documentation/platform/DETECTION_AND_OBSERVABILITY.md) | Blue team + Elasticsearch |
-| [Best practices](documentation/platform/BEST_PRACTICES.md) | Defensive patterns and prevention |
-| [Quick reference](documentation/platform/QUICK_REFERENCE.md) | One-page commands |
-| [Tooling & doc maintenance](documentation/platform/TOOLING.md) | `scripts/` catalog + doc lifecycle (maintainers) |
-| [Integration guides](documentation/guides/index.md) | Optional Floci (local-AWS) cloud track |
-| [FAQ](documentation/platform/FAQ.md) | Troubleshooting |
-| [Scenario walkthroughs](documentation/reference/SCENARIOS.md) | Numbered list with skills |
-| [Additional resources](documentation/reference/RESOURCES.md) | External tools and incidents |
-| [Observability stack](observability/README.md) | Optional Elasticsearch + Kibana |
+| [Documentation index](documentation/index.md) | Main hub |
+| [Scenario catalog](documentation/scenario-guides/CATALOG.md) | All 23 labs |
+| [Full-stack setup](documentation/getting-started/FULL_STACK_SETUP.md) | SCAS + ES + Floci |
+| [Docker labs](documentation/getting-started/DOCKER_LABS.md) | `./docker/install.sh` |
+| [First lab in 10 minutes](documentation/getting-started/ZERO_TO_HERO.md) | Short guided start |
+| [SCAS-only setup](documentation/getting-started/SETUP.md) | Core install |
+| [Scenario learning path](documentation/learning-path/SCENARIO_LEARNING_PATH.md) | Beginner → advanced |
+| [Architecture](documentation/platform/ARCHITECTURE.md) | How the platform fits together |
+| [Operations](documentation/platform/OPERATIONS.md) | Ports, workflow, teardown |
+| [Detection & observability](documentation/platform/DETECTION_AND_OBSERVABILITY.md) | Blue team + ES |
+| [Best practices](documentation/platform/BEST_PRACTICES.md) | Defensive habits |
+| [Quick reference](documentation/platform/QUICK_REFERENCE.md) | Commands on one page |
+| [Tooling](documentation/platform/TOOLING.md) | Scripts and doc maintenance |
+| [Integration guides](documentation/guides/index.md) | Floci cloud track |
+| [FAQ](documentation/platform/FAQ.md) | Common problems |
+| [Scenario walkthroughs](documentation/reference/SCENARIOS.md) | Numbered list + skills |
+| [Resources](documentation/reference/RESOURCES.md) | External reading |
+| [Observability stack](observability/README.md) | ES + Kibana |
 
-The **`docs/`** folder is the GitHub Pages site (`index.html`, `guide.html`, `assets/`); shared guides are **symlinks** into `documentation/` — see **`docs/README.md`**.
+`docs/` is the GitHub Pages site; content is symlinked from `documentation/` — see `docs/README.md`.
 
 ## Issue templates
 
-GitHub issue forms live under `.github/ISSUE_TEMPLATE`:
+Under `.github/ISSUE_TEMPLATE`: bug report, feature request, and scenario issue forms.
 
-- `bug_report.yaml`
-- `feature_request.yaml`
-- `scenario_issue.yaml`
+## Learning path
 
-## Learning path (how to order the labs)
+There is no single required order. A workable default:
 
-There is **no single mandatory order** for all 23 scenarios. Use this as a rule of thumb, then follow **[Scenario learning path](documentation/learning-path/SCENARIO_LEARNING_PATH.md)** for tracks and outcomes.
+1. Do **01 → 02 → 03** first.
+2. Finish **01–05** before **06** (Shai-Hulud) — it is the heaviest single lab.
+3. After that, pick by interest: registry/repo labs (**07, 08, 10, 12, 13, 16**), or CI/signing/container labs (**05, 09, 11, 14, 15, 17–23**).
 
-1. **Foundation**: Complete **01 → 02 → 03** (typosquatting, dependency confusion, compromised package) before deep dives.
-2. **Before scenario 06**: Finish **01–05** first. **06 (Shai-Hulud)** is the heaviest “single scenario” lab and assumes you understand earlier mechanics and response concepts.
-3. **Everything else**: Choose by role—intermediate registry and repo labs (for example **07, 08, 10, 12, 13, 16**), advanced CI and signing labs (**05, 09, 11, 14, 15, 17–23**) as needed. Enterprise-focused notes apply especially to **11** (mirrors); container tooling to **14**; scanner/toolchain trust to **23**.
-
-Capstone-style work is described in the **[Capstone rubric](documentation/learning-path/CAPSTONE_RUBRIC.md)**.
+More structure: [Scenario learning path](documentation/learning-path/SCENARIO_LEARNING_PATH.md) and [Capstone rubric](documentation/learning-path/CAPSTONE_RUBRIC.md).
 
 ## Contributing
 
-This is an educational project. Contributions are welcome:
-
-- New attack scenarios
-- Improved detection tools
-- Better documentation
-- Bug fixes and enhancements
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution workflow and testing expectations.
+New labs, better detection, clearer docs, and fixes are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Community standards
 
@@ -262,43 +234,33 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution workflow and testing exp
 
 **Creator:** [Raja Nagori](https://github.com/rajanagori) · Copyright © 2024–2026
 
-This project uses **dual licensing**:
+Dual licensing:
 
 | Material | License |
 |----------|---------|
-| **Software** — scenarios, scripts, detection tools, observability | [MIT License](LICENSE) |
-| **Documentation** — guides, modules, learning paths, curriculum | [CC BY-NC-ND 4.0](DOCUMENTATION-CC-BY-NC-ND.md) |
+| Software — scenarios, scripts, detection tools, observability | [MIT License](LICENSE) |
+| Documentation — guides, modules, learning paths | [CC BY-NC-ND 4.0](DOCUMENTATION-CC-BY-NC-ND.md) |
 
-- **[LEGAL.md](LEGAL.md)** — ownership and what others may not do  
-- **[ATTRIBUTION.md](ATTRIBUTION.md)** — how to credit SCAS when sharing or teaching  
-- **[AUTHORS.md](AUTHORS.md)** — creator and contributors  
-- **[NOTICE](NOTICE)** — summary for distributions  
-- **[CONTRIBUTING.md](CONTRIBUTING.md)** — DCO and contribution terms  
+- [LEGAL.md](LEGAL.md) — ownership
+- [ATTRIBUTION.md](ATTRIBUTION.md) — how to credit SCAS
+- [AUTHORS.md](AUTHORS.md) — creator and contributors
+- [NOTICE](NOTICE) — distribution summary
+- [CONTRIBUTING.md](CONTRIBUTING.md) — DCO and contribution terms
 
-You may fork and use the **software** under MIT (keep copyright notice). **Documentation** may be shared with attribution but not commercially republished as modified derivatives without permission. Do not remove copyright or claim you authored SCAS.
+Fork and use the software under MIT (keep the copyright notice). Docs can be shared with attribution; do not commercially republish modified docs without permission. Do not strip copyright or claim you wrote SCAS.
 
 ## Acknowledgments
 
 **[Floci](https://floci.io/)** — local cloud emulator ([floci-io/floci](https://github.com/floci-io/floci)), maintained by **[Hector Ventura](https://github.com/hectorvent)**.
 
-Inspired by real-world supply chain incidents, including:
-
-- SolarWinds (2020)
-- CodeCov (2021)
-- Event-stream (2018)
-- UA-Parser-js (2021)
-- Colors.js & Faker.js (2022)
+Built with an eye toward real incidents, including SolarWinds (2020), CodeCov (2021), event-stream (2018), UA-Parser-js (2021), and Colors.js / Faker.js (2022).
 
 ## Support
 
-For questions or issues:
-
-- Read the [FAQ](documentation/platform/FAQ.md) and [documentation index](documentation/index.md)
-- Check [OPERATIONS.md](documentation/platform/OPERATIONS.md) for ports and teardown
-- Open an issue on GitHub
+- [FAQ](documentation/platform/FAQ.md) and [documentation index](documentation/index.md)
+- [OPERATIONS.md](documentation/platform/OPERATIONS.md) for ports and teardown
+- GitHub issues for bugs and questions
 
 ---
 
-**Remember**: With great power comes great responsibility. Use these skills to defend, not to harm.
-
-Happy learning.
+Use this to get better at defense. That is the point.

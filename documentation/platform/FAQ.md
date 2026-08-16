@@ -35,7 +35,7 @@ Only in an **isolated lab environment** (VM or dedicated machine). Malicious sam
 
 ### What order should I run scenarios?
 
-See [SCENARIO_LEARNING_PATH.md](../learning-path/SCENARIO_LEARNING_PATH.md). Minimum: **01 → 02 → 03**. Finish **01–05** before **06 (Shai-Hulud)**.
+See [SCENARIO_LEARNING_PATH.md](../learning-path/SCENARIO_LEARNING_PATH.md). Minimum: **01 → 02 → 03**. Finish **01-05** before **06 (Shai-Hulud)**.
 
 ---
 
@@ -64,7 +64,7 @@ Port reference: [OPERATIONS.md](./OPERATIONS.md) · [CATALOG.md](../scenario-gui
 
 ### Scenario 11 folders don't exist
 
-Run setup first — it generates the lab tree:
+Run setup first - it generates the lab tree:
 
 ```bash
 cd scenarios/11-registry-mirror-poisoning
@@ -118,7 +118,7 @@ Create data views and saved searches:
 
 ### Smoke observability test fails on scanner findings
 
-Scenario 01's package may produce **zero scanner findings** (subtle payload). The smoke script also runs `ship-captures.js` — ensure `captured-data.json` exists from a prior lab run.
+Scenario 01's package may produce **zero scanner findings** (subtle payload). The smoke script also runs `ship-captures.js` - ensure `captured-data.json` exists from a prior lab run.
 
 ---
 
@@ -126,7 +126,7 @@ Scenario 01's package may produce **zero scanner findings** (subtle payload). Th
 
 ### Which documentation is the source of truth?
 
-**[`documentation/`](../README.md)** — this folder. The [`docs/`](../../docs/) folder adds GitHub Pages HTML and symlinks to the same Markdown.
+**[`documentation/`](../README.md)** - this folder. The [`docs/`](../../docs/) folder adds GitHub Pages HTML and symlinks to the same Markdown.
 
 ### Where is the master index of all files?
 
@@ -138,7 +138,7 @@ Scenario 01's package may produce **zero scanner findings** (subtle payload). Th
 
 ### Who owns Supply Chain Attack Simulator?
 
-**Raja Nagori** holds copyright (© 2024–2026) in the original scenarios, documentation, curriculum, and related materials. See [AUTHORS.md](../../AUTHORS.md) and [LEGAL.md](../../LEGAL.md).
+**Raja Nagori** holds copyright (© 2024-2026) in the original scenarios, documentation, curriculum, and related materials. See [AUTHORS.md](../../AUTHORS.md) and [LEGAL.md](../../LEGAL.md).
 
 ### Can someone copy this and claim they created it?
 

@@ -2,9 +2,9 @@
 
 > [Documentation](../index.md) › [Integration guides](./index.md) › Floci
 
-Optional **local AWS emulator** track for **all 23 scenarios**. Uses [Floci](https://github.com/floci-io/floci) core on port **4566** (not floci-ui — avoids clashes with SCAS mock servers on 3000–3023).
+Optional **local AWS emulator** track for **all 23 scenarios**. Uses [Floci](https://github.com/floci-io/floci) core on port **4566** (not floci-ui - avoids clashes with SCAS mock servers on 3000-3023).
 
-**First-time install?** Start with [Full-stack setup](../getting-started/FULL_STACK_SETUP.md) (Parts 1–3 cover SCAS, Elasticsearch, and Floci together).
+**First-time install?** Start with [Full-stack setup](../getting-started/FULL_STACK_SETUP.md) (Parts 1-3 cover SCAS, Elasticsearch, and Floci together).
 
 The Floci helper scripts are also catalogued in [Tooling & doc maintenance](../platform/TOOLING.md#floci-cloud-track-optional).
 
@@ -34,7 +34,7 @@ cd scenarios/NN-slug
 
 | Layer | Role |
 |-------|------|
-| Mock server (`:3000`–`:3023`) | Primary exfil — always runs |
+| Mock server (`:3000`-`:3023`) | Primary exfil - always runs |
 | `floci-exfil.js` / `floci_exfil.py` | Opt-in dual-write when `SCAS_FLOCI_ENABLED=1` |
 | `scripts/floci/floci-bridge.sh` | S3, ECR, Secrets, SQS, SNS, EventBridge, STS, ECS, IAM, CodePipeline, Step Functions, Glue, SSM, CloudWatch Logs |
 | `detection-tools/floci/*` | Blue-team verify scripts |
@@ -61,13 +61,13 @@ cd scenarios/NN-slug
 | `detection-tools/floci/cloudtrail-hunt.sh` | Cloud API abuse hunt (05, 23) |
 | `detection-tools/floci/pipeline-artifact-check.sh` | CodePipeline (23) |
 
-**Buckets:** `scas-sc01-artifacts` … `scas-sc23-artifacts`
+**Buckets:** `scas-sc01-artifacts` ... `scas-sc23-artifacts`
 
 ## Scenario matrix
 
 | # | Scenario | Floci services | Depth |
 |---|----------|----------------|-------|
-| 01–04, 07–10, 12–13, 15–16, 18, 20 | Standard npm/PyPI labs | **S3** exfil mirror | Universal |
+| 01-04, 07-10, 12-13, 15-16, 18, 20 | Standard npm/PyPI labs | **S3** exfil mirror | Universal |
 | 21 | Axios postinstall | **S3** | Reference hook |
 | 22 | LiteLLM PyPI | **S3** (Python) | Universal |
 | 05 | Build compromise | **S3**, IAM, STS, SSM, CloudWatch Logs | Extended |
@@ -82,7 +82,7 @@ Per-scenario docs: `scenarios/NN-*/FLOCI.md`
 
 ### Universal track (S3 only)
 
-Scenarios **01–04, 07–13, 15–16, 18–20, 22–23** mirror mock-server JSON to `s3://scas-scNN-artifacts/exfil/*` via `uploadJson()` / `floci_exfil.py` / `floci-upload-json.sh`.
+Scenarios **01-04, 07-13, 15-16, 18-20, 22-23** mirror mock-server JSON to `s3://scas-scNN-artifacts/exfil/*` via `uploadJson()` / `floci_exfil.py` / `floci-upload-json.sh`.
 
 ### Extended tracks
 
@@ -98,7 +98,7 @@ Scenarios **01–04, 07–13, 15–16, 18–20, 22–23** mirror mock-server JSO
 
 ## Port conflicts
 
-SCAS runs **`scas-floci` on 4566 only** — not floci-ui (`:3000`/`:4500`). SCAS mock servers use 3000–3023.
+SCAS runs **`scas-floci` on 4566 only** - not floci-ui (`:3000`/`:4500`). SCAS mock servers use 3000-3023.
 
 ## Scripts reference
 

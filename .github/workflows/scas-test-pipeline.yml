@@ -1,0 +1,110 @@
+name: SCAS Dockerized Scenarios CI/CD
+
+# PR tripwire only: docker compose config on scenario dirs the diff touched.
+# No lab containers, no verify.sh, no payload. Run stacks locally:
+#   scripts/docker/smoke-scenario-01.sh
+#   scripts/docker/smoke-all-compose-labs.sh
+
+on:
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'scenarios/**'
+      - 'scripts/docker/**'
+      - '.github/workflows/scas-test-pipeline.yml'
+  push:
+    branches: [main, master]
+    paths:
+      - 'scenarios/**'
+      - 'scripts/docker/**'
+      - '.github/workflows/scas-test-pipeline.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  compose-config:
+    name: Compose config (touched dirs)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve changed scenario dirs
+        id: scope
+        run: |
+          set -euo pipefail
+
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch --no-tags origin "${{ github.base_ref }}"
+            BASE="origin/${{ github.base_ref }}"
+            HEAD="${{ github.sha }}"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            BASE=""
+            HEAD=""
+          else
+            BASE="${{ github.event.before }}"
+            HEAD="${{ github.sha }}"
+            if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then
+              BASE=""
+            fi
+          fi
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ -z "$BASE" ]; then
+            DIRS="$(find scenarios -maxdepth 1 -mindepth 1 -type d -name '[0-9][0-9]-*' | sort)"
+          else
+            CHANGED="$(git diff --name-only "$BASE" "$HEAD" || true)"
+            DIRS="$(printf '%s\n' "$CHANGED" | grep -E '^scenarios/[0-9]{2}-' | cut -d/ -f1-2 | sort -u || true)"
+            if [ -z "$DIRS" ]; then
+              if echo "$CHANGED" | grep -qE '^scenarios/_shared/docker/|^scripts/docker/|scas-test-pipeline.yml'; then
+                DIRS="$(find scenarios -maxdepth 1 -mindepth 1 -type d | grep -E 'scenarios/[0-9]{2}-' | sort || true)"
+              fi
+            fi
+          fi
+
+          {
+            echo "dirs<<EOF"
+            printf '%s\n' "$DIRS"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "compose dirs:"
+          printf '%s\n' "$DIRS"
+
+      - name: Validate compose (touched dirs only)
+        run: |
+          set -euo pipefail
+          DIRS="${{ steps.scope.outputs.dirs }}"
+          if [ -z "${DIRS// }" ]; then
+            echo "No scenario dirs with compose changes."
+            exit 0
+          fi
+          n=0
+          while IFS= read -r dir; do
+            [ -z "$dir" ] && continue
+            compose=""
+            for candidate in \
+              "$dir/docker-compose.yml" \
+              "$dir/docker-compose.yaml" \
+              "$dir/assets/docker-compose.yml" \
+              "$dir/assets/docker-compose.yaml"
+            do
+              if [ -f "$candidate" ]; then
+                compose="$candidate"
+                break
+              fi
+            done
+            if [ -z "$compose" ]; then
+              echo "Skip $dir (no compose file)"
+              continue
+            fi
+            echo "Validating: $compose"
+            docker compose -f "$compose" config --quiet
+            n=$((n + 1))
+          done <<< "$DIRS"
+          echo "Validated $n compose file(s)."

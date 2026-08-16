@@ -55,8 +55,21 @@ You work for a security research team. Your task is to:
 ## 🔧 Setup
 
 ### Prerequisites
-- Node.js 16+ and npm installed
-- Repository root setup completed once (`./scripts/setup/setup.sh` from the repo root; see [SETUP.md](../../documentation/getting-started/SETUP.md))
+- Node.js 16+ and npm, **or** Docker with Compose v2 ([DOCKER_LABS.md](../../documentation/getting-started/DOCKER_LABS.md))
+- One-time repo setup (`./scripts/setup/setup.sh` from the repo root; [SETUP.md](../../documentation/getting-started/SETUP.md)) — not needed for the Docker path
+
+### Docker (no host Node)
+
+```bash
+cd scenarios/01-typosquatting
+docker compose up -d --build
+docker compose exec victim bash
+# inside container: cd victim-app && npm start
+# on host: curl http://localhost:3000/captured-data
+docker compose down -v
+```
+
+Exfiltration still goes to the mock on localhost inside the lab network.
 
 ### Environment Setup
 

@@ -2,7 +2,7 @@
 
 Based on [MODULE_TEMPLATE.md](./MODULE_TEMPLATE.md).
 
-This scenario teaches how a **maintainer-published patch** can introduce an **unreferenced transitive** that still runs **`postinstall`**, with optional **manifest decoy** behavior—using fictional packages and **localhost-only** beacons. See [GitHub issue #3](https://github.com/RAJANAGORI/supply-chain-attack-simulator/issues/3).
+This scenario teaches how a **maintainer-published patch** can introduce an **unreferenced transitive** that still runs **`postinstall`**, with optional **manifest decoy** behavior-using fictional packages and **localhost-only** beacons. See [GitHub issue #3](https://github.com/RAJANAGORI/supply-chain-attack-simulator/issues/3).
 
 ## 1) Module Card
 

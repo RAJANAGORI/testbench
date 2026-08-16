@@ -33,21 +33,21 @@ export TESTBENCH_MODE=enabled
 ./setup.sh
 ```
 
-`setup.sh` runs `build-repos.sh` — creates real git repos under `work/` (gitignored).
+`setup.sh` runs `build-repos.sh` - creates real git repos under `work/` (gitignored).
 
 ## 🎯 Attack Execution
 
 ```bash
-# Terminal A — mock C2
+# Terminal A - mock C2
 node infrastructure/mock-server.js
 
-# Terminal B — real attack path
+# Terminal B - real attack path
 bash infrastructure/build-repos.sh   # if work/ was cleared
 
 git -c protocol.file.allow=always clone --recurse-submodules \
     work/awesome-project work/victim-clone
 
-# ⚠️  export must be in the SAME terminal as npm install — env vars don't cross sessions
+# ⚠️  export must be in the SAME terminal as npm install - env vars don't cross sessions
 export TESTBENCH_MODE=enabled && npm --prefix work/victim-clone install
 
 curl -s http://localhost:3000/captured-data
@@ -122,7 +122,7 @@ curl -X DELETE http://localhost:3000/captured-data
 ## 💡 Key Concepts
 
 - **Real git flow**: `clone --recurse-submodules` → `npm install` → submodule script runs
-- **.gitmodules**: Defines submodule URL and path — review on every PR
+- **.gitmodules**: Defines submodule URL and path - review on every PR
 - **protocol.file.allow**: Git hardening blocks local submodules unless explicitly enabled
 - **Detection**: Submodule URL allowlist, commit pinning, postinstall script audit
 - **Prevention**: Block `file://` submodules in CI; scan submodule content

@@ -1,4 +1,4 @@
-# Quick Reference — Scenario 19: SBOM Manipulation Attack
+# Quick Reference - Scenario 19: SBOM Manipulation Attack
 
 Use this as your runbook for Scenario 19 when you are teaching live or practicing quickly.
 

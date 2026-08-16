@@ -14,9 +14,12 @@ from pathlib import Path
 def find_upload_script() -> Path | None:
     directory = Path.cwd()
     for _ in range(12):
-        candidate = directory / "scripts" / "floci-upload-json.sh"
-        if candidate.is_file():
-            return candidate
+        for candidate in (
+            directory / "scripts" / "floci" / "floci-upload-json.sh",
+            directory / "scripts" / "floci-upload-json.sh",
+        ):
+            if candidate.is_file():
+                return candidate
         parent = directory.parent
         if parent == directory:
             break

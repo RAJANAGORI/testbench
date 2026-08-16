@@ -46,13 +46,13 @@ A **multi-stage supply chain attack** progresses through sequential phases rathe
 
 **Typical three-stage pattern in this lab**:
 ```
-Stage 1 — Initial Access
+Stage 1 - Initial Access
   Write local token artifact + stage1 capture
 
-Stage 2 — Privilege / Credential Abuse
+Stage 2 - Privilege / Credential Abuse
   Read stage1 token + stage2 capture
 
-Stage 3 — Replication / Persistence
+Stage 3 - Replication / Persistence
   Write spread artifact + stage3 capture
 ```
 
@@ -60,7 +60,7 @@ Stage 3 — Replication / Persistence
 
 1. **Low signal per stage**: Each event seems minor alone
 2. **Time separation**: Stages may occur seconds apart but different alerts fire separately
-3. **Different data sources**: File writes, network beacons, package loads — siloed in SIEM
+3. **Different data sources**: File writes, network beacons, package loads - siloed in SIEM
 4. **Progressive trust abuse**: Stage 2 depends on artifacts from stage 1
 5. **Alert fatigue**: SOC closes "informational" alerts missing chain context
 
@@ -74,11 +74,11 @@ Stage 3 — Replication / Persistence
 
 **The Attack Chain**:
 ```
-Stage 1 package installed — foothold established
+Stage 1 package installed - foothold established
         ↓
 Local artifact written (.stolen/token.json)
         ↓
-Stage 2 package uses stolen token — escalation simulated
+Stage 2 package uses stolen token - escalation simulated
         ↓
 Replication artifacts written (spread.json)
         ↓
@@ -110,8 +110,8 @@ Correlator ties stage1 → stage2 → stage3 into single incident
 
 Before we start, make sure you've completed:
 
-- ✅ Scenarios 1–5 — foundational supply chain attack patterns
-- ✅ Scenario 7 (Transitive Dependencies) — dependency chain concepts
+- ✅ Scenarios 1-5 - foundational supply chain attack patterns
+- ✅ Scenario 7 (Transitive Dependencies) - dependency chain concepts
 - ✅ Node.js 16+ and npm installed
 - ✅ TESTBENCH_MODE enabled
 
@@ -164,8 +164,8 @@ export TESTBENCH_MODE=enabled
 ```
 17-multi-stage-attack-chain/
 ├── packages/
-│   ├── stage1-access-lib/       # Stage 1 — initial access
-│   └── stage2-compromised-lib/  # Stage 2 + 3 — abuse + replication
+│   ├── stage1-access-lib/       # Stage 1 - initial access
+│   └── stage2-compromised-lib/  # Stage 2 + 3 - abuse + replication
 ├── victim-app/
 │   └── index.js                 # Orchestrates stage1 → stage2Chain
 ├── infrastructure/
@@ -185,7 +185,7 @@ export TESTBENCH_MODE=enabled
 
 ## Part 4: Understanding the Stage Package Structure (20 minutes)
 
-### Step 1: Examine Stage 1 — Initial Access
+### Step 1: Examine Stage 1 - Initial Access
 
 ```bash
 cat packages/stage1-access-lib/package.json
@@ -200,7 +200,7 @@ cat packages/stage1-access-lib/index.js
 
 **Exports**: `stage1()`, `getToken()` for victim orchestration
 
-### Step 2: Examine Stage 2 — Abuse and Replication
+### Step 2: Examine Stage 2 - Abuse and Replication
 
 ```bash
 cat packages/stage2-compromised-lib/package.json
@@ -213,7 +213,7 @@ cat packages/stage2-compromised-lib/index.js
 3. Writes `replication/spread.json` (simulated spread)
 4. Appends stage3 evidence + POSTs stage3 capture
 
-**Exports**: `stage2Chain()` — runs stage 2 and stage 3 in sequence
+**Exports**: `stage2Chain()` - runs stage 2 and stage 3 in sequence
 
 ### Step 3: Review Victim Orchestration
 
@@ -233,7 +233,7 @@ async function main() {
 }
 ```
 
-**Key Point**: Explicit ordering — stage 2 cannot succeed fully without stage 1 artifact.
+**Key Point**: Explicit ordering - stage 2 cannot succeed fully without stage 1 artifact.
 
 ### Step 4: Map Artifacts and Evidence
 
@@ -253,9 +253,9 @@ async function main() {
 
 **Attack Timeline**:
 1. Developer installs `stage1-access-lib` and `stage2-compromised-lib`
-2. Application start invokes stage1 — token stolen and captured
-3. stage2Chain reads token — abuse simulated and captured
-4. Replication file written — spread simulated and stage3 captured
+2. Application start invokes stage1 - token stolen and captured
+3. stage2Chain reads token - abuse simulated and captured
+4. Replication file written - spread simulated and stage3 captured
 5. Blue team correlates all three stages into single incident
 
 ### Step 2: Start the Mock Attacker Server
@@ -290,7 +290,7 @@ npm install ../packages/stage1-access-lib ../packages/stage2-compromised-lib
 
 **What happens:**
 - Both stage packages linked into `node_modules`
-- No exfil yet — malicious paths gated until TESTBENCH_MODE and app start
+- No exfil yet - malicious paths gated until TESTBENCH_MODE and app start
 
 ### Step 4: Execute the Attack Chain
 
@@ -423,7 +423,7 @@ ls victim-app/node_modules/ | grep stage
 curl -s http://127.0.0.1:3017/captured-data | jq '.captures | length'
 ```
 
-Three or more captures (file may contain duplicates from appendEvidence + HTTP) — correlate by `data.stage` field.
+Three or more captures (file may contain duplicates from appendEvidence + HTTP) - correlate by `data.stage` field.
 
 ### Detection Method 6: Sigma Rule (from DETECT.md)
 
@@ -497,9 +497,9 @@ cat victim-app/replication/spread.json | jq
 ```
 
 **Document:**
-- `simulatedSpreads: 3` — educational stand-in for worm/replication behavior
+- `simulatedSpreads: 3` - educational stand-in for worm/replication behavior
 - Timestamp of spread artifact
-- Whether spread directory is gitignored (should be — runtime artifact)
+- Whether spread directory is gitignored (should be - runtime artifact)
 
 ### Investigation Step 4: Package Code Review
 
@@ -549,14 +549,14 @@ curl -X DELETE http://127.0.0.1:3017/captured-data
 ### Response Step 2: Interrupt Stage Progression
 
 **Earliest containment points:**
-1. **Before stage1 install** — dependency review blocks packages entirely
-2. **After stage1, before stage2** — remove `.stolen/token.json`, rotate credentials
-3. **After stage2** — prevent replication; network egress block limits stage3 beacon
+1. **Before stage1 install** - dependency review blocks packages entirely
+2. **After stage1, before stage2** - remove `.stolen/token.json`, rotate credentials
+3. **After stage2** - prevent replication; network egress block limits stage3 beacon
 
 ```bash
 # Simulate interrupt after stage1 discovery
 rm -rf victim-app/.stolen
-# stage2 would fail to read token — chain broken
+# stage2 would fail to read token - chain broken
 ```
 
 ### Response Step 3: Validate Clean State
@@ -573,7 +573,7 @@ node detection-tools/multi-stage-correlator.js .
 
 1. **Correlation rules requiring cross-stage context** before closing alerts
 
-2. **Segment credentials** — stage1 token should not unlock stage2 resources in production
+2. **Segment credentials** - stage1 token should not unlock stage2 resources in production
 
 3. **Automated containment** on stage transitions within short windows
 
@@ -612,22 +612,22 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 ## Elasticsearch + Kibana observability (optional)
 
-Scenario **17 — Multi-Stage Attack Chain** is indexed in Elasticsearch when the observability stack is running.
+Scenario **17 - Multi-Stage Attack Chain** is indexed in Elasticsearch when the observability stack is running.
 
 Multi-stage chain: stage1-access-lib enables stage2-compromised-lib exfil at runtime.
 
-- **Detection runbook (static)** → index `scas-rules`, document id `17` — IOCs, Sigma, YARA, sample logs from `DETECT.md`
-- **Runtime captures (dynamic)** → index `scas-detections` — one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector
+- **Detection runbook (static)** → index `scas-rules`, document id `17` - IOCs, Sigma, YARA, sample logs from `DETECT.md`
+- **Runtime captures (dynamic)** → index `scas-detections` - one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector
 
 ### How to read this diagram
 
 | Phase | What you should look for |
 |-------|--------------------------|
-| **1 — Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
-| **2 — Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
-| **3 — Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
-| **4 — Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
-| **5 — Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
+| **1 - Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
+| **2 - Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
+| **3 - Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
+| **4 - Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
+| **5 - Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
 
 > **Safety:** All network calls stay on `127.0.0.1`. Malicious logic runs only when `TESTBENCH_MODE=enabled`.
 
@@ -637,7 +637,7 @@ Multi-stage chain: stage1-access-lib enables stage2-compromised-lib exfil at run
 
 *Swimlane diagram for Scenario 17. Editable source: [`scas-observability-scenario-17.excalidraw`](../../assets/diagrams/observability/excalidraw/scas-observability-scenario-17.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-observability-diagrams.js`.*
 
-### Sequence diagram (Phase 1–5)
+### Sequence diagram (Phase 1-5)
 
 Same flow as a participant sequence (expandable in the docs hub).
 
@@ -651,13 +651,13 @@ sequenceDiagram
     participant ES as Elasticsearch :9200
     participant Kibana as Kibana :5601
 
-    Note over Learner,Mock: Phase 1 — Start collectors (Terminal A)
+    Note over Learner,Mock: Phase 1 - Start collectors (Terminal A)
     Learner->>Mock: export TESTBENCH_MODE=enabled
     Learner->>Mock: export SCAS_ES_URL=http://localhost:9200 (optional)
     Learner->>Mock: node infrastructure/mock-server.js
     Mock->>Mock: Listen for exfil POST on localhost
 
-    Note over Learner,MalPkg: Phase 2 — Run the lab (Terminal B)
+    Note over Learner,MalPkg: Phase 2 - Run the lab (Terminal B)
     Learner->>Learner: export TESTBENCH_MODE=enabled
     Learner->>Learner: export SCAS_ES_URL=http://localhost:9200 (optional)
     Learner->>Victim: npm install stage1-access-lib + stage2-compromised-lib
@@ -665,13 +665,13 @@ sequenceDiagram
     Victim->>MalPkg: Stage 1 loads → triggers stage 2 payload
     MalPkg->>MalPkg: Chained exfil completes (stage 3 simulated in logs)
 
-    Note over MalPkg,Mock: Phase 3 — Simulated exfiltration (127.0.0.1 only)
+    Note over MalPkg,Mock: Phase 3 - Simulated exfiltration (127.0.0.1 only)
     Note over MalPkg: Malicious path gated by TESTBENCH_MODE=enabled
     MalPkg->>Mock: POST /collect JSON payload
     Mock->>Mock: Append to infrastructure/captured-data.json
     Mock-->>Learner: 200 OK (capture accepted)
 
-    Note over Mock,Kibana: Phase 4 — Optional Elasticsearch indexing
+    Note over Mock,Kibana: Phase 4 - Optional Elasticsearch indexing
     alt SCAS_ES_URL is set in Terminal A
     Mock->>ES: POST scas-detections (scenario_id=17, event_type=exfil_capture)
     ES->>ES: Store @timestamp, package, detail fields
@@ -680,11 +680,11 @@ sequenceDiagram
     end
 
     Note over ES: Runbook pre-seeded at scas-rules/_doc/17
-    Note over Learner,Kibana: Phase 5 — Blue-team review in Kibana
-    Learner->>Kibana: Open Discover → SCAS Detections — Scenario 17
+    Note over Learner,Kibana: Phase 5 - Blue-team review in Kibana
+    Learner->>Kibana: Open Discover → SCAS Detections - Scenario 17
     Kibana->>ES: Query scenario_id + sort by @timestamp desc
     ES-->>Kibana: Return capture events for this lab
-    Learner->>Kibana: Open SCAS Rules — Scenario 17
+    Learner->>Kibana: Open SCAS Rules - Scenario 17
     ES-->>Kibana: Return IOCs, Sigma, YARA from DETECT.md
     Learner->>Learner: Correlate capture detail with runbook IOCs
 ```
@@ -711,7 +711,7 @@ From the repository root:
 
 ### Run this scenario with live Elasticsearch forwarding
 
-**Terminal A — mock collector** (from `scenarios/17-multi-stage-attack-chain`):
+**Terminal A - mock collector** (from `scenarios/17-multi-stage-attack-chain`):
 
 ```bash
 cd scenarios/17-multi-stage-attack-chain
@@ -720,7 +720,7 @@ export SCAS_ES_URL=http://localhost:9200
 node infrastructure/mock-server.js
 ```
 
-**Terminal B — execute the lab:**
+**Terminal B - execute the lab:**
 
 ```bash
 cd scenarios/17-multi-stage-attack-chain
@@ -754,8 +754,8 @@ curl -s "http://localhost:9200/scas-detections/_search?pretty" \
 ### Verify in Kibana (UI)
 
 1. Open [http://localhost:5601](http://localhost:5601)
-2. **Discover** → **SCAS Detections — Scenario 17** — live capture timeline (`@timestamp`, `package.name`, `detail`)
-3. **Discover** → **SCAS Rules — Scenario 17** — compare against `iocs`, `sigma`, and `yara` fields
+2. **Discover** → **SCAS Detections - Scenario 17** - live capture timeline (`@timestamp`, `package.name`, `detail`)
+3. **Discover** → **SCAS Rules - Scenario 17** - compare against `iocs`, `sigma`, and `yara` fields
 4. Ask: *Does each capture field match an IOC or Sigma condition in the runbook?*
 
 See [observability/README.md](../../../observability/README.md) for stack details.
@@ -773,7 +773,7 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 ### Best Practices
 
 1. ✅ **Correlate alerts** across filesystem, network, and package events
-2. ✅ **Contain early** — stage1 response prevents stage3
+2. ✅ **Contain early** - stage1 response prevents stage3
 3. ✅ **Segment credentials** to limit stage-to-stage reuse
 4. ✅ **Preserve stage-specific forensic artifacts**
 5. ✅ **Run attack-chain tabletops** for CI/CD architectures
@@ -785,7 +785,7 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 - **Campaign duration**: Stages may span hours or months in real attacks
 - **Detection time**: Correlation reduces mean-time-to-detect vs single IOCs
 - **Blast radius**: Replication stage multiplies affected systems
-- **Recovery**: Requires staged rollback — not single-package removal
+- **Recovery**: Requires staged rollback - not single-package removal
 
 ---
 
@@ -797,7 +797,7 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 
 ### Exercise 2: Containment Decision Tree
 - Document response actions at each stage discovery point
-- Tabletop: "Stage2 found — what do you do in first 15 minutes?"
+- Tabletop: "Stage2 found - what do you do in first 15 minutes?"
 
 ### Exercise 3: Break the Chain Experiment
 - Run victim flow, delete `.stolen/token.json` between stage1 and stage2
@@ -816,9 +816,9 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 
 ## 📚 Additional Resources
 
-- [MITRE ATT&CK — Supply Chain Compromise](https://attack.mitre.org/techniques/T1195/)
-- [NIST Cybersecurity Framework — Detect and Respond](https://www.nist.gov/cyberframework)
-- [Google SLSA — threat model](https://slsa.dev/spec/v1.0/threats)
+- [MITRE ATT&CK - Supply Chain Compromise](https://attack.mitre.org/techniques/T1195/)
+- [NIST Cybersecurity Framework - Detect and Respond](https://www.nist.gov/cyberframework)
+- [Google SLSA - threat model](https://slsa.dev/spec/v1.0/threats)
 - Scenario README: `scenarios/17-multi-stage-attack-chain/README.md`
 - Detection runbook: `scenarios/17-multi-stage-attack-chain/DETECT.md`
 
@@ -832,7 +832,7 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 - ✅ Never deploy stage packages to production systems
 - ✅ All malicious behavior requires `TESTBENCH_MODE=enabled`
 - ✅ Exfiltration targets `127.0.0.1:3017` only
-- ✅ Replication/spread artifacts are simulated — not real worm behavior
+- ✅ Replication/spread artifacts are simulated - not real worm behavior
 
 ---
 
@@ -843,6 +843,6 @@ You've completed the Multi-Stage Attack Chain scenario! You now understand:
 - How to correlate stage1 → stage2 → stage3 evidence into one incident
 - How early containment breaks the chain before replication
 
-**Remember**: Individual alerts are chapters — correlation tells the story. Invest in cross-stage detection before stage3 runs.
+**Remember**: Individual alerts are chapters - correlation tells the story. Invest in cross-stage detection before stage3 runs.
 
 🔐 Happy Learning!

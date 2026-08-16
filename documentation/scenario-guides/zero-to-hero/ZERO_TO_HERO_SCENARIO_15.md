@@ -42,14 +42,14 @@ By the end of this guide, you will:
 
 ### What Is a Developer Tool Compromise?
 
-A **developer tool compromise** occurs when software installed to help developers build, test, or deploy code — CLIs, linters, build plugins, local utilities — contains malicious logic that runs during **install or dev workflows**. These tools execute with the developer's user privileges and often access credentials, source code, and environment variables.
+A **developer tool compromise** occurs when software installed to help developers build, test, or deploy code - CLIs, linters, build plugins, local utilities - contains malicious logic that runs during **install or dev workflows**. These tools execute with the developer's user privileges and often access credentials, source code, and environment variables.
 
 **Example tool categories at risk**:
 ```
-CLI helpers        — local build/deploy utilities
-Code generators    — scaffold and boilerplate tools
-Lint/format plugins — run during pre-commit hooks
-Internal npm packages — shared dev tooling from private registries
+CLI helpers        - local build/deploy utilities
+Code generators    - scaffold and boilerplate tools
+Lint/format plugins - run during pre-commit hooks
+Internal npm packages - shared dev tooling from private registries
 ```
 
 ### Why Developer Tools Are High-Value Targets
@@ -104,7 +104,7 @@ Environment metadata and tokens collected
         ↓
 Data exfiltrated to attacker server (localhost:3015 in this lab)
         ↓
-Developer continues working — attack already succeeded
+Developer continues working - attack already succeeded
 ```
 
 ### Why Developer Tool Attacks Are Risky
@@ -130,8 +130,8 @@ Developer continues working — attack already succeeded
 
 Before we start, make sure you've completed:
 
-- ✅ Scenario 1 (Typosquatting) — basic malicious package patterns
-- ✅ Scenario 4 or similar — lifecycle script awareness
+- ✅ Scenario 1 (Typosquatting) - basic malicious package patterns
+- ✅ Scenario 4 or similar - lifecycle script awareness
 - ✅ Node.js 16+ and npm installed
 - ✅ TESTBENCH_MODE enabled
 
@@ -211,7 +211,7 @@ cat dev-tools/legitimate-dev-tool/package.json
 
 **What you'll see:**
 - Version `1.0.0`
-- Empty `scripts` object — no lifecycle hooks
+- Empty `scripts` object - no lifecycle hooks
 - Benign description
 
 ```bash
@@ -233,7 +233,7 @@ cat dev-tools/malicious-dev-tool/package.json
 - Version `9.9.9` (major suspicious bump)
 - `postinstall`: `node postinstall.js`
 
-**Key Point**: Same package name (`dev-tool`) as legitimate variant — name alone is insufficient for trust.
+**Key Point**: Same package name (`dev-tool`) as legitimate variant - name alone is insufficient for trust.
 
 ### Step 3: Inspect the Malicious Postinstall
 
@@ -266,7 +266,7 @@ cat victim-app/package.json
 cat victim-app/index.js
 ```
 
-The victim app runs normally after install — the compromise already occurred during dependency installation.
+The victim app runs normally after install - the compromise already occurred during dependency installation.
 
 ---
 
@@ -281,7 +281,7 @@ The victim app runs normally after install — the compromise already occurred d
 2. `npm install` resolves malicious local package
 3. npm executes `postinstall` automatically
 4. Postinstall exfiltrates developer environment metadata
-5. Developer runs `npm start` — unaware install already compromised session
+5. Developer runs `npm start` - unaware install already compromised session
 
 ### Step 2: Start the Mock Attacker Server
 
@@ -477,7 +477,7 @@ cat victim-app/node_modules/dev-tool/postinstall.js
 **Document:**
 - Exfil destination (`localhost:3015`, `/collect`)
 - Collected fields (hostname, username, env vars)
-- Conditional gate (`TESTBENCH_MODE`) — lab safety only
+- Conditional gate (`TESTBENCH_MODE`) - lab safety only
 
 ### Investigation Step 3: Capture Timeline
 
@@ -567,7 +567,7 @@ node detection-tools/dev-tool-compromise-detector.js victim-app
 
 6. **Credential rotation** after any confirmed install-time compromise
 
-7. **Allowlist internal tools** — reject unknown devDependency names/versions
+7. **Allowlist internal tools** - reject unknown devDependency names/versions
 
 ---
 
@@ -591,22 +591,22 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 ## Elasticsearch + Kibana observability (optional)
 
-Scenario **15 — Developer Tool Compromise** is indexed in Elasticsearch when the observability stack is running.
+Scenario **15 - Developer Tool Compromise** is indexed in Elasticsearch when the observability stack is running.
 
 Developer tool compromise: malicious-dev-tool postinstall runs when victim-app installs the tool.
 
-- **Detection runbook (static)** → index `scas-rules`, document id `15` — IOCs, Sigma, YARA, sample logs from `DETECT.md`
-- **Runtime captures (dynamic)** → index `scas-detections` — one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector
+- **Detection runbook (static)** → index `scas-rules`, document id `15` - IOCs, Sigma, YARA, sample logs from `DETECT.md`
+- **Runtime captures (dynamic)** → index `scas-detections` - one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector
 
 ### How to read this diagram
 
 | Phase | What you should look for |
 |-------|--------------------------|
-| **1 — Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
-| **2 — Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
-| **3 — Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
-| **4 — Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
-| **5 — Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
+| **1 - Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |
+| **2 - Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |
+| **3 - Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |
+| **4 - Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |
+| **5 - Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |
 
 > **Safety:** All network calls stay on `127.0.0.1`. Malicious logic runs only when `TESTBENCH_MODE=enabled`.
 
@@ -616,7 +616,7 @@ Developer tool compromise: malicious-dev-tool postinstall runs when victim-app i
 
 *Swimlane diagram for Scenario 15. Editable source: [`scas-observability-scenario-15.excalidraw`](../../assets/diagrams/observability/excalidraw/scas-observability-scenario-15.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-observability-diagrams.js`.*
 
-### Sequence diagram (Phase 1–5)
+### Sequence diagram (Phase 1-5)
 
 Same flow as a participant sequence (expandable in the docs hub).
 
@@ -630,13 +630,13 @@ sequenceDiagram
     participant ES as Elasticsearch :9200
     participant Kibana as Kibana :5601
 
-    Note over Learner,Mock: Phase 1 — Start collectors (Terminal A)
+    Note over Learner,Mock: Phase 1 - Start collectors (Terminal A)
     Learner->>Mock: export TESTBENCH_MODE=enabled
     Learner->>Mock: export SCAS_ES_URL=http://localhost:9200 (optional)
     Learner->>Mock: node infrastructure/mock-server.js
     Mock->>Mock: Listen for exfil POST on localhost
 
-    Note over Learner,MalPkg: Phase 2 — Run the lab (Terminal B)
+    Note over Learner,MalPkg: Phase 2 - Run the lab (Terminal B)
     Learner->>Learner: export TESTBENCH_MODE=enabled
     Learner->>Learner: export SCAS_ES_URL=http://localhost:9200 (optional)
     Learner->>Victim: npm install ../dev-tools/malicious-dev-tool
@@ -644,13 +644,13 @@ sequenceDiagram
     Learner->>Victim: npm start
     MalPkg->>MalPkg: Harvest IDE / shell adjacent paths (simulated)
 
-    Note over MalPkg,Mock: Phase 3 — Simulated exfiltration (127.0.0.1 only)
+    Note over MalPkg,Mock: Phase 3 - Simulated exfiltration (127.0.0.1 only)
     Note over MalPkg: Malicious path gated by TESTBENCH_MODE=enabled
     MalPkg->>Mock: POST /collect JSON payload
     Mock->>Mock: Append to infrastructure/captured-data.json
     Mock-->>Learner: 200 OK (capture accepted)
 
-    Note over Mock,Kibana: Phase 4 — Optional Elasticsearch indexing
+    Note over Mock,Kibana: Phase 4 - Optional Elasticsearch indexing
     alt SCAS_ES_URL is set in Terminal A
     Mock->>ES: POST scas-detections (scenario_id=15, event_type=exfil_capture)
     ES->>ES: Store @timestamp, package, detail fields
@@ -659,11 +659,11 @@ sequenceDiagram
     end
 
     Note over ES: Runbook pre-seeded at scas-rules/_doc/15
-    Note over Learner,Kibana: Phase 5 — Blue-team review in Kibana
-    Learner->>Kibana: Open Discover → SCAS Detections — Scenario 15
+    Note over Learner,Kibana: Phase 5 - Blue-team review in Kibana
+    Learner->>Kibana: Open Discover → SCAS Detections - Scenario 15
     Kibana->>ES: Query scenario_id + sort by @timestamp desc
     ES-->>Kibana: Return capture events for this lab
-    Learner->>Kibana: Open SCAS Rules — Scenario 15
+    Learner->>Kibana: Open SCAS Rules - Scenario 15
     ES-->>Kibana: Return IOCs, Sigma, YARA from DETECT.md
     Learner->>Learner: Correlate capture detail with runbook IOCs
 ```
@@ -690,7 +690,7 @@ From the repository root:
 
 ### Run this scenario with live Elasticsearch forwarding
 
-**Terminal A — mock collector** (from `scenarios/15-developer-tool-compromise`):
+**Terminal A - mock collector** (from `scenarios/15-developer-tool-compromise`):
 
 ```bash
 cd scenarios/15-developer-tool-compromise
@@ -699,7 +699,7 @@ export SCAS_ES_URL=http://localhost:9200
 node infrastructure/mock-server.js
 ```
 
-**Terminal B — execute the lab:**
+**Terminal B - execute the lab:**
 
 ```bash
 cd scenarios/15-developer-tool-compromise
@@ -733,8 +733,8 @@ curl -s "http://localhost:9200/scas-detections/_search?pretty" \
 ### Verify in Kibana (UI)
 
 1. Open [http://localhost:5601](http://localhost:5601)
-2. **Discover** → **SCAS Detections — Scenario 15** — live capture timeline (`@timestamp`, `package.name`, `detail`)
-3. **Discover** → **SCAS Rules — Scenario 15** — compare against `iocs`, `sigma`, and `yara` fields
+2. **Discover** → **SCAS Detections - Scenario 15** - live capture timeline (`@timestamp`, `package.name`, `detail`)
+3. **Discover** → **SCAS Rules - Scenario 15** - compare against `iocs`, `sigma`, and `yara` fields
 4. Ask: *Does each capture field match an IOC or Sigma condition in the runbook?*
 
 See [observability/README.md](../../../observability/README.md) for stack details.
@@ -791,7 +791,7 @@ See [observability/README.md](../../../observability/README.md) for stack detail
 ## 📚 Additional Resources
 
 - [npm scripts documentation](https://docs.npmjs.com/cli/v9/using-npm/scripts)
-- [npm install — ignore-scripts](https://docs.npmjs.com/cli/v9/commands/npm-install#ignore-scripts)
+- [npm install - ignore-scripts](https://docs.npmjs.com/cli/v9/commands/npm-install#ignore-scripts)
 - [OWASP NCSC supply chain guidance](https://owasp.org/www-project-top-10-ci-cd-security-risks/)
 - Scenario README: `scenarios/15-developer-tool-compromise/README.md`
 - Detection runbook: `scenarios/15-developer-tool-compromise/DETECT.md`
@@ -817,6 +817,6 @@ You've completed the Developer Tool Compromise scenario! You now understand:
 - How to detect postinstall exfiltration in dev tooling packages
 - How to harden installs with pinning, ignore-scripts, and CI sandboxing
 
-**Remember**: The most dangerous moment for a dev tool is `npm install` — not when you invoke the CLI.
+**Remember**: The most dangerous moment for a dev tool is `npm install` - not when you invoke the CLI.
 
 🔐 Happy Learning!

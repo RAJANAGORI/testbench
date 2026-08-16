@@ -1,0 +1,54 @@
+# SCAS Command Center (control-plane + dashboard + landing)
+FROM node:20-bookworm-slim
+
+ARG TARGETARCH
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends ca-certificates curl git \
+ && rm -rf /var/lib/apt/lists/*
+
+# Docker CLI (talks to mounted docker.sock) + Compose v2 plugin
+RUN curl -fsSL https://download.docker.com/linux/static/stable/$(uname -m)/docker-27.5.1.tgz \
+    | tar -xz -C /tmp \
+ && mv /tmp/docker/docker /usr/local/bin/docker \
+ && rm -rf /tmp/docker \
+ && mkdir -p /usr/local/lib/docker/cli-plugins \
+ && ARCH="$TARGETARCH" \
+ && if [ -z "$ARCH" ]; then \
+      case "$(uname -m)" in \
+        aarch64|arm64) ARCH=aarch64 ;; \
+        x86_64|amd64) ARCH=x86_64 ;; \
+        *) ARCH="$(uname -m)" ;; \
+      esac; \
+    else \
+      case "$ARCH" in \
+        arm64) ARCH=aarch64 ;; \
+        amd64) ARCH=x86_64 ;; \
+      esac; \
+    fi \
+ && curl -fsSL "https://github.com/docker/compose/releases/download/v2.32.4/docker-compose-linux-${ARCH}" \
+      -o /usr/local/lib/docker/cli-plugins/docker-compose \
+ && chmod +x /usr/local/lib/docker/cli-plugins/docker-compose \
+ && docker compose version
+
+WORKDIR /repo
+
+COPY package.json package-lock.json ./
+COPY apps/control-plane/package.json apps/control-plane/
+COPY apps/dashboard/package.json apps/dashboard/
+COPY apps/landing/package.json apps/landing/
+COPY docker/ui-entrypoint.sh /usr/local/bin/scas-ui-entrypoint.sh
+RUN chmod +x /usr/local/bin/scas-ui-entrypoint.sh \
+ && npm install
+
+ENV SCAS_REPO_ROOT=/repo \
+    SCAS_LAB_BACKEND=docker \
+    SCAS_CAPTURE_HOST=host.docker.internal \
+    SCAS_PLATFORM_HOST=host.docker.internal \
+    CONTROL_PLANE_HOST=0.0.0.0 \
+    CONTROL_PLANE_PORT=3101 \
+    NEXT_TELEMETRY_DISABLED=1
+
+EXPOSE 3100 3101 5173
+ENTRYPOINT ["/usr/local/bin/scas-ui-entrypoint.sh"]
+CMD ["npm", "run", "dev:control-plane"]

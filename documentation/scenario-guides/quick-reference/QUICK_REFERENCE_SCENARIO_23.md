@@ -1,4 +1,4 @@
-# Quick Reference — Scenario 23: Trivy Supply Chain Attack (CVE-2026-33634)
+# Quick Reference - Scenario 23: Trivy Supply Chain Attack (CVE-2026-33634)
 
 Use this as your runbook for Scenario 23 when you are teaching live or practicing quickly.
 
@@ -32,7 +32,7 @@ Use this as your runbook for Scenario 23 when you are teaching live or practicin
 
 `cd scenarios/23-trivy-supply-chain-attack/victim-ci && export TESTBENCH_MODE=enabled && node run-pipeline.js`
 
-Optional — set fake CI secrets to see them harvested:
+Optional - set fake CI secrets to see them harvested:
 
 `export GITHUB_TOKEN=ghp_FAKE_FOR_LAB && export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE && node run-pipeline.js`
 

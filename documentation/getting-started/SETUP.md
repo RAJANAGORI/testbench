@@ -24,7 +24,7 @@ This guide walks you through setting up the Supply Chain Attack Testbench on you
 
 ### Optional Software
 
-- **Docker Desktop** (or Docker Engine + Compose v2) — required for [Elasticsearch/Kibana](../platform/DETECTION_AND_OBSERVABILITY.md) and [Floci](../guides/FLOCI_INTEGRATION.md); see [Full-stack setup](./FULL_STACK_SETUP.md)
+- **Docker Desktop** (or Docker Engine + Compose v2) - required for [Elasticsearch/Kibana](../platform/DETECTION_AND_OBSERVABILITY.md) and [Floci](../guides/FLOCI_INTEGRATION.md); see [Full-stack setup](./FULL_STACK_SETUP.md)
 
 ### Supported Operating Systems
 
@@ -32,7 +32,7 @@ This guide walks you through setting up the Supply Chain Attack Testbench on you
 - Linux (Ubuntu 20.04+, Debian 11+, Fedora 35+)
 - Windows 10/11 with WSL2
 
-**Documentation paths:** The canonical markdown guides live in **`documentation/`** (organized under **`getting-started/`**, **`platform/`**, **`reference/`**, **`learning-path/`**, **`modules/`**, and **`scenario-guides/`**). The **`docs/`** directory is the GitHub Pages root (landing page + static assets) with **symbolic links** mirroring this tree—not separate copies. On Windows, enable symlink support if links do not resolve (see **`docs/README.md`**).
+**Documentation paths:** The canonical markdown guides live in **`documentation/`** (organized under **`getting-started/`**, **`platform/`**, **`reference/`**, **`learning-path/`**, **`modules/`**, and **`scenario-guides/`**). The **`docs/`** directory is the GitHub Pages root (landing page + static assets) with **symbolic links** mirroring this tree - not separate copies. On Windows, enable symlink support if links do not resolve (see **`docs/README.md`**).
 
 ### Hardware Requirements
 
@@ -275,7 +275,7 @@ npm install
 
 ### Custom Mock Server Port
 
-Each scenario’s mock server lives at `scenarios/<name>/infrastructure/mock-server.js` after you run that scenario’s `./setup.sh`. Edit the `PORT` constant in the file you are using, for example:
+Each scenario's mock server lives at `scenarios/<name>/infrastructure/mock-server.js` after you run that scenario's `./setup.sh`. Edit the `PORT` constant in the file you are using, for example:
 
 ```javascript
 const PORT = 3001; // Change from 3000

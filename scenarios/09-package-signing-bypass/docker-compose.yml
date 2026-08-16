@@ -1,0 +1,64 @@
+# Auto-generated local Docker lab — 09-package-signing-bypass
+# Floci: victim uses host.docker.internal:4566 (extra_hosts on mock-c2 netns)
+# Usage:
+#   docker compose up -d --build
+#   docker compose exec victim bash
+#   curl http://localhost:3000/captured-data
+#   docker compose down -v
+
+name: scas-09-package-signing-bypass
+
+services:
+  mock-c2:
+    image: node:20-alpine
+    container_name: scas-09-package-signing-bypass-mock-c2
+    working_dir: /scenarios/09-package-signing-bypass/infrastructure
+    volumes:
+      - ./:/scenarios/09-package-signing-bypass
+      - ../_shared:/scenarios/_shared:ro
+      - ../../detection-tools:/detection-tools:ro
+    environment:
+      SCAS_ES_URL: "${SCAS_ES_URL:-http://host.docker.internal:9200}"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: ["node", "mock-server.js"]
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('http').get('http://127.0.0.1:3000/captured-data',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 8s
+
+  victim:
+    build:
+      context: ..
+      dockerfile: 09-package-signing-bypass/Dockerfile
+    container_name: scas-09-package-signing-bypass-victim
+    network_mode: "service:mock-c2"
+    environment:
+      TESTBENCH_MODE: enabled
+      SCAS_FLOCI_ENABLED: "${SCAS_FLOCI_ENABLED:-1}"
+      SCAS_FLOCI_ENDPOINT: "${SCAS_FLOCI_ENDPOINT:-http://host.docker.internal:4566}"
+      AWS_ENDPOINT_URL: "${AWS_ENDPOINT_URL:-http://host.docker.internal:4566}"
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID:-test}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY:-test}"
+      AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION:-us-east-1}"
+      AWS_EC2_METADATA_DISABLED: "true"
+      SCAS_ES_URL: "${SCAS_ES_URL:-http://host.docker.internal:9200}"
+    volumes:
+      - ../../detection-tools:/lab/detection-tools:ro
+      - ../../scripts/floci:/lab/scripts/floci:ro
+    depends_on:
+      mock-c2:
+        condition: service_healthy
+    tty: true
+    stdin_open: true
+    command: ["sleep", "infinity"]
