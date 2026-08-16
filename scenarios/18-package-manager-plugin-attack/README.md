@@ -74,13 +74,13 @@ export TESTBENCH_MODE=enabled
 
 ## Run the lab
 
-### Terminal A — mock attacker server
+### Terminal A - mock attacker server
 
 ```bash
 node infrastructure/mock-server.js
 ```
 
-### Terminal B — run victim (triggers plugin hook)
+### Terminal B - run victim (triggers plugin hook)
 
 ```bash
 cd victim-app
@@ -113,11 +113,11 @@ Follow **Run the lab** above first. The sections below provide reference layout,
 
 ## Structure
 
-- `plugins/legitimate-plugin/`, `plugins/malicious-plugin/` — reference vs malicious hook implementations
-- `packages/target-lib/` — library the hook targets
-- `victim-app/` — loads plugin and runs the scenario (`plugin-active.js`, scripts)
-- `infrastructure/` — mock server (port **3018**), `captured-data.json`
-- `detection-tools/` — `plugin-attack-detector.js`
+- `plugins/legitimate-plugin/`, `plugins/malicious-plugin/` - reference vs malicious hook implementations
+- `packages/target-lib/` - library the hook targets
+- `victim-app/` - loads plugin and runs the scenario (`plugin-active.js`, scripts)
+- `infrastructure/` - mock server (port **3018**), `captured-data.json`
+- `detection-tools/` - `plugin-attack-detector.js`
 
 ## Evidence
 

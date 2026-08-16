@@ -13,8 +13,8 @@ python3 scenarios/_shared/generate-lookalike-secrets.py
 
 Outputs (gitignored):
 
-- `lookalike-secrets.env` — source before a harvest run  
-- `lookalike-secrets.json` — Floci Secrets Manager / SSM seeds  
+- `lookalike-secrets.env` - source before a harvest run  
+- `lookalike-secrets.json` - Floci Secrets Manager / SSM seeds  
 
 ```bash
 set -a && source scenarios/_shared/lookalike-secrets.env && set +a

@@ -1,6 +1,6 @@
 # Shared Docker primitives (local labs)
 
-Shared Compose pieces for SCAS scenarios. You run these on your own machine — there is no Killercoda or browser-lab path here.
+Shared Compose pieces for SCAS scenarios. You run these on your own machine - there is no Killercoda or browser-lab path here.
 
 ## Layout
 
@@ -19,8 +19,8 @@ Shared Compose pieces for SCAS scenarios. You run these on your own machine — 
 
 | Scenario family | Registry service |
 |-----------------|------------------|
-| File / path installs (01, 21, …) | None |
-| Custom npm registry sim (02, 11) | Wrap existing `infrastructure/registry-server.js` — do **not** default to Verdaccio |
+| File / path installs (01, 21, ...) | None |
+| Custom npm registry sim (02, 11) | Wrap existing `infrastructure/registry-server.js` - do **not** default to Verdaccio |
 | PyPI path install (22) | Python image + venv; no pypiserver required for the current lab |
 | Container image lab (14) | May need Docker-in-Docker or prebuilt images |
 
@@ -30,7 +30,7 @@ Shared Compose pieces for SCAS scenarios. You run these on your own machine — 
 cd scenarios/01-typosquatting
 docker compose up -d --build
 docker compose exec victim bash
-# …run the lab…
+# ...run the lab...
 curl http://localhost:3000/captured-data
 docker compose down -v
 ```

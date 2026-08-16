@@ -5,10 +5,10 @@ Local AWS emulator for cloud-track scenarios **05, 06, 14, 17, 21**.
 ## One-time setup
 
 ```bash
-# From repo root — clones github.com/floci-io/floci → vendor/floci-aws and builds Docker image
+# From repo root - clones github.com/floci-io/floci → vendor/floci-aws and builds Docker image
 ./scripts/floci/floci-setup.sh
 
-# Fast path (no clone, no Java build — uses published image)
+# Fast path (no clone, no Java build - uses published image)
 ./scripts/floci/floci-setup.sh --image
 ```
 

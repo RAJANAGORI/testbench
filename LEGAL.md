@@ -1,13 +1,13 @@
 # Copyright and ownership
 
-**Supply Chain Attack Simulator** (SCAS) — original educational platform for software supply chain security.
+**Supply Chain Attack Simulator** (SCAS) - original educational platform for software supply chain security.
 
 > This page explains how authorship and licensing work in this repository. It is not legal advice.
 
 ## Copyright holder
 
 **Raja Nagori**  
-Copyright (c) 2024–2026 Raja Nagori
+Copyright (c) 2024-2026 Raja Nagori
 
 Creating and publishing this project establishes copyright in the original scenarios, documentation, curriculum, diagrams, and related materials. The public [GitHub repository](https://github.com/rajanagori/supply-chain-attack-simulator) and [project website](https://rajanagori.github.io/supply-chain-attack-simulator/) are the canonical sources.
 
@@ -15,8 +15,8 @@ Creating and publishing this project establishes copyright in the original scena
 
 | Material | License | File |
 |----------|---------|------|
-| **Software** — `scenarios/`, `scripts/`, `detection-tools/`, `observability/`, mock servers, CI, site app code | [MIT License](LICENSE) | `LICENSE` |
-| **Documentation** — `documentation/`, guides, modules, learning paths, web docs content | [CC BY-NC-ND 4.0](DOCUMENTATION-CC-BY-NC-ND.md) | `DOCUMENTATION-CC-BY-NC-ND.md` |
+| **Software** - `scenarios/`, `scripts/`, `detection-tools/`, `observability/`, mock servers, CI, site app code | [MIT License](LICENSE) | `LICENSE` |
+| **Documentation** - `documentation/`, guides, modules, learning paths, web docs content | [CC BY-NC-ND 4.0](DOCUMENTATION-CC-BY-NC-ND.md) | `DOCUMENTATION-CC-BY-NC-ND.md` |
 
 See also [NOTICE](NOTICE) and [ATTRIBUTION.md](ATTRIBUTION.md).
 
@@ -25,7 +25,7 @@ See also [NOTICE](NOTICE) and [ATTRIBUTION.md](ATTRIBUTION.md).
 ### Software (MIT)
 
 - Keep the **copyright notice** and MIT license text in copies or substantial portions
-- Do **not** remove Raja Nagori’s copyright and claim you wrote the codebase
+- Do **not** remove Raja Nagori's copyright and claim you wrote the codebase
 
 ### Documentation (CC BY-NC-ND)
 
@@ -40,7 +40,7 @@ See also [NOTICE](NOTICE) and [ATTRIBUTION.md](ATTRIBUTION.md).
 - Selling or commercially distributing documentation derivatives without permission
 - Misrepresenting affiliation with or endorsement by Raja Nagori
 
-If someone violates these terms (especially stripping attribution), you may use [GitHub’s DMCA process](https://docs.github.com/en/site-policy/content-removal-policies/submitting-content-removal-requests) or contact the copyright holder directly.
+If someone violates these terms (especially stripping attribution), you may use [GitHub's DMCA process](https://docs.github.com/en/site-policy/content-removal-policies/submitting-content-removal-requests) or contact the copyright holder directly.
 
 ## Contributors
 
@@ -58,11 +58,11 @@ To check a checkout:
 
 Scenario labs inherit the same fingerprint via `scenarios/_shared/scenario-provenance.js` (loaded by mock servers) and `./scripts/provenance/embed-scenario-provenance.sh` (re-applies markers to all scenario `setup.sh`, templates, and infrastructure files).
 
-If someone removes visible copyright notices but leaves these markers (or vice versa), the mismatch supports a claim that the copy originated here. **Git commit history on the canonical repository remains the strongest technical evidence**; fingerprints supplement LICENSE and DMCA processes—they do not replace them.
+If someone removes visible copyright notices but leaves these markers (or vice versa), the mismatch supports a claim that the copy originated here. **Git commit history on the canonical repository remains the strongest technical evidence**; fingerprints supplement LICENSE and DMCA processes-they do not replace them.
 
 ## Trademark
 
-“Supply Chain Attack Simulator” and **SCAS** refer to this project and its author’s educational work. Third-party use of the name to imply an official product or endorsement is discouraged; trademark registration may be pursued separately.
+"Supply Chain Attack Simulator" and **SCAS** refer to this project and its author's educational work. Third-party use of the name to imply an official product or endorsement is discouraged; trademark registration may be pursued separately.
 
 ## Questions
 

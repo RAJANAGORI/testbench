@@ -57,7 +57,7 @@ npm start
 
 ### Scenario: Install Malicious Package
 
-The sample app listens on **port 8000**. The Scenario 3 malicious package sends exfiltration traffic to a **mock collector on port 3000**—start it from the compromised-package lab before you expect `curl` to show data:
+The sample app listens on **port 8000**. The Scenario 3 malicious package sends exfiltration traffic to a **mock collector on port 3000**-start it from the compromised-package lab before you expect `curl` to show data:
 
 ```bash
 # If your cwd is vulnerable-apps/nodejs-app:

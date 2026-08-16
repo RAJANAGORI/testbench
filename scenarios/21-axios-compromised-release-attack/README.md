@@ -4,7 +4,7 @@
 - **Estimated Time**: 60-90 minutes
 - **Primary Attack Surface**: Maintainer compromise and transitive lifecycle scripts
 
-**Inspired by:** Maintainer-account takeover pattern discussed for npm (e.g. unexpected patch semver + transitive `postinstall`), as requested in [GitHub issue #3](https://github.com/RAJANAGORI/supply-chain-attack-simulator/issues/3). This lab uses **fictional** package names (`axios-like`, `plain-crypto-js-like`) and **localhost-only** telemetry—no real malware or external C2.
+**Inspired by:** Maintainer-account takeover pattern discussed for npm (e.g. unexpected patch semver + transitive `postinstall`), as requested in [GitHub issue #3](https://github.com/RAJANAGORI/supply-chain-attack-simulator/issues/3). This lab uses **fictional** package names (`axios-like`, `plain-crypto-js-like`) and **localhost-only** telemetry-no real malware or external C2.
 
 
 
@@ -41,7 +41,7 @@
 ## Attack flow (testbench)
 
 1. Victim depends on **clean** `axios-like@1.14.0` (no extra deps).
-2. Attacker publishes **compromised** `axios-like@1.14.1` that **bundles** **`plain-crypto-js-like`** (`bundledDependencies`) so `npm install` of the packed release always materializes the transitive and runs **`postinstall`** (avoids “linked `file:` dep skips nested install” behavior).
+2. Attacker publishes **compromised** `axios-like@1.14.1` that **bundles** **`plain-crypto-js-like`** (`bundledDependencies`) so `npm install` of the packed release always materializes the transitive and runs **`postinstall`** (avoids "linked `file:` dep skips nested install" behavior).
 3. `plain-crypto-js-like` **`postinstall`** (only when `TESTBENCH_MODE=enabled`): writes `.testbench-axios-ioc.json`, POSTs JSON to `http://localhost:3021/beacon`, then replaces its installed `package.json` with a decoy without `postinstall`.
 
 ## Threat Model Snapshot
@@ -101,7 +101,7 @@ Key indicators to capture:
 ## Mitigation Playbook
 
 1. **Contain:** stop CI runners / isolate dev machines that ran `npm install` with `TESTBENCH_MODE=enabled` against the bad version.
-2. **Eradicate:** remove `node_modules`, delete lockfile or regenerate from a known-good manifest; revoke **npm tokens** and rotate CI secrets (real incidents—here, only mock markers).
+2. **Eradicate:** remove `node_modules`, delete lockfile or regenerate from a known-good manifest; revoke **npm tokens** and rotate CI secrets (real incidents-here, only mock markers).
 3. **Recover:** pin **`axios-like` to `1.14.0`** (or exact commit / verified tarball); enforce **lockfile-only** installs in CI; enable **provenance / trusted publishing** checks where available.
 4. **Hunt:** search org lockfiles for `plain-crypto-js-like` (or real IOC names from advisories).
 
@@ -127,7 +127,7 @@ Key indicators to capture:
 ## CI-safe and offline modes
 
 - **No network:** all traffic is to `127.0.0.1:3021`.
-- **Offline install (skip beacon):** `TESTBENCH_OFFLINE=1 npm install axios-like@file:../packages/axios-like-1.14.1.tgz` — postinstall exits early (marker file still written unless you extend the script).
+- **Offline install (skip beacon):** `TESTBENCH_OFFLINE=1 npm install axios-like@file:../packages/axios-like-1.14.1.tgz` - postinstall exits early (marker file still written unless you extend the script).
 
 ## References (real world)
 

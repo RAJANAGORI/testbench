@@ -1,8 +1,8 @@
 # Documentation License
 
-**Supply Chain Attack Simulator — documentation and educational content**
+**Supply Chain Attack Simulator - documentation and educational content**
 
-Copyright (c) 2024–2026 **Raja Nagori**. All rights reserved where not granted below.
+Copyright (c) 2024-2026 **Raja Nagori**. All rights reserved where not granted below.
 
 The **documentation tree** in this repository is licensed under the  
 **Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License**  
@@ -20,19 +20,19 @@ The **documentation tree** in this repository is licensed under the
 
 ## You may
 
-- **Share** — copy and redistribute the material in any medium or format
-- **Attribution** — you must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in a way that suggests Raja Nagori endorses you or your use.
+- **Share** - copy and redistribute the material in any medium or format
+- **Attribution** - you must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in a way that suggests Raja Nagori endorses you or your use.
 
 Suggested attribution line:
 
-> *Supply Chain Attack Simulator* documentation © 2024–2026 Raja Nagori.  
+> *Supply Chain Attack Simulator* documentation © 2024-2026 Raja Nagori.  
 > Source: https://github.com/rajanagori/supply-chain-attack-simulator  
 > Licensed under CC BY-NC-ND 4.0.
 
 ## You may not
 
 - Use the material for **commercial purposes** without separate written permission from the copyright holder
-- **Remix, transform, or build upon** the material for redistribution (NoDerivatives — e.g. republishing modified guides or selling a re-branded copy of the curriculum as your own original work)
+- **Remix, transform, or build upon** the material for redistribution (NoDerivatives - e.g. republishing modified guides or selling a re-branded copy of the curriculum as your own original work)
 
 Personal study, classroom use in non-commercial settings, and linking to the official repository are encouraged.
 

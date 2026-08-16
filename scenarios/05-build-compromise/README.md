@@ -95,13 +95,13 @@ export TESTBENCH_MODE=enabled
 
 Use two terminals (or background the mock server). All paths are relative to `scenarios/05-build-compromise`.
 
-### Terminal A — mock attacker server
+### Terminal A - mock attacker server
 
 ```bash
 node infrastructure/mock-server.js
 ```
 
-### Terminal B — compare builds and exercise compromise
+### Terminal B - compare builds and exercise compromise
 
 ```bash
 cat legitimate-build/build.sh
@@ -120,7 +120,7 @@ npm run build
 curl -s http://localhost:3000/captured-data
 ```
 
-### Optional — load compromised artifacts into victim app
+### Optional - load compromised artifacts into victim app
 
 ```bash
 cp compromised-build/dist/* victim-app/dist/
@@ -364,7 +364,7 @@ gpg --verify dist/app.js.asc
 - Apply least privilege to CI/CD jobs and secret exposure.
 - Run builds in isolated environments with minimal credentials.
 - Verify build artifacts with checksums and signed attestations.
-- Use secret management tools — never hardcode secrets in build scripts.
+- Use secret management tools - never hardcode secrets in build scripts.
 - Audit and log all build activities for forensic review.
 - Sign release artifacts and verify signatures before deployment.
 

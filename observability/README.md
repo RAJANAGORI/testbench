@@ -33,10 +33,10 @@ This creates:
 | SCAS Rules | `scas-rules` | `ingested_at` |
 | SCAS Detections | `scas-detections` | `@timestamp` |
 
-Plus **46 saved searches** — for each scenario 01–23:
+Plus **46 saved searches** - for each scenario 01-23:
 
-- `SCAS Rules — Scenario XX` (detection runbook / IOCs / Sigma / YARA)
-- `SCAS Detections — Scenario XX` (runtime capture events)
+- `SCAS Rules - Scenario XX` (detection runbook / IOCs / Sigma / YARA)
+- `SCAS Detections - Scenario XX` (runtime capture events)
 
 Open **Discover** and pick any saved search, or filter manually on `scenario_id`.
 

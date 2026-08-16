@@ -49,7 +49,7 @@ const SCENARIO_DIAGRAMS = {
       { from: 'Learner', to: 'MalPkg', message: 'cd compromised-build && npm run build' },
       { from: 'MalPkg', to: 'MalPkg', message: 'Build script injects payload into dist/ artifacts' },
       { from: 'Learner', to: 'Victim', message: 'cp compromised-build/dist/* victim-app/dist/' },
-      { from: 'Learner', to: 'Victim', message: 'npm start — runs trojanized bundle' }
+      { from: 'Learner', to: 'Victim', message: 'npm start - runs trojanized bundle' }
     ]
   },
   '06': {
@@ -145,10 +145,10 @@ const SCENARIO_DIAGRAMS = {
   '16': {
     intro: 'Cache poisoning: repeated npm install reuses poisoned cache-lib artifact from cache/.',
     attack_steps: [
-      { from: 'Learner', to: 'Victim', message: 'npm install (first pass — seeds poisoned cache-lib)' },
+      { from: 'Learner', to: 'Victim', message: 'npm install (first pass - seeds poisoned cache-lib)' },
       { from: 'Learner', to: 'Victim', message: 'rm node_modules && npm install again (cache hit)' },
       { from: 'Victim', to: 'MalPkg', message: 'Load cache-lib from poisoned local cache/' },
-      { from: 'Learner', to: 'Victim', message: 'npm start — same bad bits reinstalled' }
+      { from: 'Learner', to: 'Victim', message: 'npm start - same bad bits reinstalled' }
     ]
   },
   '17': {
@@ -173,7 +173,7 @@ const SCENARIO_DIAGRAMS = {
     intro: 'SBOM manipulation: malicious-lib runs at runtime but is omitted from generated sbom.json.',
     attack_steps: [
       { from: 'Learner', to: 'Victim', message: 'npm install (includes hidden malicious-lib)' },
-      { from: 'Learner', to: 'Victim', message: 'npm start — generates incomplete SBOM' },
+      { from: 'Learner', to: 'Victim', message: 'npm start - generates incomplete SBOM' },
       { from: 'Victim', to: 'MalPkg', message: 'malicious-lib executes despite SBOM gap' },
       { from: 'MalPkg', to: 'MalPkg', message: 'Compare truth/dependencies.json vs victim-app/sbom.json' }
     ]
@@ -210,8 +210,8 @@ const SCENARIO_DIAGRAMS = {
     attack_steps: [
       { from: 'Learner', to: 'Victim', message: 'cd victim-ci && node run-pipeline.js (TESTBENCH_MODE=enabled)' },
       { from: 'Victim', to: 'MalPkg', message: 'require("trivy-action-like") triggers harvestAndExfiltrate()' },
-      { from: 'MalPkg', to: 'Mock', message: 'POST http://127.0.0.1:3023/collect — CI env vars harvested' },
-      { from: 'MalPkg', to: 'Victim', message: 'scanTarget() runs — pipeline output appears normal' }
+      { from: 'MalPkg', to: 'Mock', message: 'POST http://127.0.0.1:3023/collect - CI env vars harvested' },
+      { from: 'MalPkg', to: 'Victim', message: 'scanTarget() runs - pipeline output appears normal' }
     ]
   }
 };

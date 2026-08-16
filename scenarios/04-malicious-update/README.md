@@ -3,7 +3,7 @@
 
 
 
-> **Simulation scope:** The victim installs the malicious `utils-helper` via a `file:` path rather than auto-resolving `^2.1.0` from a registry, so the semver auto-update is modeled rather than executed by npm. The malicious patch behavior — hidden exfiltration on load, gated by `TESTBENCH_MODE` — is real.
+> **Simulation scope:** The victim installs the malicious `utils-helper` via a `file:` path rather than auto-resolving `^2.1.0` from a registry, so the semver auto-update is modeled rather than executed by npm. The malicious patch behavior - hidden exfiltration on load, gated by `TESTBENCH_MODE` - is real.
 
 
 
@@ -97,13 +97,13 @@ export TESTBENCH_MODE=enabled
 
 Use two terminals (or run the mock server in the background). All paths are relative to `scenarios/04-malicious-update`.
 
-### Terminal A — mock attacker server
+### Terminal A - mock attacker server
 
 ```bash
 node infrastructure/mock-server.js
 ```
 
-### Terminal B — install flow and victim
+### Terminal B - install flow and victim
 
 ```bash
 cat legitimate-package/utils-helper/index.js
@@ -372,11 +372,11 @@ Always review changelogs before updating:
 
 ## Mitigation Playbook
 
-- Pin exact versions in `package.json` — avoid carets on sensitive dependencies.
+- Pin exact versions in `package.json` - avoid carets on sensitive dependencies.
 - Commit lockfiles and use `npm ci` in CI/CD pipelines.
 - Verify updates before install (changelog review, integrity checks, code diff).
 - Scan dependency updates automatically in CI before merge.
-- Use staged rollouts — test updates in staging before production.
+- Use staged rollouts - test updates in staging before production.
 - Require human review of changelogs for patch and minor bumps on critical packages.
 
 ## ✅ Success Criteria

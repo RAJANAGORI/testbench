@@ -43,7 +43,7 @@ rule Build_Compromise_IOC {
 - Apply least privilege to CI/CD jobs and secret exposure.
 - Run builds in isolated environments with minimal credentials.
 - Verify build artifacts with checksums and signed attestations.
-- Use secret management tools — never hardcode secrets in build scripts.
+- Use secret management tools - never hardcode secrets in build scripts.
 - Audit and log all build activities for forensic review.
 - Sign release artifacts and verify signatures before deployment.
 

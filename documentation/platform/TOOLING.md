@@ -20,6 +20,7 @@ Every maintainer-facing script in [`scripts/`](../../scripts/), grouped by purpo
 | [`scripts/setup/kill-port.sh`](../../scripts/setup/kill-port.sh) | Free one port, or `--all` ports from `ports.env` |
 | [`scripts/smoke/smoke-all-scenarios.sh`](../../scripts/smoke/smoke-all-scenarios.sh) | End-to-end smoke test across all 23 scenarios |
 | [`scripts/docs/check-info-consistency.js`](../../scripts/docs/check-info-consistency.js) | **CI harness** - fail if public lab counts / indexes / ranges drift from on-disk `scenarios/NN-*` |
+| [`scripts/docs/check-markdown-watermarks.js`](../../scripts/docs/check-markdown-watermarks.js) | **CI harness** - fail if tracked `.md`/`.mdc` contain em/en dash, curly quotes, or zero-width marks |
 | [`scripts/diagrams/check-diagram-assets.js`](../../scripts/diagrams/check-diagram-assets.js) | **CI harness** - Excalidraw/SVG drawing contract (`scripts/lib/diagram-specs.js`); also in [Smoke](../../.github/workflows/smoke.yml) + path-filtered [Diagrams](../../.github/workflows/diagrams.yml) |
 | [`scripts/lib/diagram-specs.js`](../../scripts/lib/diagram-specs.js) | Canonical nodes/edges/labels for diagrams - edit before redrawing |
 | [`scripts/diagrams/generate-scenario-observability-diagrams.js`](../../scripts/diagrams/generate-scenario-observability-diagrams.js) | Generate unique `scas-observability-scenario-NN.{excalidraw,svg}` for all 23 labs (CI regenerates and fails on drift) |
@@ -110,6 +111,9 @@ node scripts/docs/inject-markdown-toc.js all
 #    "N runbooks" / "2N saved searches", playbooks, control-plane registry -
 #    then verify:
 node scripts/docs/check-info-consistency.js
+
+# 5b. Markdown punctuation (ASCII hyphen/quotes only; smoke.yml)
+node scripts/docs/check-markdown-watermarks.js
 
 # 6. After editing diagrams under documentation/assets/diagrams/:
 #    update scripts/lib/diagram-specs.js if nodes/edges changed, keep .excalidraw+.svg

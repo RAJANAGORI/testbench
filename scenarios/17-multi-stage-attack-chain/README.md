@@ -36,7 +36,7 @@
 ## Learning Objectives
 
 - Understand how supply chain attacks **chain** stages (access → abuse → spread).
-- Practice **correlating** evidence across stages into a single narrative (“kill chain”).
+- Practice **correlating** evidence across stages into a single narrative ("kill chain").
 - Learn mitigations: defense in depth, least privilege, monitoring, and staged rollback.
 
 ## Background
@@ -54,9 +54,9 @@ Single alerts are easy to dismiss. Real campaigns often include **initial access
 
 This lab simulates three stages with staged packages and a victim app:
 
-1. **Stage 1** — initial access; writes local artifacts and emits stage-1 evidence.
-2. **Stage 2** — uses prior artifacts, emits stage-2 evidence.
-3. **Stage 3** — replication-style behavior and stage-3 evidence.
+1. **Stage 1** - initial access; writes local artifacts and emits stage-1 evidence.
+2. **Stage 2** - uses prior artifacts, emits stage-2 evidence.
+3. **Stage 3** - replication-style behavior and stage-3 evidence.
 
 Unified evidence is written to `infrastructure/captured-data.json`. Your tasks:
 
@@ -80,13 +80,13 @@ export TESTBENCH_MODE=enabled
 
 ## Run the lab
 
-### Terminal A — mock attacker server
+### Terminal A - mock attacker server
 
 ```bash
 node infrastructure/mock-server.js
 ```
 
-### Terminal B — install stage packages and run victim
+### Terminal B - install stage packages and run victim
 
 ```bash
 cd victim-app
@@ -120,10 +120,10 @@ Follow **Run the lab** above first. The sections below provide reference layout,
 
 ## Structure
 
-- `packages/stage1-access-lib/`, `packages/stage2-compromised-lib/` — staged dependencies
-- `victim-app/` — orchestrates the chain
-- `infrastructure/` — mock server (port **3017**), `captured-data.json`
-- `detection-tools/` — `multi-stage-correlator.js`
+- `packages/stage1-access-lib/`, `packages/stage2-compromised-lib/` - staged dependencies
+- `victim-app/` - orchestrates the chain
+- `infrastructure/` - mock server (port **3017**), `captured-data.json`
+- `detection-tools/` - `multi-stage-correlator.js`
 
 ## Evidence
 

@@ -73,13 +73,13 @@ cd scenarios/19-sbom-manipulation-attack
 
 ## Run the lab
 
-### Terminal A — mock attacker server
+### Terminal A - mock attacker server
 
 ```bash
 node infrastructure/mock-server.js
 ```
 
-### Terminal B — install dependencies and generate SBOM
+### Terminal B - install dependencies and generate SBOM
 
 ```bash
 cd victim-app
@@ -112,11 +112,11 @@ Follow **Run the lab** above first. The sections below provide reference layout,
 
 ## Structure
 
-- `truth/` — reference dependency truth (`dependencies.json`)
-- `sbom/` — malicious SBOM generator script
-- `victim-app/` — consumes generator output (`sbom.json`)
-- `infrastructure/` — mock server (port **3019**), `captured-data.json`
-- `detection-tools/` — `sbom-manipulation-validator.js`
+- `truth/` - reference dependency truth (`dependencies.json`)
+- `sbom/` - malicious SBOM generator script
+- `victim-app/` - consumes generator output (`sbom.json`)
+- `infrastructure/` - mock server (port **3019**), `captured-data.json`
+- `detection-tools/` - `sbom-manipulation-validator.js`
 
 ## Evidence
 

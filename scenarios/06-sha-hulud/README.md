@@ -93,7 +93,7 @@ export TESTBENCH_MODE=enabled
 
 Use two terminals. All paths are relative to `scenarios/06-sha-hulud`.
 
-### Terminal A — infrastructure listeners
+### Terminal A - infrastructure listeners
 
 ```bash
 cd infrastructure
@@ -105,7 +105,7 @@ cd ..
 
 Keep this terminal open while the lab runs.
 
-### Terminal B — review, install compromised package, run victim
+### Terminal B - review, install compromised package, run victim
 
 ```bash
 cat legitimate-package/data-processor/index.js

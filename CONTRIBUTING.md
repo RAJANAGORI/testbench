@@ -4,7 +4,7 @@ Thanks for helping improve the Supply Chain Attack Test Bench.
 
 ## Copyright and licensing
 
-The maintainers’ original work in this repository is **copyright Raja Nagori**
+The maintainers' original work in this repository is **copyright Raja Nagori**
 (see [LICENSE](LICENSE), [DOCUMENTATION-CC-BY-NC-ND.md](DOCUMENTATION-CC-BY-NC-ND.md),
 [LEGAL.md](LEGAL.md), and [NOTICE](NOTICE)).
 
@@ -13,7 +13,7 @@ The maintainers’ original work in this repository is **copyright Raja Nagori**
   paths) are licensed under **CC BY-NC-ND 4.0** (see DOCUMENTATION-CC-BY-NC-ND.md).
 
 The MIT License grants certain permissions for software; CC BY-NC-ND governs
-documentation. Neither transfers ownership of the project’s copyright to
+documentation. Neither transfers ownership of the project's copyright to
 contributors or users.
 
 ### Developer Certificate of Origin (DCO)
@@ -79,16 +79,16 @@ For teaching consistency, use `documentation/modules/MODULE_TEMPLATE.md` when wr
 
 ## Documentation maintenance
 
-Scenario docs use shared tooling under `scripts/`. The **canonical reference** for every script and the doc-sync lifecycle is **[documentation/platform/TOOLING.md](documentation/platform/TOOLING.md)** — read it before changing scenario docs.
+Scenario docs use shared tooling under `scripts/`. The **canonical reference** for every script and the doc-sync lifecycle is **[documentation/platform/TOOLING.md](documentation/platform/TOOLING.md)** - read it before changing scenario docs.
 
 Quick version after editing scenario mitigations or headings:
 
 ```bash
-node scripts/docs/sync-mitigation-gaps.js     # sync DETECT.md + README playbooks (01–06)
+node scripts/docs/sync-mitigation-gaps.js     # sync DETECT.md + README playbooks (01-06)
 node scripts/docs/inject-markdown-toc.js all  # rebuild every Table of Contents
 ```
 
-Canonical mitigation bullets live in `scripts/lib/mitigation-playbooks.js` — edit there first. Learner docs (`documentation/scenario-guides/zero-to-hero/`) carry a **Mitigation Playbook** + **Table of Contents**; blue-team `DETECT.md` runbooks carry detection content plus a short **Mitigation** section.
+Canonical mitigation bullets live in `scripts/lib/mitigation-playbooks.js` - edit there first. Learner docs (`documentation/scenario-guides/zero-to-hero/`) carry a **Mitigation Playbook** + **Table of Contents**; blue-team `DETECT.md` runbooks carry detection content plus a short **Mitigation** section.
 
 ## Code style and scripts
 
@@ -105,6 +105,9 @@ Run these locally before opening a PR:
 # Catches lab-count / index / public-doc drift (fast; also runs in CI)
 node scripts/docs/check-info-consistency.js
 
+# Catches em/en dash, curly quotes, zero-width marks in tracked Markdown
+node scripts/docs/check-markdown-watermarks.js
+
 # Catches Excalidraw/SVG diagram contract drift (nodes, edges, embeds, XML &)
 node scripts/diagrams/check-diagram-assets.js
 
@@ -112,7 +115,7 @@ find scripts -name '*.sh' -type f -exec chmod +x {} +
 ./scripts/smoke/smoke-all-scenarios.sh
 ```
 
-If your change only affects one scenario, you should still run that scenario fully and confirm capture output appears as expected. When you **add or remove a scenario**, update every public surface that states the lab count or lists `01–NN`, then re-run `check-info-consistency.js`. When you **edit diagrams**, update `scripts/lib/diagram-specs.js` if the story changed, keep `.excalidraw`+`.svg` pairs, then re-run `check-diagram-assets.js`.
+If your change only affects one scenario, you should still run that scenario fully and confirm capture output appears as expected. When you **add or remove a scenario**, update every public surface that states the lab count or lists `01-NN`, then re-run `check-info-consistency.js`. When you **edit diagrams**, update `scripts/lib/diagram-specs.js` if the story changed, keep `.excalidraw`+`.svg` pairs, then re-run `check-diagram-assets.js`.
 
 ## Pull request checklist
 

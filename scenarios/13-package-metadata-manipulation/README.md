@@ -75,13 +75,13 @@ export TESTBENCH_MODE=enabled
 
 Use two terminals. All paths are relative to `scenarios/13-package-metadata-manipulation`.
 
-### Terminal A — mock attacker server
+### Terminal A - mock attacker server
 
 ```bash
 node infrastructure/mock-server.js
 ```
 
-### Terminal B — install compromised package and run victim
+### Terminal B - install compromised package and run victim
 
 ```bash
 cd victim-app
@@ -121,7 +121,7 @@ Follow **Run the lab** above first. The sections below expand the exercise with 
 - victim-app/ - app depending on `clean-utils`
 - infrastructure/ - mock attacker server and captured-data
 - detection-tools/ - metadata-validator and SBOM checks
-- `documentation/scenario-guides/` — quick reference and zero-to-hero guides (same tree as `docs/scenario-guides/` via symlink for GitHub Pages)
+- `documentation/scenario-guides/` - quick reference and zero-to-hero guides (same tree as `docs/scenario-guides/` via symlink for GitHub Pages)
 
 ## Attack Walkthrough
 

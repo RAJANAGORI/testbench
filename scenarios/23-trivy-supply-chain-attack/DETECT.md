@@ -1,9 +1,9 @@
-# Detection Runbook: Scenario 23 (Trivy Supply Chain Attack — CVE-2026-33634)
+# Detection Runbook: Scenario 23 (Trivy Supply Chain Attack - CVE-2026-33634)
 
 ## IOCs
 - References to `aquasecurity/trivy-action@v0.34.x` or `aquasecurity/setup-trivy@v0.x.x` (up to v0.2.5) in workflow files.
 - Docker image tags `aquasec/trivy:0.69.4`, `aquasec/trivy:0.69.5`, or `aquasec/trivy:0.69.6` in CI configs or Dockerfiles.
-- Unexpected POST beacon to `127.0.0.1:3023` (lab) or `scan.aquasecurtiy[.]org` (real incident — note typosquatted domain).
+- Unexpected POST beacon to `127.0.0.1:3023` (lab) or `scan.aquasecurtiy[.]org` (real incident - note typosquatted domain).
 - Presence of a GitHub repository named `tpcp-docs` in the organization (real attack backup exfil channel).
 - IOC marker file `infrastructure/captured-data.json` containing CI credential fields (lab evidence).
 
@@ -46,7 +46,7 @@ rule Trivy_Supply_Chain_IOC {
 ## EDR/SIEM What To Expect
 - HTTP POST from a CI runner process to an external domain immediately after trivy-action step begins.
 - Network connection to `scan.aquasecurtiy[.]org` (typosquatted) from a build agent.
-- Unexpected `tpcp-docs` repository creation events in GitHub audit logs around March 19–22, 2026.
+- Unexpected `tpcp-docs` repository creation events in GitHub audit logs around March 19-22, 2026.
 - CI pipeline logs show trivy-action step completing normally (infostealer preserves legitimate output to avoid detection).
 - In the lab: capture evidence at `infrastructure/captured-data.json` with `ci_secret_exfil` event type.
 

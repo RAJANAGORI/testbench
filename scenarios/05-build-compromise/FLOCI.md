@@ -29,7 +29,7 @@ Creates bucket `scas-sc05-artifacts` with a legitimate `releases/legitimate/mani
 ```bash
 node infrastructure/mock-server.js &
 cd compromised-build
-# Lookalike CI secrets (LAB ONLY) — same values seeded into Floci SM/SSM
+# Lookalike CI secrets (LAB ONLY) - same values seeded into Floci SM/SSM
 set -a && source .env.lab 2>/dev/null || source ../../_shared/lookalike-secrets.env; set +a
 npm run build
 ```
@@ -40,9 +40,9 @@ npm run build
 |------|------------------|---------------------------|
 | Stolen env JSON | `POST /collect` | `s3://scas-sc05-artifacts/exfil/build-secrets-*.json` |
 | Build output | local `dist/` | `s3://scas-sc05-artifacts/releases/compromised/<ts>/` |
-| CI identity abuse | — | STS `GetCallerIdentity` + CloudWatch Logs `/scas/sc05/build` |
+| CI identity abuse | - | STS `GetCallerIdentity` + CloudWatch Logs `/scas/sc05/build` |
 
-### 3. Blue team — verify cloud evidence
+### 3. Blue team - verify cloud evidence
 
 ```bash
 ./infrastructure/floci/verify.sh
@@ -60,7 +60,7 @@ scas_floci_aws s3 ls s3://scas-sc05-artifacts/releases/ --recursive
 ## Learning goals (Floci layer)
 
 - Build pipelines with `AWS_*` in env are a **real exfil target** (CodeCov-style).
-- HTTP beacons are not the only channel — **artifact buckets** get overwritten too.
+- HTTP beacons are not the only channel - **artifact buckets** get overwritten too.
 - Detection: monitor S3 `PutObject` on release prefixes, not just outbound HTTP.
 
 ## Without Floci
@@ -88,7 +88,7 @@ cd scenarios/05-build-compromise
 ./infrastructure/floci/seed.sh
 ```
 
-1. **Floci init ready?** `./scripts/floci/floci-status.sh` — must show `Init: ✅ ready`
+1. **Floci init ready?** `./scripts/floci/floci-status.sh` - must show `Init: ✅ ready`
 2. **Use emulator credentials:** `source .floci.env` from repo root (do not rely on host `~/.aws/credentials`)
 3. **Inspect logs:** `docker logs scas-floci --tail 80`
 4. **Manual upload test** (inside container):
@@ -105,7 +105,7 @@ You must see `[TESTBENCH] Simulating build-time data exfiltration...` during `np
 ```bash
 source /path/to/supply-chain-attack-simulator/.testbench.env
 source /path/to/supply-chain-attack-simulator/.floci.env
-# Lookalike CI secrets for JSON harvest only — do not overwrite Floci emulator keys after this
+# Lookalike CI secrets for JSON harvest only - do not overwrite Floci emulator keys after this
 set -a && source .env.lab 2>/dev/null || source ../../_shared/lookalike-secrets.env; set +a
 npm run build
 ```

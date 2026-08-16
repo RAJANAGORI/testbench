@@ -41,7 +41,7 @@
 
 ## Background
 
-Package managers cache downloads to speed up installs. If an attacker or bug writes a **malicious copy** into that cache (or a mirror serves bad content once), subsequent installs may keep pulling the poisoned bits until the cache is invalidated. Defenders must treat “clean `package.json`” as insufficient when the cache layer is untrusted.
+Package managers cache downloads to speed up installs. If an attacker or bug writes a **malicious copy** into that cache (or a mirror serves bad content once), subsequent installs may keep pulling the poisoned bits until the cache is invalidated. Defenders must treat "clean `package.json`" as insufficient when the cache layer is untrusted.
 
 ## Threat Model Snapshot
 
@@ -74,13 +74,13 @@ export TESTBENCH_MODE=enabled
 
 ## Run the lab
 
-### Terminal A — mock attacker server
+### Terminal A - mock attacker server
 
 ```bash
 node infrastructure/mock-server.js
 ```
 
-### Terminal B — install, repeat install, run victim
+### Terminal B - install, repeat install, run victim
 
 ```bash
 cd victim-app
@@ -116,10 +116,10 @@ Follow **Run the lab** above first. The sections below provide reference layout,
 
 ## Structure
 
-- `cache/` — simulated cache contents (legitimate vs poisoned layouts)
-- `victim-app/` — app that installs from cache / triggers load
-- `infrastructure/` — mock server (port **3016**), `captured-data.json`
-- `detection-tools/` — `cache-poisoning-detector.js`
+- `cache/` - simulated cache contents (legitimate vs poisoned layouts)
+- `victim-app/` - app that installs from cache / triggers load
+- `infrastructure/` - mock server (port **3016**), `captured-data.json`
+- `detection-tools/` - `cache-poisoning-detector.js`
 
 ## Evidence
 

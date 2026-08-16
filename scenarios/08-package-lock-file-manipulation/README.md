@@ -62,7 +62,7 @@ By completing this scenario, you will learn:
 
 ## 🎯 Scenario Description
 
-**Scenario**: You have a victim application whose `package.json` lists benign public packages plus a suspicious **`file:`** dependency `evil-utils` (a realistic insider or takeover pattern). On **npm 7+**, the lockfile’s root section is reconciled with `package.json`, so lock-only injection without a matching manifest line is pruned on `npm install`; this lab therefore uses an explicit `file:` dependency so installs and `postinstall` behave reliably while you still practice **lock diffing**, integrity checks, and spotting unexpected local packages. Your task is to:
+**Scenario**: You have a victim application whose `package.json` lists benign public packages plus a suspicious **`file:`** dependency `evil-utils` (a realistic insider or takeover pattern). On **npm 7+**, the lockfile's root section is reconciled with `package.json`, so lock-only injection without a matching manifest line is pruned on `npm install`; this lab therefore uses an explicit `file:` dependency so installs and `postinstall` behave reliably while you still practice **lock diffing**, integrity checks, and spotting unexpected local packages. Your task is to:
 
 1. **Red Team**: Execute a lock file manipulation attack
 2. **Blue Team**: Detect the lock file tampering
@@ -88,13 +88,13 @@ export TESTBENCH_MODE=enabled
 
 Use two terminals (or background the mock server). All paths are relative to `scenarios/08-package-lock-file-manipulation`.
 
-### Terminal A — mock attacker server
+### Terminal A - mock attacker server
 
 ```bash
 node infrastructure/mock-server.js
 ```
 
-### Terminal B — inspect lockfiles, install (exfil), run victim app
+### Terminal B - inspect lockfiles, install (exfil), run victim app
 
 `evil-utils` **`postinstall`** posts to `http://localhost:3000/collect` when `TESTBENCH_MODE=enabled`. The victim **Express app also listens on port 3000**, so **`npm install` with the mock server running, then curl, before starting the victim.**
 
@@ -114,7 +114,7 @@ Stop the mock server on Terminal A (port `3000` is shared), then:
 npm start
 ```
 
-Optional — **compromised-app** (same port `3000` constraint: keep the mock server on Terminal A during `npm install`, `curl`, then stop the mock server before `npm start`):
+Optional - **compromised-app** (same port `3000` constraint: keep the mock server on Terminal A during `npm install`, `curl`, then stop the mock server before `npm start`):
 
 ```bash
 cd ../compromised-app
@@ -226,7 +226,7 @@ cat package-lock.json | grep -A 10 "evil-utils"
    - Check the mock server console for captured data
 
 **What Happens**:
-- `package.json` lists `express`, `lodash`, and `evil-utils` (file: — review whether that path is trusted)
+- `package.json` lists `express`, `lodash`, and `evil-utils` (file: - review whether that path is trusted)
 - `package-lock.json` contains `evil-utils` entry
 - `npm install` or `npm ci` installs `evil-utils` based on lock file
 - Malicious postinstall script executes

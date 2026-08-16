@@ -56,7 +56,7 @@ You work for a security research team. Your task is to:
 
 ### Prerequisites
 - Node.js 16+ and npm, **or** Docker with Compose v2 ([DOCKER_LABS.md](../../documentation/getting-started/DOCKER_LABS.md))
-- One-time repo setup (`./scripts/setup/setup.sh` from the repo root; [SETUP.md](../../documentation/getting-started/SETUP.md)) — not needed for the Docker path
+- One-time repo setup (`./scripts/setup/setup.sh` from the repo root; [SETUP.md](../../documentation/getting-started/SETUP.md)) - not needed for the Docker path
 
 ### Docker (no host Node)
 
@@ -85,7 +85,7 @@ export TESTBENCH_MODE=enabled
 
 Use two terminals. All paths are relative to `scenarios/01-typosquatting`.
 
-### Terminal A — mock attacker server
+### Terminal A - mock attacker server
 
 ```bash
 node infrastructure/mock-server.js
@@ -93,7 +93,7 @@ node infrastructure/mock-server.js
 
 Leave this running. Exfiltration only runs when `TESTBENCH_MODE=enabled` and posts to `http://localhost:3000/collect`.
 
-### Terminal B — review, install typo, run victim
+### Terminal B - review, install typo, run victim
 
 ```bash
 export TESTBENCH_MODE=enabled

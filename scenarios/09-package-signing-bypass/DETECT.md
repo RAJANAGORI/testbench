@@ -3,7 +3,7 @@
 ## IOCs
 - Package carries valid `package.sig` (Ed25519) but contains malicious `postinstall.js`.
 - Legitimate v1.0.0 and compromised v1.0.1 share the same `keyId` / `keyFingerprint` (stolen key).
-- `crypto.verify()` returns valid for both packages — signature check alone does not flag compromise.
+- `crypto.verify()` returns valid for both packages - signature check alone does not flag compromise.
 - Detection tool reports `MALICIOUS_POSTINSTALL` / `CRITICAL` despite `VALID_SIGNATURE`.
 - Runtime callbacks to `127.0.0.1:3000` with `signatureStatus: VALID` and `keyCompromised: true`.
 - Signing key material in `infrastructure/keys/` (lab only; in production, monitor HSM/signing audit logs).
@@ -52,7 +52,7 @@ rule Signing_Bypass_Indicator {
 - Require MFA for all key access and signing operations.
 - Rotate signing keys on a regular schedule and after incidents.
 - Limit who can sign packages with strict access controls.
-- Always verify signatures — but pair with behavioral and content analysis.
+- Always verify signatures - but pair with behavioral and content analysis.
 - Monitor signing activity for anomalies (time, volume, key fingerprint).
 
 ## Floci (optional cloud track)

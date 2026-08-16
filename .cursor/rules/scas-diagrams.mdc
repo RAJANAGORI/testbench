@@ -26,5 +26,5 @@ Markdown **cannot** render `.excalidraw`. Maintain pairs under:
 1. Platform docs: SVG only (no Mermaid).
 2. Scenario observability sections: SVG + Mermaid `sequenceDiagram`.
 3. Scenario codeflow sections: SVG only under `## Code-level workflow`.
-4. SVG must be well-formed XML — escape `&` as `&amp;`.
+4. SVG must be well-formed XML - escape `&` as `&amp;`.
 5. After edits: `node scripts/diagrams/check-diagram-assets.js`.

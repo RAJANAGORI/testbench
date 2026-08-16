@@ -39,11 +39,11 @@ rule Malicious_Update_Script {
 
 ## Mitigation
 
-- Pin exact versions in `package.json` — avoid carets on sensitive dependencies.
+- Pin exact versions in `package.json` - avoid carets on sensitive dependencies.
 - Commit lockfiles and use `npm ci` in CI/CD pipelines.
 - Verify updates before install (changelog review, integrity checks, code diff).
 - Scan dependency updates automatically in CI before merge.
-- Use staged rollouts — test updates in staging before production.
+- Use staged rollouts - test updates in staging before production.
 - Require human review of changelogs for patch and minor bumps on critical packages.
 
 ## Floci (optional cloud track)

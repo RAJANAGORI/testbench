@@ -5,7 +5,7 @@ alwaysApply: true
 
 # SCAS
 
-23 localhost-only supply-chain attack labs (`scenarios/01-`…`23-`). Docs hub: `documentation/index.md` — `docs/` is a GitHub Pages mirror; do not edit both.
+23 localhost-only supply-chain attack labs (`scenarios/01-`...`23-`). Docs hub: `documentation/index.md` - `docs/` is a GitHub Pages mirror; do not edit both.
 
 ## Safety (never weaken)
 
@@ -26,9 +26,9 @@ alwaysApply: true
 | Scripts / doc sync | `documentation/platform/TOOLING.md` |
 | Ports | `scripts/setup/ports.env` |
 
-**Exceptions:** **06** — `credential-harvester.js`, `mock-cdn.js`; **21**/**22** — npm/PyPI sims, **22** uses `mock_server.py`.
+**Exceptions:** **06** - `credential-harvester.js`, `mock-cdn.js`; **21**/**22** - npm/PyPI sims, **22** uses `mock_server.py`.
 
-Shared-pattern edits: implement in **01** (or exception), `grep` `scenarios/` + `documentation/scenario-guides/`, apply the same diff — do not open all 23 folders.
+Shared-pattern edits: implement in **01** (or exception), `grep` `scenarios/` + `documentation/scenario-guides/`, apply the same diff - do not open all 23 folders.
 
 **Public-count drift:** after adding/removing a lab, run `node scripts/docs/check-info-consistency.js` (CI-enforced in `smoke.yml`).
 **Diagrams:** what to draw lives in `scripts/lib/diagram-specs.js`; validate with `node scripts/diagrams/check-diagram-assets.js`.
@@ -36,3 +36,5 @@ Shared-pattern edits: implement in **01** (or exception), `grep` `scenarios/` + 
 ## Exploration
 
 `grep`/glob before broad reads. Read narrow slices (signatures, call sites). Stop once the pattern is clear.
+
+Markdown (and `.mdc` rules): ASCII `-` and straight quotes only. Do not put em/en dashes into docs; `node scripts/docs/check-markdown-watermarks.js` fails CI.

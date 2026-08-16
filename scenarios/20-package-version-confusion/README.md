@@ -7,7 +7,7 @@
 
 
 
-> **Simulation scope:** Version selection is performed by the lab's own resolver in `victim-app/index.js` (it scans `registry/` and copies the **highest** semver into `node_modules`), not by npm's installer — so `npm install` does not perform the confusion, `npm start` does. This models the risk of "highest version wins" logic; it does not exercise npm's semver resolution or registry precedence directly.
+> **Simulation scope:** Version selection is performed by the lab's own resolver in `victim-app/index.js` (it scans `registry/` and copies the **highest** semver into `node_modules`), not by npm's installer - so `npm install` does not perform the confusion, `npm start` does. This models the risk of "highest version wins" logic; it does not exercise npm's semver resolution or registry precedence directly.
 
 
 
@@ -39,11 +39,11 @@
 
 - Understand **version confusion**: risky resolution rules that pick an attacker-controlled **high** version (or wrong registry) over an intended release.
 - Practice detecting suspicious version skew and semver abuse in a project.
-- Learn mitigations: **pin** versions, use lockfiles, verify registry scope, and block “latest wins” patterns for critical deps.
+- Learn mitigations: **pin** versions, use lockfiles, verify registry scope, and block "latest wins" patterns for critical deps.
 
 ## Background
 
-Attackers may publish a package under the same name with an **implausibly high** version or exploit resolver precedence so that `*` or loose ranges pull malware. Teams that rely on “highest semver wins” without registry controls are exposed—especially in split public/private registry setups (classic dependency confusion) or custom registries.
+Attackers may publish a package under the same name with an **implausibly high** version or exploit resolver precedence so that `*` or loose ranges pull malware. Teams that rely on "highest semver wins" without registry controls are exposed-especially in split public/private registry setups (classic dependency confusion) or custom registries.
 
 ## Threat Model Snapshot
 
@@ -76,13 +76,13 @@ export TESTBENCH_MODE=enabled
 
 ## Run the lab
 
-### Terminal A — mock attacker server
+### Terminal A - mock attacker server
 
 ```bash
 node infrastructure/mock-server.js
 ```
 
-### Terminal B — resolve/install and run victim flow
+### Terminal B - resolve/install and run victim flow
 
 ```bash
 cd victim-app
@@ -116,10 +116,10 @@ Follow **Run the lab** above first. The sections below provide reference layout,
 
 ## Structure
 
-- `registry/` — versioned package payloads (e.g. benign vs malicious semver folders)
-- `victim-app/` — resolver simulation and install output (`installed-version.json`)
-- `infrastructure/` — mock server (port **3020**), `captured-data.json`
-- `detection-tools/` — `version-confusion-detector.js`
+- `registry/` - versioned package payloads (e.g. benign vs malicious semver folders)
+- `victim-app/` - resolver simulation and install output (`installed-version.json`)
+- `infrastructure/` - mock server (port **3020**), `captured-data.json`
+- `detection-tools/` - `version-confusion-detector.js`
 
 ## Evidence
 
@@ -148,7 +148,7 @@ Key indicators to capture:
 
 ## Expected Outcome
 
-- The victim selects the attacker’s high version; evidence may show exfiltration when enabled.
+- The victim selects the attacker's high version; evidence may show exfiltration when enabled.
 - The detector warns on suspicious ranges, version jumps, or pinning gaps.
 
 ## Validation Checklist

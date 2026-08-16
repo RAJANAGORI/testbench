@@ -5,7 +5,7 @@ How to properly credit **Supply Chain Attack Simulator** (SCAS) when you share, 
 ## Short credit (README, slides, blog)
 
 ```text
-Supply Chain Attack Simulator © 2024–2026 Raja Nagori
+Supply Chain Attack Simulator © 2024-2026 Raja Nagori
 https://github.com/rajanagori/supply-chain-attack-simulator
 Software: MIT License · Documentation: CC BY-NC-ND 4.0
 ```
@@ -14,12 +14,12 @@ Software: MIT License · Documentation: CC BY-NC-ND 4.0
 
 ```markdown
 [Supply Chain Attack Simulator](https://github.com/rajanagori/supply-chain-attack-simulator)
-by [Raja Nagori](https://github.com/rajanagori) — software (MIT), documentation (CC BY-NC-ND 4.0).
+by [Raja Nagori](https://github.com/rajanagori) - software (MIT), documentation (CC BY-NC-ND 4.0).
 ```
 
 ## Academic / course citation (APA-style)
 
-> Nagori, R. (2024–2026). *Supply Chain Attack Simulator* [Computer software and documentation]. GitHub. https://github.com/rajanagori/supply-chain-attack-simulator
+> Nagori, R. (2024-2026). *Supply Chain Attack Simulator* [Computer software and documentation]. GitHub. https://github.com/rajanagori/supply-chain-attack-simulator
 
 ## When teaching from SCAS
 
@@ -32,7 +32,7 @@ by [Raja Nagori](https://github.com/rajanagori) — software (MIT), documentatio
 
 - Keep the [LICENSE](LICENSE) and copyright notice
 - Clearly state your fork is based on SCAS by Raja Nagori
-- Documentation you copy remains under [CC BY-NC-ND](DOCUMENTATION-CC-BY-NC-ND.md) — attribute and do not publish modified doc derivatives commercially
+- Documentation you copy remains under [CC BY-NC-ND](DOCUMENTATION-CC-BY-NC-ND.md) - attribute and do not publish modified doc derivatives commercially
 
 ## Commercial use
 

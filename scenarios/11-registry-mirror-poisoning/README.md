@@ -5,7 +5,7 @@
 
 
 
-> **Live registry mechanism:** `setup.sh` packs the compromised packages into real `.tgz` tarballs and starts `infrastructure/registry-server.js` — a minimal HTTP server speaking the **npm registry protocol** on port 4873. `corporate-app/.npmrc` sets `registry=http://localhost:4873/`. When the victim runs `npm install`, npm queries the poisoned mirror, downloads the tarballs, and the malicious `postinstall` scripts fire — exactly as a real compromised Nexus/Artifactory/Verdaccio instance would behave.
+> **Live registry mechanism:** `setup.sh` packs the compromised packages into real `.tgz` tarballs and starts `infrastructure/registry-server.js` - a minimal HTTP server speaking the **npm registry protocol** on port 4873. `corporate-app/.npmrc` sets `registry=http://localhost:4873/`. When the victim runs `npm install`, npm queries the poisoned mirror, downloads the tarballs, and the malicious `postinstall` scripts fire - exactly as a real compromised Nexus/Artifactory/Verdaccio instance would behave.
 
 
 
@@ -85,20 +85,20 @@ export TESTBENCH_MODE=enabled
 
 Use two terminals (or background the mock server). All paths are relative to `scenarios/11-registry-mirror-poisoning`.
 
-### Terminal A — mock attacker server
+### Terminal A - mock attacker server
 
 ```bash
 node infrastructure/mock-server.js
 ```
 
-### Terminal B — start the poisoned mirror
+### Terminal B - start the poisoned mirror
 
 ```bash
 # Poisoned registry speaks npm registry protocol on port 4873
 node infrastructure/registry-server.js
 ```
 
-### Terminal C — victim installs from the poisoned mirror
+### Terminal C - victim installs from the poisoned mirror
 
 ```bash
 # See what the attacker injected

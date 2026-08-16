@@ -1,6 +1,6 @@
 'use strict';
 
-/** Canonical mitigation bullets per scenario (01–23). Single source for README, DETECT, zero-to-hero. */
+/** Canonical mitigation bullets per scenario (01-23). Single source for README, DETECT, zero-to-hero. */
 const PLAYBOOKS = {
   '01': {
     scenarioDir: '01-typosquatting',
@@ -38,11 +38,11 @@ const PLAYBOOKS = {
   '04': {
     scenarioDir: '04-malicious-update',
     bullets: [
-      'Pin exact versions in `package.json` — avoid carets on sensitive dependencies.',
+      'Pin exact versions in `package.json` - avoid carets on sensitive dependencies.',
       'Commit lockfiles and use `npm ci` in CI/CD pipelines.',
       'Verify updates before install (changelog review, integrity checks, code diff).',
       'Scan dependency updates automatically in CI before merge.',
-      'Use staged rollouts — test updates in staging before production.',
+      'Use staged rollouts - test updates in staging before production.',
       'Require human review of changelogs for patch and minor bumps on critical packages.',
     ],
   },
@@ -53,7 +53,7 @@ const PLAYBOOKS = {
       'Apply least privilege to CI/CD jobs and secret exposure.',
       'Run builds in isolated environments with minimal credentials.',
       'Verify build artifacts with checksums and signed attestations.',
-      'Use secret management tools — never hardcode secrets in build scripts.',
+      'Use secret management tools - never hardcode secrets in build scripts.',
       'Audit and log all build activities for forensic review.',
       'Sign release artifacts and verify signatures before deployment.',
     ],
@@ -72,7 +72,7 @@ const PLAYBOOKS = {
   '07': {
     scenarioDir: '07-transitive-dependency',
     bullets: [
-      'Pin exact dependency versions — avoid loose semver ranges on critical packages.',
+      'Pin exact dependency versions - avoid loose semver ranges on critical packages.',
       'Commit `package-lock.json` and use `npm ci` in CI/CD.',
       'Run automated scanning (`npm audit`, SBOM tools) across the full dependency tree.',
       'Generate and maintain SBOMs for transitive dependency visibility.',
@@ -98,7 +98,7 @@ const PLAYBOOKS = {
       'Require MFA for all key access and signing operations.',
       'Rotate signing keys on a regular schedule and after incidents.',
       'Limit who can sign packages with strict access controls.',
-      'Always verify signatures — but pair with behavioral and content analysis.',
+      'Always verify signatures - but pair with behavioral and content analysis.',
       'Monitor signing activity for anomalies (time, volume, key fingerprint).',
     ],
   },
@@ -115,7 +115,7 @@ const PLAYBOOKS = {
   '11': {
     scenarioDir: '11-registry-mirror-poisoning',
     bullets: [
-      'Secure mirror access — limit who can publish or modify mirror storage.',
+      'Secure mirror access - limit who can publish or modify mirror storage.',
       'Audit mirror configuration and cached packages on a schedule.',
       'Verify mirror packages match upstream registry digests.',
       'Implement strict access controls and MFA on mirror admin paths.',

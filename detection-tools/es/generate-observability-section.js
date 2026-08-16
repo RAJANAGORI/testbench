@@ -51,7 +51,7 @@ function buildSvgDiagram(scenario) {
 }
 
 /**
- * Per-scenario Mermaid sequenceDiagram (Phase 1–5) — kept alongside the SVG
+ * Per-scenario Mermaid sequenceDiagram (Phase 1-5) - kept alongside the SVG
  * so guide.html can expand/lightbox the interaction sequence.
  */
 function buildSequenceDiagram(scenario) {
@@ -72,13 +72,13 @@ function buildSequenceDiagram(scenario) {
     '    participant ES as Elasticsearch :9200',
     '    participant Kibana as Kibana :5601',
     '',
-    '    Note over Learner,Mock: Phase 1 — Start collectors (Terminal A)',
+    '    Note over Learner,Mock: Phase 1 - Start collectors (Terminal A)',
     '    Learner->>Mock: export TESTBENCH_MODE=enabled',
     '    Learner->>Mock: export SCAS_ES_URL=http://localhost:9200 (optional)',
     `    Learner->>Mock: ${scenario.mock_start}`,
     '    Mock->>Mock: Listen for exfil POST on localhost',
     '',
-    '    Note over Learner,MalPkg: Phase 2 — Run the lab (Terminal B)',
+    '    Note over Learner,MalPkg: Phase 2 - Run the lab (Terminal B)',
     '    Learner->>Learner: export TESTBENCH_MODE=enabled',
     '    Learner->>Learner: export SCAS_ES_URL=http://localhost:9200 (optional)',
   ];
@@ -89,13 +89,13 @@ function buildSequenceDiagram(scenario) {
 
   lines.push(
     '',
-    '    Note over MalPkg,Mock: Phase 3 — Simulated exfiltration (127.0.0.1 only)',
+    '    Note over MalPkg,Mock: Phase 3 - Simulated exfiltration (127.0.0.1 only)',
     '    Note over MalPkg: Malicious path gated by TESTBENCH_MODE=enabled',
     `    MalPkg->>Mock: ${scenario.mock_endpoint} JSON payload`,
     `    Mock->>Mock: Append to infrastructure/${captureFile}`,
     '    Mock-->>Learner: 200 OK (capture accepted)',
     '',
-    '    Note over Mock,Kibana: Phase 4 — Optional Elasticsearch indexing',
+    '    Note over Mock,Kibana: Phase 4 - Optional Elasticsearch indexing',
     '    alt SCAS_ES_URL is set in Terminal A',
     `    Mock->>ES: POST scas-detections (scenario_id=${id}, event_type=exfil_capture)`,
     '    ES->>ES: Store @timestamp, package, detail fields',
@@ -104,11 +104,11 @@ function buildSequenceDiagram(scenario) {
     '    end',
     '',
     '    Note over ES: Runbook pre-seeded at scas-rules/_doc/' + id,
-    '    Note over Learner,Kibana: Phase 5 — Blue-team review in Kibana',
-    `    Learner->>Kibana: Open Discover → SCAS Detections — Scenario ${id}`,
+    '    Note over Learner,Kibana: Phase 5 - Blue-team review in Kibana',
+    `    Learner->>Kibana: Open Discover → SCAS Detections - Scenario ${id}`,
     '    Kibana->>ES: Query scenario_id + sort by @timestamp desc',
     '    ES-->>Kibana: Return capture events for this lab',
-    `    Learner->>Kibana: Open SCAS Rules — Scenario ${id}`,
+    `    Learner->>Kibana: Open SCAS Rules - Scenario ${id}`,
     '    ES-->>Kibana: Return IOCs, Sigma, YARA from DETECT.md',
     '    Learner->>Learner: Correlate capture detail with runbook IOCs',
     '```'
@@ -117,12 +117,12 @@ function buildSequenceDiagram(scenario) {
   return lines.join('\n');
 }
 
-/** SVG swimlane + Mermaid sequence — both required for scenario guides. */
+/** SVG swimlane + Mermaid sequence - both required for scenario guides. */
 function buildDiagram(scenario) {
   return [
     buildSvgDiagram(scenario),
     '',
-    '### Sequence diagram (Phase 1–5)',
+    '### Sequence diagram (Phase 1-5)',
     '',
     'Same flow as a participant sequence (expandable in the docs hub).',
     '',
@@ -156,11 +156,11 @@ function buildDiagramLegend() {
     '',
     '| Phase | What you should look for |',
     '|-------|--------------------------|',
-    '| **1 — Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |',
-    '| **2 — Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |',
-    '| **3 — Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |',
-    '| **4 — Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |',
-    '| **5 — Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |',
+    '| **1 - Collectors** | Terminal A starts the mock server (or harvester). Set `SCAS_ES_URL` here if you want live Elasticsearch indexing. |',
+    '| **2 - Lab execution** | Terminal B runs the scenario README steps. See the **sequence diagram** and **Scenario-specific attack steps** below. |',
+    '| **3 - Exfiltration** | Malicious sample sends **localhost-only** JSON to the mock endpoint. Evidence is always written to `infrastructure/` on disk. |',
+    '| **4 - Elasticsearch** | When `SCAS_ES_URL` is set, the same capture is indexed into `scas-detections` with `scenario_id` and `event_type=exfil_capture`. |',
+    '| **5 - Kibana** | Use the per-scenario saved searches to compare **runtime captures** (Detections) with the **static runbook** (Rules). |',
     '',
     '> **Safety:** All network calls stay on `127.0.0.1`. Malicious logic runs only when `TESTBENCH_MODE=enabled`.',
     '',
@@ -177,12 +177,12 @@ function buildSection(scenario) {
     '',
     '## Elasticsearch + Kibana observability (optional)',
     '',
-    `Scenario **${id} — ${scenario.title}** is indexed in Elasticsearch when the observability stack is running.`,
+    `Scenario **${id} - ${scenario.title}** is indexed in Elasticsearch when the observability stack is running.`,
     '',
     intro,
     '',
-    '- **Detection runbook (static)** → index `scas-rules`, document id `' + id + '` — IOCs, Sigma, YARA, sample logs from `DETECT.md`',
-    '- **Runtime captures (dynamic)** → index `scas-detections` — one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector',
+    '- **Detection runbook (static)** → index `scas-rules`, document id `' + id + '` - IOCs, Sigma, YARA, sample logs from `DETECT.md`',
+    '- **Runtime captures (dynamic)** → index `scas-detections` - one document per exfil event when `SCAS_ES_URL` is set before starting the mock collector',
     '',
     buildDiagramLegend(),
     '### End-to-end flow',
@@ -201,7 +201,7 @@ function buildSection(scenario) {
     '',
     '### Run this scenario with live Elasticsearch forwarding',
     '',
-    '**Terminal A — mock collector** (from `scenarios/' + scenario.folder + '`):',
+    '**Terminal A - mock collector** (from `scenarios/' + scenario.folder + '`):',
     '',
     '```bash',
     'cd scenarios/' + scenario.folder,
@@ -210,7 +210,7 @@ function buildSection(scenario) {
     scenario.mock_start,
     '```',
     '',
-    '**Terminal B — execute the lab:**',
+    '**Terminal B - execute the lab:**',
     '',
     '```bash',
     'cd scenarios/' + scenario.folder,
@@ -251,8 +251,8 @@ function buildSection(scenario) {
     '### Verify in Kibana (UI)',
     '',
     '1. Open [http://localhost:5601](http://localhost:5601)',
-    '2. **Discover** → **SCAS Detections — Scenario ' + id + '** — live capture timeline (`@timestamp`, `package.name`, `detail`)',
-    '3. **Discover** → **SCAS Rules — Scenario ' + id + '** — compare against `iocs`, `sigma`, and `yara` fields',
+    '2. **Discover** → **SCAS Detections - Scenario ' + id + '** - live capture timeline (`@timestamp`, `package.name`, `detail`)',
+    '3. **Discover** → **SCAS Rules - Scenario ' + id + '** - compare against `iocs`, `sigma`, and `yara` fields',
     '4. Ask: *Does each capture field match an IOC or Sigma condition in the runbook?*',
     '',
     'See [observability/README.md](../../../observability/README.md) for stack details.',
@@ -293,7 +293,7 @@ const OBS_HEADING_RE =
  */
 function stripObservabilitySections(content) {
   // Match optional --- rules (with blank lines) + the full section until the next
-  // non-observability H2 (or EOF). Must allow \n between --- and the heading —
+  // non-observability H2 (or EOF). Must allow \n between --- and the heading -
   // otherwise a leftover --- stacks on every regeneration.
   const blockRe =
     /(?:^|\n)(?:---\s*\n+)*## Elasticsearch \+ Kibana observability \(optional\)\s*\n[\s\S]*?(?=\n## (?!Elasticsearch \+ Kibana observability)|\s*$)/g;
@@ -313,7 +313,7 @@ function patchGuide(guidePath, section) {
   const hadSection = OBS_HEADING_RE.test(content);
   content = stripObservabilitySections(content);
 
-  // buildSection already starts with ---\n\n## … — do not wrap it again.
+  // buildSection already starts with ---\n\n## ... - do not wrap it again.
   const block = `${section.trim()}\n`;
   const lines = content.replace(/\s*$/, '\n').split('\n');
   const insertAt = findInsertIndex(lines);

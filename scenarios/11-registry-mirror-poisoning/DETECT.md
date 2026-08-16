@@ -48,7 +48,7 @@ rule Registry_Mirror_Poisoning_IOC {
 
 ## Mitigation
 
-- Secure mirror access — limit who can publish or modify mirror storage.
+- Secure mirror access - limit who can publish or modify mirror storage.
 - Audit mirror configuration and cached packages on a schedule.
 - Verify mirror packages match upstream registry digests.
 - Implement strict access controls and MFA on mirror admin paths.

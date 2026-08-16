@@ -2,13 +2,13 @@
 
 ## Creator and copyright holder
 
-**Raja Nagori** — original author of the Supply Chain Attack Simulator (SCAS)
+**Raja Nagori** - original author of the Supply Chain Attack Simulator (SCAS)
 
 - Designed the 23-scenario lab curriculum, platform architecture, and safety model
 - Authored the core documentation, zero-to-hero guides, teaching modules, and learning paths
 - Maintains the open-source repository and project website
 
-Copyright (c) 2024–2026 Raja Nagori. See [LEGAL.md](LEGAL.md), [LICENSE](LICENSE), and [DOCUMENTATION-CC-BY-NC-ND.md](DOCUMENTATION-CC-BY-NC-ND.md).
+Copyright (c) 2024-2026 Raja Nagori. See [LEGAL.md](LEGAL.md), [LICENSE](LICENSE), and [DOCUMENTATION-CC-BY-NC-ND.md](DOCUMENTATION-CC-BY-NC-ND.md).
 
 ## Contributors
 

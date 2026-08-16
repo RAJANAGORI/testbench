@@ -11,7 +11,7 @@ docs/
 ├── docs-manifest.json      Navigation catalog for guide.html
 ├── index.md                → ../documentation/index.md (navigation hub)
 ├── DOCUMENTATION_INDEX.md  → ../documentation/index.md (alias for guide.html)
-Governance Markdown (LEGAL.md, ATTRIBUTION.md, AUTHORS.md, DOCUMENTATION-CC-BY-NC-ND.md) is copied from repo root at Pages deploy — not symlinked under docs/ (avoids duplicate GitHub License tabs).
+Governance Markdown (LEGAL.md, ATTRIBUTION.md, AUTHORS.md, DOCUMENTATION-CC-BY-NC-ND.md) is copied from repo root at Pages deploy - not symlinked under docs/ (avoids duplicate GitHub License tabs).
 ├── assets/
 │   ├── css/                Landing + documentation hub styles
 │   └── js/                 docs-app.js, theme.js
@@ -27,9 +27,9 @@ Governance Markdown (LEGAL.md, ATTRIBUTION.md, AUTHORS.md, DOCUMENTATION-CC-BY-N
 
 ## Same content as `documentation/`?
 
-Markdown under **`getting-started/`**, **`platform/`**, **`reference/`**, **`learning-path/`**, **`modules/`**, **`scenario-guides/`**, and **`guides/`** are **symbolic links** to matching paths under **`documentation/`** — not separate copies. Edit under `documentation/` for content changes.
+Markdown under **`getting-started/`**, **`platform/`**, **`reference/`**, **`learning-path/`**, **`modules/`**, **`scenario-guides/`**, and **`guides/`** are **symbolic links** to matching paths under **`documentation/`** - not separate copies. Edit under `documentation/` for content changes.
 
-**Web docs:** Open [`guide.html`](./guide.html) for the full sequential documentation experience. Use URLs like `guide.html?p=platform/TOOLING.md#floci-cloud-track-optional` — not bare `/platform/TOOLING.md` paths (those redirect to `guide.html` after deploy).
+**Web docs:** Open [`guide.html`](./guide.html) for the full sequential documentation experience. Use URLs like `guide.html?p=platform/TOOLING.md#floci-cloud-track-optional` - not bare `/platform/TOOLING.md` paths (those redirect to `guide.html` after deploy).
 
 **Accidentally ran materialize locally?** `./scripts/docs/restore-docs-symlinks.sh` then `git status docs/`.
 

@@ -12,6 +12,6 @@ Canonical layout (run from repo root):
 | `smoke/` | End-to-end smoke | `./scripts/smoke/smoke-all-scenarios.sh` |
 | `ui/` | Control Center launcher | `./scripts/ui/start-dashboard.sh` |
 | `provenance/` | Provenance embed / verify | `./scripts/provenance/verify-provenance.sh` |
-| `lib/` | Shared Node libraries | `diagram-specs.js`, `mitigation-playbooks.js`, … |
+| `lib/` | Shared Node libraries | `diagram-specs.js`, `mitigation-playbooks.js`, ... |
 
 Ports allow-list: [`setup/ports.env`](setup/ports.env).

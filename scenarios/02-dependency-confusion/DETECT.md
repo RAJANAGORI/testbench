@@ -2,7 +2,7 @@
 
 ## IOCs
 - Scoped package `@techcorp/auth-lib` resolved from unexpected registry (`localhost:4874` in lab; public npm in production).
-- Installed version `999.999.999` — far higher than approved internal version (`1.0.x`).
+- Installed version `999.999.999` - far higher than approved internal version (`1.0.x`).
 - `.npmrc` scope mapping `@techcorp:registry` points at attacker-controlled or public registry instead of internal registry.
 - `package-lock.json` `resolved` URL references non-internal registry host for scoped packages.
 - `postinstall` script execution immediately after `npm install` (phase: `postinstall`).
@@ -10,7 +10,7 @@
 
 ## Sample Log Lines
 ```json
-{"scenario_id":"02","event_type":"dependency_confusion_postinstall","package":"@techcorp/auth-lib","version":"999.999.999","attackType":"dependency-confusion","registrySource":"public-npm (localhost:4874) — attacker-controlled","phase":"postinstall","destination":"127.0.0.1:3000","timestamp_utc":"2026-06-30T04:30:16.556Z"}
+{"scenario_id":"02","event_type":"dependency_confusion_postinstall","package":"@techcorp/auth-lib","version":"999.999.999","attackType":"dependency-confusion","registrySource":"public-npm (localhost:4874) - attacker-controlled","phase":"postinstall","destination":"127.0.0.1:3000","timestamp_utc":"2026-06-30T04:30:16.556Z"}
 ```
 
 ## Sigma (example)

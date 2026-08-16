@@ -35,23 +35,23 @@ By completing this scenario, you will learn:
 
 ## Background
 
-**CVE-2026-33634** represents one of the most significant supply chain attacks in recent history. In March 2026, a financially motivated threat group known as **TeamPCP** compromised Aqua Security's Trivy vulnerability scanner — a tool trusted by thousands of organizations to *find* vulnerabilities in their code and containers.
+**CVE-2026-33634** represents one of the most significant supply chain attacks in recent history. In March 2026, a financially motivated threat group known as **TeamPCP** compromised Aqua Security's Trivy vulnerability scanner - a tool trusted by thousands of organizations to *find* vulnerabilities in their code and containers.
 
 ### The Attack Timeline
 
 | Date | Event |
 |:-----|:------|
 | **Late February 2026** | Attackers exploited a misconfigured `pull_request_target` workflow in Trivy's own GitHub repo to steal a high-privilege Personal Access Token (PAT). |
-| **March 1, 2026** | Aqua Security detected the breach and rotated credentials — but the rotation was **not atomic**: not all tokens were revoked simultaneously, leaving a window. |
+| **March 1, 2026** | Aqua Security detected the breach and rotated credentials - but the rotation was **not atomic**: not all tokens were revoked simultaneously, leaving a window. |
 | **March 19, 2026** | Using still-valid credentials, attackers: (1) published malicious **Trivy v0.69.4** release, (2) force-pushed **76 of 77** version tags in `aquasecurity/trivy-action` to credential-stealing commits, (3) replaced **all 7** tags in `aquasecurity/setup-trivy` with malicious commits. |
 | **March 22, 2026** | Attackers published malicious Docker images **v0.69.5** and **v0.69.6** on Docker Hub, GHCR, and ECR. |
 
 ### What Made This Attack Unique
 
-1. **Trusted tool as attack vector** — Trivy is a *security scanner*; organizations trusted it to find threats, not *be* one.
-2. **Force-push technique** — Overwriting existing tags rather than creating new releases avoids most notification triggers.
-3. **Cascading impact** — The same TeamPCP campaign later compromised Checkmarx KICS and BerriAI's LiteLLM.
-4. **Multiple distribution channels** — GitHub Releases, Docker Hub (`docker.io/aquasec/trivy`), GHCR, and ECR were all affected.
+1. **Trusted tool as attack vector** - Trivy is a *security scanner*; organizations trusted it to find threats, not *be* one.
+2. **Force-push technique** - Overwriting existing tags rather than creating new releases avoids most notification triggers.
+3. **Cascading impact** - The same TeamPCP campaign later compromised Checkmarx KICS and BerriAI's LiteLLM.
+4. **Multiple distribution channels** - GitHub Releases, Docker Hub (`docker.io/aquasec/trivy`), GHCR, and ECR were all affected.
 
 ### The Malicious Payload
 
@@ -96,7 +96,7 @@ export TESTBENCH_MODE=enabled
 
 Use two terminals. All paths are relative to `scenarios/23-trivy-supply-chain-attack`.
 
-### Terminal A — Mock C2 Server
+### Terminal A - Mock C2 Server
 
 ```bash
 node infrastructure/mock-c2-server.js
@@ -104,7 +104,7 @@ node infrastructure/mock-c2-server.js
 
 Leave this running. It listens on `localhost:3023` and logs every exfiltration attempt.
 
-### Terminal B — Simulate the Attack
+### Terminal B - Simulate the Attack
 
 ```bash
 export TESTBENCH_MODE=enabled
@@ -112,7 +112,7 @@ export TESTBENCH_MODE=enabled
 # 1. Review the clean scanner (the attacker's starting point)
 node legitimate/trivy-scanner/index.js
 
-# 2. Run the victim CI pipeline — watch the malicious action exfiltrate secrets
+# 2. Run the victim CI pipeline - watch the malicious action exfiltrate secrets
 cd victim-ci
 node run-pipeline.js
 cd ..
@@ -128,7 +128,7 @@ curl -s http://127.0.0.1:3023/captured-data | node -e "
 ### Optionally set lookalike CI secrets to make the harvest more realistic
 
 ```bash
-# After ./setup.sh — planted .env.ci-lab (same values as scenarios/_shared/lookalike-secrets.env)
+# After ./setup.sh - planted .env.ci-lab (same values as scenarios/_shared/lookalike-secrets.env)
 set -a && source .env.ci-lab && set +a
 export GITHUB_REPOSITORY=acme-corp/payments-api
 cd victim-ci && node run-pipeline.js
@@ -198,7 +198,7 @@ npm run audit
 **Questions:**
 - Which `WF-0x` check identifies the initial access vector used by TeamPCP?
 - What does a force-pushed tag look like in GitHub's audit log vs. a normal release?
-- How would you determine if your organization ran affected pipelines between March 19–22?
+- How would you determine if your organization ran affected pipelines between March 19-22?
 
 ### Part 4: Hardening and Prevention (20 minutes)
 
@@ -220,7 +220,7 @@ Use this checklist to determine if your organization was affected:
 - [ ] Search all `.yml`/`.yaml` workflow files for `trivy-action@v0.34` and `setup-trivy@v0.2.5` (or earlier)
 - [ ] Check Docker configs for `aquasec/trivy:0.69.4`, `0.69.5`, or `0.69.6`
 - [ ] Inspect GitHub organization audit logs for unexpected `tpcp-docs` repository creation
-- [ ] Review pipeline logs from **March 19–22, 2026** for unexpected network connections
+- [ ] Review pipeline logs from **March 19-22, 2026** for unexpected network connections
 - [ ] Check for `~/.ssh/id_rsa`, `~/.aws/credentials`, `~/.kube/config` access in process logs
 - [ ] Rotate all secrets that were accessible to pipelines running in that window
 
@@ -238,11 +238,11 @@ Use this checklist to determine if your organization was affected:
 
 ## References
 
-- [CVE-2026-33634 — NVD](https://nvd.nist.gov/vuln/detail/CVE-2026-33634)
+- [CVE-2026-33634 - NVD](https://nvd.nist.gov/vuln/detail/CVE-2026-33634)
 - [GitHub Security Advisory GHSA-69fq-xp46-6x23](https://github.com/aquasecurity/trivy/security/advisories/GHSA-69fq-xp46-6x23)
 - [Aqua Security CVE-2026-33634 Announcement](https://blog.aquasecurity.io)
-- [step-security/harden-runner](https://github.com/step-security/harden-runner) — blocks unexpected network calls from actions
-- [SLSA Framework](https://slsa.dev) — supply-chain levels for software artifacts
+- [step-security/harden-runner](https://github.com/step-security/harden-runner) - blocks unexpected network calls from actions
+- [SLSA Framework](https://slsa.dev) - supply-chain levels for software artifacts
 
 ---
 

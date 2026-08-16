@@ -3,7 +3,7 @@
 
 
 
-> **Simulation scope:** The victim installs the compromised `secure-validator` directly via a `file:` path, so the committed lab effectively starts on the malicious version; the "trusted v2.5.3 → malicious v2.5.4" upgrade is illustrative framing. The payload itself — a legitimate API surface plus hidden exfiltration on module load, gated by `TESTBENCH_MODE` — runs for real.
+> **Simulation scope:** The victim installs the compromised `secure-validator` directly via a `file:` path, so the committed lab effectively starts on the malicious version; the "trusted v2.5.3 → malicious v2.5.4" upgrade is illustrative framing. The payload itself - a legitimate API surface plus hidden exfiltration on module load, gated by `TESTBENCH_MODE` - runs for real.
 
 
 
@@ -95,13 +95,13 @@ export TESTBENCH_MODE=enabled
 
 Use two terminals. All paths are relative to `scenarios/03-compromised-package`.
 
-### Terminal A — mock attacker server
+### Terminal A - mock attacker server
 
 ```bash
 node infrastructure/mock-server.js
 ```
 
-### Terminal B — review packages, run victim, install compromised path
+### Terminal B - review packages, run victim, install compromised path
 
 ```bash
 cat legitimate-package/secure-validator/index.js
@@ -317,7 +317,7 @@ npm owner ls secure-validator
 
 #### Investigation Step 5: Behavioral Analysis
 
-Run the victim app with `TESTBENCH_MODE=enabled` while the mock server is up, then review `curl http://localhost:3000/captured-data`. For a full sandbox, use your org’s standard dynamic-analysis tooling.
+Run the victim app with `TESTBENCH_MODE=enabled` while the mock server is up, then review `curl http://localhost:3000/captured-data`. For a full sandbox, use your org's standard dynamic-analysis tooling.
 
 Monitor:
 - Network requests

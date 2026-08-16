@@ -3,7 +3,7 @@
 
 
 
-> **Live crypto mechanism:** `setup.sh` generates a real **Ed25519 keypair** (Node.js built-in `crypto`) and signs *both* the legitimate v1.0.0 and the attacker's v1.0.1 package with the same private key. `infrastructure/verify-signature.js` performs a genuine `crypto.verify()` — and **both packages pass**. The detection tool then finds the CRITICAL indicator: the malicious postinstall. This is the authentic key-compromise signing bypass: valid signatures everywhere, danger in the behaviour.
+> **Live crypto mechanism:** `setup.sh` generates a real **Ed25519 keypair** (Node.js built-in `crypto`) and signs *both* the legitimate v1.0.0 and the attacker's v1.0.1 package with the same private key. `infrastructure/verify-signature.js` performs a genuine `crypto.verify()` - and **both packages pass**. The detection tool then finds the CRITICAL indicator: the malicious postinstall. This is the authentic key-compromise signing bypass: valid signatures everywhere, danger in the behaviour.
 
 
 
@@ -82,13 +82,13 @@ export TESTBENCH_MODE=enabled
 
 Use two terminals (or background the mock server). All paths are relative to `scenarios/09-package-signing-bypass`.
 
-### Terminal A — mock attacker server
+### Terminal A - mock attacker server
 
 ```bash
 node infrastructure/mock-server.js
 ```
 
-### Terminal B — real Ed25519 verification + attack + detection
+### Terminal B - real Ed25519 verification + attack + detection
 
 ```bash
 # 1. See both packages pass real cryptographic verification (same stolen key!)
@@ -100,7 +100,7 @@ cd victim-app
 npm install
 export TESTBENCH_MODE=enabled && npm start
 
-# 3. Deep-scan the installed package — catches malicious postinstall despite valid sig
+# 3. Deep-scan the installed package - catches malicious postinstall despite valid sig
 node ../detection-tools/signature-validator.js node_modules/secure-utils
 ```
 

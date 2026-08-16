@@ -1,6 +1,6 @@
 # Supply Chain Attack Test Bench
 
-Local labs for learning how software supply chain attacks work — and how to spot and stop them.
+Local labs for learning how software supply chain attacks work - and how to spot and stop them.
 
 [![Smoke](https://github.com/RAJANAGORI/supply-chain-attack-simulator/actions/workflows/smoke.yml/badge.svg)](https://github.com/RAJANAGORI/supply-chain-attack-simulator/actions/workflows/smoke.yml)
 
@@ -10,14 +10,14 @@ Local labs for learning how software supply chain attacks work — and how to sp
 
 Pick one path. The rest of the docs are linked so you do not have to read this whole file.
 
-| You are… | Do this |
+| You are... | Do this |
 |----------|---------|
 | New to the project | `./install.sh -y` (SCAS + ES + Floci) · [Full-stack setup](documentation/getting-started/FULL_STACK_SETUP.md) · or `./START_HERE.sh` |
 | Prefer Docker | `./docker/install.sh` · [Docker labs](documentation/getting-started/DOCKER_LABS.md) |
-| Pi / USB HDD host | Optional: [`install-external.sh`](install-external.sh) — [Pi storage](documentation/getting-started/RASPBERRY_PI_STORAGE.md) |
-| Prefer a browser UI | [Dashboard](documentation/platform/DASHBOARD.md) — `./scripts/ui/start-dashboard.sh` (localhost only) |
+| Pi / USB HDD host | Optional: [`install-external.sh`](install-external.sh) - [Pi storage](documentation/getting-started/RASPBERRY_PI_STORAGE.md) |
+| Prefer a browser UI | [Dashboard](documentation/platform/DASHBOARD.md) - `./scripts/ui/start-dashboard.sh` (localhost only) |
 | Teaching or building a curriculum | [Scenario learning path](documentation/learning-path/SCENARIO_LEARNING_PATH.md) |
-| Already comfortable with npm and VMs | [Quick start](#quick-start-experienced-users) below, then open each scenario’s README |
+| Already comfortable with npm and VMs | [Quick start](#quick-start-experienced-users) below, then open each scenario's README |
 
 **Safety:** Education only, in isolated environments. Read [Safety & ethics](#safety--ethics) before you run anything.
 
@@ -25,18 +25,18 @@ Pick one path. The rest of the docs are linked so you do not have to read this w
 
 Twenty-three small labs under `scenarios/` (`01-` through `23-`). Each one walks through an attack, shows how you might detect it, and points at mitigations. You mostly work from the CLI; there is an optional [localhost dashboard](documentation/platform/DASHBOARD.md) if you want a UI.
 
-Guides and learning paths live in [`documentation/`](documentation/index.md). Malicious bits only run when you opt in (for example `TESTBENCH_MODE=enabled`), and exfiltration stays aimed at localhost — see [Security notice](#security-notice).
+Guides and learning paths live in [`documentation/`](documentation/index.md). Malicious bits only run when you opt in (for example `TESTBENCH_MODE=enabled`), and exfiltration stays aimed at localhost - see [Security notice](#security-notice).
 
 ## Themes (not a full catalog)
 
 The labs cover a few broad areas:
 
-- Package and registry abuse — typosquatting, dependency confusion, mirrors, lockfiles, caches, workspaces
-- Broken trust — bad updates, signing gaps, submodules, SBOM tricks
-- Build and delivery — pipelines, containers, multi-stage chains
-- Developer tools — plugins, self-spreading patterns ([`06-sha-hulud/`](scenarios/06-sha-hulud/)), IDE/CLI-style risks
-- Incident-style sims — Axios-like npm and LiteLLM-like PyPI patterns (fake packages, localhost only; [#3](https://github.com/RAJANAGORI/supply-chain-attack-simulator/issues/3), [#4](https://github.com/RAJANAGORI/supply-chain-attack-simulator/issues/4))
-- Defense — detection tooling and hardening, threaded through the scenarios
+- Package and registry abuse - typosquatting, dependency confusion, mirrors, lockfiles, caches, workspaces
+- Broken trust - bad updates, signing gaps, submodules, SBOM tricks
+- Build and delivery - pipelines, containers, multi-stage chains
+- Developer tools - plugins, self-spreading patterns ([`06-sha-hulud/`](scenarios/06-sha-hulud/)), IDE/CLI-style risks
+- Incident-style sims - Axios-like npm and LiteLLM-like PyPI patterns (fake packages, localhost only; [#3](https://github.com/RAJANAGORI/supply-chain-attack-simulator/issues/3), [#4](https://github.com/RAJANAGORI/supply-chain-attack-simulator/issues/4))
+- Defense - detection tooling and hardening, threaded through the scenarios
 
 For the full numbered list, see [Scenario walkthroughs](documentation/reference/SCENARIOS.md).
 
@@ -50,7 +50,7 @@ For the full numbered list, see [Scenario walkthroughs](documentation/reference/
 
 ```
 supply-chain-attack-simulator/
-├── scenarios/                  # Labs 01–23
+├── scenarios/                  # Labs 01-23
 ├── vulnerable-apps/            # Optional sample app (scenario 03)
 ├── malicious-packages/         # Example packages for learning
 ├── detection-tools/            # Scanners and helpers
@@ -74,7 +74,7 @@ Use your own fork URL if that is what you cloned.
 
 ### 2. Install
 
-Full stack (SCAS + Elasticsearch/Kibana + Floci — needs Docker):
+Full stack (SCAS + Elasticsearch/Kibana + Floci - needs Docker):
 
 ```bash
 chmod +x install.sh
@@ -119,7 +119,7 @@ You should see captured exercise data from the mock exfiltration endpoint (exact
 
 ## Scenario index
 
-Each folder’s README has the steps. Levels match [documentation/reference/SCENARIOS.md](documentation/reference/SCENARIOS.md).
+Each folder's README has the steps. Levels match [documentation/reference/SCENARIOS.md](documentation/reference/SCENARIOS.md).
 
 | # | Lab | Level |
 |---|-----|--------|
@@ -205,7 +205,7 @@ Start at the **[documentation index](documentation/index.md)**. Same files rende
 | [Resources](documentation/reference/RESOURCES.md) | External reading |
 | [Observability stack](observability/README.md) | ES + Kibana |
 
-`docs/` is the GitHub Pages site; content is symlinked from `documentation/` — see `docs/README.md`.
+`docs/` is the GitHub Pages site; content is symlinked from `documentation/` - see `docs/README.md`.
 
 ## Issue templates
 
@@ -216,8 +216,8 @@ Under `.github/ISSUE_TEMPLATE`: bug report, feature request, and scenario issue 
 There is no single required order. A workable default:
 
 1. Do **01 → 02 → 03** first.
-2. Finish **01–05** before **06** (Shai-Hulud) — it is the heaviest single lab.
-3. After that, pick by interest: registry/repo labs (**07, 08, 10, 12, 13, 16**), or CI/signing/container labs (**05, 09, 11, 14, 15, 17–23**).
+2. Finish **01-05** before **06** (Shai-Hulud) - it is the heaviest single lab.
+3. After that, pick by interest: registry/repo labs (**07, 08, 10, 12, 13, 16**), or CI/signing/container labs (**05, 09, 11, 14, 15, 17-23**).
 
 More structure: [Scenario learning path](documentation/learning-path/SCENARIO_LEARNING_PATH.md) and [Capstone rubric](documentation/learning-path/CAPSTONE_RUBRIC.md).
 
@@ -232,26 +232,26 @@ New labs, better detection, clearer docs, and fixes are welcome. See [CONTRIBUTI
 
 ## License and copyright
 
-**Creator:** [Raja Nagori](https://github.com/rajanagori) · Copyright © 2024–2026
+**Creator:** [Raja Nagori](https://github.com/rajanagori) · Copyright © 2024-2026
 
 Dual licensing:
 
 | Material | License |
 |----------|---------|
-| Software — scenarios, scripts, detection tools, observability | [MIT License](LICENSE) |
-| Documentation — guides, modules, learning paths | [CC BY-NC-ND 4.0](DOCUMENTATION-CC-BY-NC-ND.md) |
+| Software - scenarios, scripts, detection tools, observability | [MIT License](LICENSE) |
+| Documentation - guides, modules, learning paths | [CC BY-NC-ND 4.0](DOCUMENTATION-CC-BY-NC-ND.md) |
 
-- [LEGAL.md](LEGAL.md) — ownership
-- [ATTRIBUTION.md](ATTRIBUTION.md) — how to credit SCAS
-- [AUTHORS.md](AUTHORS.md) — creator and contributors
-- [NOTICE](NOTICE) — distribution summary
-- [CONTRIBUTING.md](CONTRIBUTING.md) — DCO and contribution terms
+- [LEGAL.md](LEGAL.md) - ownership
+- [ATTRIBUTION.md](ATTRIBUTION.md) - how to credit SCAS
+- [AUTHORS.md](AUTHORS.md) - creator and contributors
+- [NOTICE](NOTICE) - distribution summary
+- [CONTRIBUTING.md](CONTRIBUTING.md) - DCO and contribution terms
 
 Fork and use the software under MIT (keep the copyright notice). Docs can be shared with attribution; do not commercially republish modified docs without permission. Do not strip copyright or claim you wrote SCAS.
 
 ## Acknowledgments
 
-**[Floci](https://floci.io/)** — local cloud emulator ([floci-io/floci](https://github.com/floci-io/floci)), maintained by **[Hector Ventura](https://github.com/hectorvent)**.
+**[Floci](https://floci.io/)** - local cloud emulator ([floci-io/floci](https://github.com/floci-io/floci)), maintained by **[Hector Ventura](https://github.com/hectorvent)**.
 
 Built with an eye toward real incidents, including SolarWinds (2020), CodeCov (2021), event-stream (2018), UA-Parser-js (2021), and Colors.js / Faker.js (2022).
 

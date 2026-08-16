@@ -4,7 +4,7 @@
 - **Estimated Time**: 60-90 minutes
 - **Primary Attack Surface**: PyPI package compromise and Python startup hooks
 
-**Inspired by:** PyPI account compromise pattern with **import-time** vs **`.pth` startup** execution, as requested in [GitHub issue #4](https://github.com/RAJANAGORI/supply-chain-attack-simulator/issues/4). This lab uses a **fictional** package name `litellm_like` and **127.0.0.1**-only HTTP—no credential theft, no external exfiltration.
+**Inspired by:** PyPI account compromise pattern with **import-time** vs **`.pth` startup** execution, as requested in [GitHub issue #4](https://github.com/RAJANAGORI/supply-chain-attack-simulator/issues/4). This lab uses a **fictional** package name `litellm_like` and **127.0.0.1**-only HTTP-no credential theft, no external exfiltration.
 
 
 
@@ -89,7 +89,7 @@ source .venv/bin/activate
 pip uninstall -y litellm_like
 export TESTBENCH_MODE=enabled
 pip install ../python-packages/v1_82_8
-# Any Python process loads .pth — no need to import litellm_like
+# Any Python process loads .pth - no need to import litellm_like
 python -c "print('hello')"
 ```
 
@@ -143,7 +143,7 @@ Key indicators to capture:
 ## CI-safe and offline modes
 
 - Traffic is only to **`127.0.0.1:3022`**.
-- **`TESTBENCH_OFFLINE=1`:** import / `.pth` hooks skip `urllib` beacons (markers may still be written for import path — see `litellm_like/__init__.py` / hook; adjust if you need zero network and zero markers).
+- **`TESTBENCH_OFFLINE=1`:** import / `.pth` hooks skip `urllib` beacons (markers may still be written for import path - see `litellm_like/__init__.py` / hook; adjust if you need zero network and zero markers).
 
 ## References (real world)
 

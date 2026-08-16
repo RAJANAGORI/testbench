@@ -26,8 +26,8 @@ Docker path for the platform (Elasticsearch, Kibana, Floci) and the 23 scenario 
 
 ## Two modes
 
-1. **One-shot** — ES (:9200), Kibana (:5601), Floci (:4566), then Scenario 01.
-2. **Scenario picker** — any compose-backed lab; optionally start the platform too.
+1. **One-shot** - ES (:9200), Kibana (:5601), Floci (:4566), then Scenario 01.
+2. **Scenario picker** - any compose-backed lab; optionally start the platform too.
 
 ## Per-lab commands (without the hub)
 

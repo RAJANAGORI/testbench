@@ -5,7 +5,7 @@ Optional **S3 mirror** plus **Glue/Athena/Config** analytics track for SBOM mani
 ```bash
 export TESTBENCH_MODE=enabled SCAS_FLOCI_ENABLED=1
 ./infrastructure/floci/seed.sh
-# run lab — malicious SBOM generator omits malicious-lib
+# run lab - malicious SBOM generator omits malicious-lib
 ./infrastructure/floci/verify.sh
 ../../detection-tools/floci/s3-exfil-check.sh 19
 ```

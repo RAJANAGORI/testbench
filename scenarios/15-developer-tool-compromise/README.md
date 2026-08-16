@@ -41,7 +41,7 @@
 
 ## Background
 
-Developer tools are often installed from the same registries as application dependencies. If an attacker publishes or compromises a tool (or tricks a developer into installing a malicious fork), **lifecycle scripts** can run as soon as someone runs `npm install`. That code executes with the developer’s privileges and can steal tokens, environment variables, or source code. Real incidents often combine social engineering with script execution during install or build.
+Developer tools are often installed from the same registries as application dependencies. If an attacker publishes or compromises a tool (or tricks a developer into installing a malicious fork), **lifecycle scripts** can run as soon as someone runs `npm install`. That code executes with the developer's privileges and can steal tokens, environment variables, or source code. Real incidents often combine social engineering with script execution during install or build.
 
 ## Threat Model Snapshot
 
@@ -52,7 +52,7 @@ Developer tools are often installed from the same registries as application depe
 
 ## Scenario Description
 
-You explore a minimal “dev tool” delivered as a local package. A **legitimate** variant exists for comparison; the **malicious** variant runs a `postinstall` step that exfiltrates data to the scenario mock server when the testbench safety flag is on. Your tasks:
+You explore a minimal "dev tool" delivered as a local package. A **legitimate** variant exists for comparison; the **malicious** variant runs a `postinstall` step that exfiltrates data to the scenario mock server when the testbench safety flag is on. Your tasks:
 
 1. **Red team**: See how install-time execution leads to capture events.
 2. **Blue team**: Inspect the victim app and `node_modules` for suspicious scripts.
@@ -74,13 +74,13 @@ export TESTBENCH_MODE=enabled
 
 ## Run the lab
 
-### Terminal A — mock attacker server
+### Terminal A - mock attacker server
 
 ```bash
 node infrastructure/mock-server.js
 ```
 
-### Terminal B — install malicious dev tool and run victim
+### Terminal B - install malicious dev tool and run victim
 
 ```bash
 cd victim-app
@@ -114,11 +114,11 @@ Follow **Run the lab** above first. The sections below provide reference layout,
 
 ## Structure
 
-- `dev-tools/legitimate-dev-tool/` — benign reference tool
-- `dev-tools/malicious-dev-tool/` — tool with `postinstall` exfiltration (testbench-gated)
-- `victim-app/` — sample app that installs the tool
-- `infrastructure/` — mock exfil server (`mock-server.js`, `captured-data.json`)
-- `detection-tools/` — `dev-tool-compromise-detector.js`
+- `dev-tools/legitimate-dev-tool/` - benign reference tool
+- `dev-tools/malicious-dev-tool/` - tool with `postinstall` exfiltration (testbench-gated)
+- `victim-app/` - sample app that installs the tool
+- `infrastructure/` - mock exfil server (`mock-server.js`, `captured-data.json`)
+- `detection-tools/` - `dev-tool-compromise-detector.js`
 
 ## Evidence
 

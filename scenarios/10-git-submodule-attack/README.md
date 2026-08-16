@@ -3,7 +3,7 @@
 
 
 
-> **Live attack mechanism:** `setup.sh` builds real local git repositories (`work/awesome-project` with `work/malicious-lib` registered as a genuine submodule). A real `git clone --recurse-submodules` fetches the malicious submodule, and `npm install` triggers the submodule's `postinstall.sh` through the normal npm lifecycle — exactly as the attack works against a real developer machine. No shortcuts or manual script invocations.
+> **Live attack mechanism:** `setup.sh` builds real local git repositories (`work/awesome-project` with `work/malicious-lib` registered as a genuine submodule). A real `git clone --recurse-submodules` fetches the malicious submodule, and `npm install` triggers the submodule's `postinstall.sh` through the normal npm lifecycle - exactly as the attack works against a real developer machine. No shortcuts or manual script invocations.
 
 
 
@@ -82,24 +82,24 @@ export TESTBENCH_MODE=enabled
 
 Use two terminals. All paths are relative to `scenarios/10-git-submodule-attack`.
 
-### Terminal A — mock attacker server
+### Terminal A - mock attacker server
 
 ```bash
 node infrastructure/mock-server.js
 ```
 
-### Terminal B — real git clone + npm install (the authentic attack path)
+### Terminal B - real git clone + npm install (the authentic attack path)
 
 ```bash
 # 1. Build real local git repos (setup.sh does this automatically; re-run any time)
 bash infrastructure/build-repos.sh
 
-# 2. Clone just like a developer would — --recurse-submodules fetches the malicious submodule
+# 2. Clone just like a developer would - --recurse-submodules fetches the malicious submodule
 git -c protocol.file.allow=always clone --recurse-submodules \
     work/awesome-project work/victim-clone
 
 # 3. npm install triggers the REAL postinstall hook from inside the submodule
-#    ⚠️  TESTBENCH_MODE must be set in the SAME terminal — env vars don't cross sessions
+#    ⚠️  TESTBENCH_MODE must be set in the SAME terminal - env vars don't cross sessions
 export TESTBENCH_MODE=enabled && npm --prefix work/victim-clone install
 
 # 4. Verify the capture arrived
@@ -112,7 +112,7 @@ node detection-tools/submodule-validator.js work/victim-clone
 ### What you'll observe
 
 - `git clone --recurse-submodules` fetches `libs/malicious-submodule/` from the poisoned source repo
-- `npm install` triggers `postinstall.sh` inside that submodule — **no manual invocation needed**
+- `npm install` triggers `postinstall.sh` inside that submodule - **no manual invocation needed**
 - The mock C2 server logs the exfiltrated host details
 
 ## 📝 Lab Tasks

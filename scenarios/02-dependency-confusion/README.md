@@ -3,7 +3,7 @@
 
 
 
-> **Live registry race mechanism:** `setup.sh` packs `@techcorp/auth-lib@999.999.999` into a real `.tgz` tarball and starts `infrastructure/registry-server.js` — a minimal npm registry server on port 4874. `corporate-app/.npmrc` sets `@techcorp:registry=http://localhost:4874/`, which is the *misconfigured* state (should point to the internal registry). npm resolves `@techcorp/auth-lib` from the attacker-controlled server, downloads `v999.999.999`, and the malicious `postinstall` fires — the authentic Alex Birsan-style registry race, locally reproduced.
+> **Live registry race mechanism:** `setup.sh` packs `@techcorp/auth-lib@999.999.999` into a real `.tgz` tarball and starts `infrastructure/registry-server.js` - a minimal npm registry server on port 4874. `corporate-app/.npmrc` sets `@techcorp:registry=http://localhost:4874/`, which is the *misconfigured* state (should point to the internal registry). npm resolves `@techcorp/auth-lib` from the attacker-controlled server, downloads `v999.999.999`, and the malicious `postinstall` fires - the authentic Alex Birsan-style registry race, locally reproduced.
 
 
 
@@ -84,7 +84,7 @@ export TESTBENCH_MODE=enabled
 
 Use two terminals. All paths are relative to `scenarios/02-dependency-confusion`.
 
-### Terminal A — mock attacker server
+### Terminal A - mock attacker server
 
 ```bash
 node infrastructure/mock-server.js
@@ -92,20 +92,20 @@ node infrastructure/mock-server.js
 
 Leave this running. The malicious package posts to `http://localhost:3000/collect` when you run the victim with `TESTBENCH_MODE=enabled`.
 
-### Terminal B — start the fake public registry
+### Terminal B - start the fake public registry
 
 ```bash
-# Attacker-controlled registry — serves @techcorp/auth-lib@999.999.999
+# Attacker-controlled registry - serves @techcorp/auth-lib@999.999.999
 node infrastructure/registry-server.js
 ```
 
-### Terminal C — victim (npm resolves from the attacker's registry)
+### Terminal C - victim (npm resolves from the attacker's registry)
 
 ```bash
 # Reconnaissance: see what internal package names leaked
 cat leaked-data/package.json
 
-# Inspect the vulnerable .npmrc — @techcorp:registry points to localhost:4874
+# Inspect the vulnerable .npmrc - @techcorp:registry points to localhost:4874
 cat corporate-app/.npmrc
 
 # Inspect the attacker's package (v999.999.999 beats any internal version)

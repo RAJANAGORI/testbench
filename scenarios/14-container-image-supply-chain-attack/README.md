@@ -69,13 +69,13 @@ export TESTBENCH_MODE=enabled
 
 Use two terminals. All paths are relative to `scenarios/14-container-image-supply-chain-attack`.
 
-### Terminal A — mock attacker server
+### Terminal A - mock attacker server
 
 ```bash
 node infrastructure/mock-server.js
 ```
 
-### Terminal B — static scan, runtime simulation, optional Docker
+### Terminal B - static scan, runtime simulation, optional Docker
 
 ```bash
 node detection-tools/image-scanner.js images/compromised-image

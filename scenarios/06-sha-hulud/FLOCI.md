@@ -16,7 +16,7 @@ export TESTBENCH_MODE=enabled SCAS_FLOCI_ENABLED=1
 
 Dual-write: `:3001/collect` (mock) + `s3://scas-sc06-artifacts/exfil/harvested-credentials-*.json`
 
-Lookalike decoys (LAB ONLY): Secrets Manager `scas/sc06/decoy-npm-token`, `decoy-github-pat`, `decoy-aws` — canonical values in `scenarios/_shared/lookalike-secrets.env`.
+Lookalike decoys (LAB ONLY): Secrets Manager `scas/sc06/decoy-npm-token`, `decoy-github-pat`, `decoy-aws` - canonical values in `scenarios/_shared/lookalike-secrets.env`.
 
 Extended seed also creates **SQS** `scas-sc06-worm-events`, **SNS** `scas-sc06-worm-replicated`, and an **EventBridge** harvest event for worm fan-out narrative.
 

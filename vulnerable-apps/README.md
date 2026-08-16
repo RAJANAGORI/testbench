@@ -1,6 +1,6 @@
 # Vulnerable sample applications
 
-Optional targets for supply-chain labs. Each app is **intentionally weak** — use only in isolated environments with `TESTBENCH_MODE=enabled`.
+Optional targets for supply-chain labs. Each app is **intentionally weak** - use only in isolated environments with `TESTBENCH_MODE=enabled`.
 
 | App | Path | Used by |
 |-----|------|---------|

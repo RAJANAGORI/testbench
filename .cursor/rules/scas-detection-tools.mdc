@@ -21,14 +21,14 @@ Mock servers call: `forwardCaptureIfEnabled(__dirname, captureEntry).catch(() =>
 
 ## Scanners
 
-- `package-scanner.js` — shared Node project scanner (text/JSON/SARIF)
-- Scenario-local scanners live under `scenarios/NN-*/detection-tools/` — match their sibling scenario's IOCs
+- `package-scanner.js` - shared Node project scanner (text/JSON/SARIF)
+- Scenario-local scanners live under `scenarios/NN-*/detection-tools/` - match their sibling scenario's IOCs
 
 ## Doc / diagram metadata
 
-- `es/scenario-observability.json` — Kibana / doc-gen metadata
-- `es/scenario-diagram-steps.js` — lab flow steps; edit before `generate-observability-section.js`
+- `es/scenario-observability.json` - Kibana / doc-gen metadata
+- `es/scenario-diagram-steps.js` - lab flow steps; edit before `generate-observability-section.js`
 
 ## Floci track (all 23 scenarios; extended on 05, 06, 11, 14, 17, 19, 23)
 
-Helpers in `floci/` — `floci-exfil.js`, `floci_exfil.py`, `s3-exfil-check.sh`, `cloudtrail-hunt.sh`, etc. See `documentation/guides/FLOCI_INTEGRATION.md`.
+Helpers in `floci/` - `floci-exfil.js`, `floci_exfil.py`, `s3-exfil-check.sh`, `cloudtrail-hunt.sh`, etc. See `documentation/guides/FLOCI_INTEGRATION.md`.

@@ -3,7 +3,7 @@
 
 
 
-> **Simulation scope:** The malicious transitive dependency is introduced by replacing `node_modules/data-processor` with the compromised copy (modeling a poisoned package pulled in through a trusted parent). Because the package is already on disk, its `postinstall` is triggered explicitly in "Run the lab" — re-running `npm install` alone will not re-fire it.
+> **Simulation scope:** The malicious transitive dependency is introduced by replacing `node_modules/data-processor` with the compromised copy (modeling a poisoned package pulled in through a trusted parent). Because the package is already on disk, its `postinstall` is triggered explicitly in "Run the lab" - re-running `npm install` alone will not re-fire it.
 
 
 
@@ -95,13 +95,13 @@ export TESTBENCH_MODE=enabled
 
 Use two terminals (or background the mock server). All paths are relative to `scenarios/07-transitive-dependency`.
 
-### Terminal A — mock attacker server
+### Terminal A - mock attacker server
 
 ```bash
 node infrastructure/mock-server.js
 ```
 
-### Terminal B — swap in compromised transitive and run victim
+### Terminal B - swap in compromised transitive and run victim
 
 ```bash
 cat legitimate-packages/web-utils/index.js

@@ -39,7 +39,7 @@ rule Transitive_Dependency_IOC {
 
 ## Mitigation
 
-- Pin exact dependency versions — avoid loose semver ranges on critical packages.
+- Pin exact dependency versions - avoid loose semver ranges on critical packages.
 - Commit `package-lock.json` and use `npm ci` in CI/CD.
 - Run automated scanning (`npm audit`, SBOM tools) across the full dependency tree.
 - Generate and maintain SBOMs for transitive dependency visibility.

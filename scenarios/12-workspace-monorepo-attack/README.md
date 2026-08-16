@@ -85,13 +85,13 @@ export TESTBENCH_MODE=enabled
 
 Use two terminals (or background the mock server). Paths are relative to `scenarios/12-workspace-monorepo-attack` unless noted.
 
-### Terminal A — mock attacker server
+### Terminal A - mock attacker server
 
 ```bash
 node infrastructure/mock-server.js
 ```
 
-### Terminal B — bootstrap workspace, swap compromised package, capture, victim app
+### Terminal B - bootstrap workspace, swap compromised package, capture, victim app
 
 Workspace root (scenario directory):
 
