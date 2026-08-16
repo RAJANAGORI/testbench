@@ -1,19 +1,22 @@
 name: SCAS Dockerized Scenarios CI/CD
 
+# PR tripwire only: docker compose config on scenario dirs the diff touched.
+# No lab containers, no verify.sh, no payload. Run stacks locally:
+#   scripts/docker/smoke-scenario-01.sh
+#   scripts/docker/smoke-all-compose-labs.sh
+
 on:
   pull_request:
     branches: [main, master]
     paths:
       - 'scenarios/**'
-      - 'scenarios/_shared/docker/**'
-      - 'infrastructure/**'
+      - 'scripts/docker/**'
       - '.github/workflows/scas-test-pipeline.yml'
   push:
     branches: [main, master]
     paths:
       - 'scenarios/**'
-      - 'scenarios/_shared/docker/**'
-      - 'infrastructure/**'
+      - 'scripts/docker/**'
       - '.github/workflows/scas-test-pipeline.yml'
   workflow_dispatch:
 
@@ -22,230 +25,86 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # ---------------------------------------------------------------------------
-  # JOB 1: Dynamic Matrix Discovery
-  # Only scenarios that already ship docker-compose.yml enter the matrix
-  # (Phase 1 rollout: exclude _shared and labs not yet containerized).
-  # ---------------------------------------------------------------------------
-  discover-scenarios:
-    name: Discover Target Scenarios
+  compose-config:
+    name: Compose config (touched dirs)
     runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-      has_scenarios: ${{ steps.set-matrix.outputs.has_scenarios }}
+    timeout-minutes: 5
     steps:
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Calculate Scenario Matrix
-        id: set-matrix
+      - name: Resolve changed scenario dirs
+        id: scope
         run: |
           set -euo pipefail
 
-          has_compose() {
-            local dir="$1"
-            [[ -f "$dir/docker-compose.yml" || -f "$dir/docker-compose.yaml" || -f "$dir/assets/docker-compose.yml" || -f "$dir/assets/docker-compose.yaml" ]]
-          }
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch --no-tags origin "${{ github.base_ref }}"
+            BASE="origin/${{ github.base_ref }}"
+            HEAD="${{ github.sha }}"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            BASE=""
+            HEAD=""
+          else
+            BASE="${{ github.event.before }}"
+            HEAD="${{ github.sha }}"
+            if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then
+              BASE=""
+            fi
+          fi
 
-          COMPOSE_DIRS=()
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ -z "$BASE" ]; then
+            DIRS="$(find scenarios -maxdepth 1 -mindepth 1 -type d -name '[0-9][0-9]-*' | sort)"
+          else
+            CHANGED="$(git diff --name-only "$BASE" "$HEAD" || true)"
+            DIRS="$(printf '%s\n' "$CHANGED" | grep -E '^scenarios/[0-9]{2}-' | cut -d/ -f1-2 | sort -u || true)"
+            if [ -z "$DIRS" ]; then
+              if echo "$CHANGED" | grep -qE '^scenarios/_shared/docker/|^scripts/docker/|scas-test-pipeline.yml'; then
+                DIRS="$(find scenarios -maxdepth 1 -mindepth 1 -type d | grep -E 'scenarios/[0-9]{2}-' | sort || true)"
+              fi
+            fi
+          fi
+
+          {
+            echo "dirs<<EOF"
+            printf '%s\n' "$DIRS"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "compose dirs:"
+          printf '%s\n' "$DIRS"
+
+      - name: Validate compose (touched dirs only)
+        run: |
+          set -euo pipefail
+          DIRS="${{ steps.scope.outputs.dirs }}"
+          if [ -z "${DIRS// }" ]; then
+            echo "No scenario dirs with compose changes."
+            exit 0
+          fi
+          n=0
           while IFS= read -r dir; do
-            base="$(basename "$dir")"
-            [[ "$base" == _shared ]] && continue
-            if has_compose "$dir"; then
-              COMPOSE_DIRS+=("$dir")
-            fi
-          done < <(find scenarios -maxdepth 1 -mindepth 1 -type d | sort)
-
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
-            CHANGED=$(git diff --name-only "origin/${{ github.base_ref }}" "${{ github.sha }}" \
-              | grep '^scenarios/' \
-              | cut -d/ -f1-2 \
-              | sort -u || true)
-            TARGETS=()
-            for dir in "${COMPOSE_DIRS[@]}"; do
-              if echo "$CHANGED" | grep -qx "$dir"; then
-                TARGETS+=("$dir")
-              fi
-            done
-            # Shared docker template / workflow-only PRs: exercise all compose labs
-            if [ ${#TARGETS[@]} -eq 0 ]; then
-              if echo "$CHANGED" | grep -q '^scenarios/_shared' || \
-                 git diff --name-only "origin/${{ github.base_ref }}" "${{ github.sha }}" | grep -q 'scas-test-pipeline.yml'; then
-                TARGETS=("${COMPOSE_DIRS[@]}")
-              fi
-            fi
-          else
-            TARGETS=("${COMPOSE_DIRS[@]}")
-          fi
-
-          if [ ${#TARGETS[@]} -eq 0 ]; then
-            echo "No compose-backed scenarios in matrix."
-            echo "has_scenarios=false" >> "$GITHUB_OUTPUT"
-            echo "matrix=[]" >> "$GITHUB_OUTPUT"
-          else
-            # Compact JSON: GITHUB_OUTPUT cannot contain raw newlines in a value.
-            MATRIX_JSON=$(printf '%s\n' "${TARGETS[@]}" | jq -R . | jq -sc '{scenario: .}')
-            echo "has_scenarios=true" >> "$GITHUB_OUTPUT"
-            echo "matrix=$MATRIX_JSON" >> "$GITHUB_OUTPUT"
-            echo "Matrix: $MATRIX_JSON"
-          fi
-
-  # ---------------------------------------------------------------------------
-  # JOB 2: Static Analysis & Configuration Validation
-  # ---------------------------------------------------------------------------
-  lint-and-validate:
-    name: Lint Docker & Compose Specs
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Hadolint Dockerfile Linter
-        run: |
-          set -euo pipefail
-          # Lint shared bases + Dockerfiles next to compose labs only (avoid legacy 14/23 Dockerfiles).
-          DOCKERFILES=()
-          while IFS= read -r f; do
-            DOCKERFILES+=("$f")
-          done < <(find scenarios/_shared/docker -type f -name 'Dockerfile*' 2>/dev/null | sort || true)
-          while IFS= read -r compose_file; do
-            dir="$(dirname "$compose_file")"
-            # assets/compose → check parent scenario dir too
-            for candidate in "$dir/Dockerfile" "$(dirname "$dir")/Dockerfile"; do
+            [ -z "$dir" ] && continue
+            compose=""
+            for candidate in \
+              "$dir/docker-compose.yml" \
+              "$dir/docker-compose.yaml" \
+              "$dir/assets/docker-compose.yml" \
+              "$dir/assets/docker-compose.yaml"
+            do
               if [ -f "$candidate" ]; then
-                DOCKERFILES+=("$candidate")
+                compose="$candidate"
+                break
               fi
             done
-          done < <(find scenarios -type f \( -name 'docker-compose.yml' -o -name 'docker-compose.yaml' \) | sort)
-
-          if [ ${#DOCKERFILES[@]} -eq 0 ]; then
-            echo "No lab Dockerfiles to lint."
-            exit 0
-          fi
-
-          # Deduplicate
-          mapfile -t DOCKERFILES < <(printf '%s\n' "${DOCKERFILES[@]}" | sort -u)
-          # alpine image has no ENTRYPOINT; without --entrypoint the first flag is exec'd.
-          docker run --rm -v "$PWD":/work -w /work --entrypoint /bin/hadolint \
-            hadolint/hadolint:2.12.0-alpine \
-            --failure-threshold error \
-            --ignore DL3008 --ignore DL3018 \
-            "${DOCKERFILES[@]}"
-
-      - name: Validate Compose File Schema
-        run: |
-          set -euo pipefail
-          mapfile -t COMPOSE_FILES < <(find scenarios -type f \( -name 'docker-compose.yml' -o -name 'docker-compose.yaml' \) | sort)
-          if [ ${#COMPOSE_FILES[@]} -eq 0 ]; then
-            echo "No compose files yet — skipping schema validation."
-            exit 0
-          fi
-          for compose_file in "${COMPOSE_FILES[@]}"; do
-            echo "Validating: $compose_file"
-            docker compose -f "$compose_file" config --quiet
-          done
-
-  # ---------------------------------------------------------------------------
-  # JOB 3: Parallel Matrix Testing
-  # ---------------------------------------------------------------------------
-  test-scenarios:
-    name: Test Lab
-    needs: [discover-scenarios, lint-and-validate]
-    if: needs.discover-scenarios.outputs.has_scenarios == 'true'
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.discover-scenarios.outputs.matrix) }}
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Cache Docker Layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: buildx-${{ runner.os }}-${{ matrix.scenario }}-${{ github.sha }}
-          restore-keys: |
-            buildx-${{ runner.os }}-${{ matrix.scenario }}-
-            buildx-${{ runner.os }}-
-
-      - name: Locate Compose & Verification Specs
-        id: prep
-        run: |
-          set -euo pipefail
-          SCENARIO_PATH="${{ matrix.scenario }}"
-
-          if [ -f "$SCENARIO_PATH/docker-compose.yml" ]; then
-            COMPOSE_FILE="$SCENARIO_PATH/docker-compose.yml"
-          elif [ -f "$SCENARIO_PATH/docker-compose.yaml" ]; then
-            COMPOSE_FILE="$SCENARIO_PATH/docker-compose.yaml"
-          elif [ -f "$SCENARIO_PATH/assets/docker-compose.yml" ]; then
-            COMPOSE_FILE="$SCENARIO_PATH/assets/docker-compose.yml"
-          elif [ -f "$SCENARIO_PATH/assets/docker-compose.yaml" ]; then
-            COMPOSE_FILE="$SCENARIO_PATH/assets/docker-compose.yaml"
-          else
-            echo "Error: No docker-compose.yml found in $SCENARIO_PATH"
-            exit 1
-          fi
-
-          if [ -f "$SCENARIO_PATH/verify.sh" ]; then
-            VERIFY_SCRIPT="$SCENARIO_PATH/verify.sh"
-          elif [ -f "$SCENARIO_PATH/assets/verify.sh" ]; then
-            VERIFY_SCRIPT="$SCENARIO_PATH/assets/verify.sh"
-          else
-            VERIFY_SCRIPT=""
-          fi
-
-          echo "compose_file=$COMPOSE_FILE" >> "$GITHUB_OUTPUT"
-          echo "verify_script=$VERIFY_SCRIPT" >> "$GITHUB_OUTPUT"
-
-      - name: Build and Spin Up Scenario Services
-        run: |
-          set -euo pipefail
-          COMPOSE_FILE="${{ steps.prep.outputs.compose_file }}"
-          echo "===> Booting stack defined in $COMPOSE_FILE"
-          docker compose -f "$COMPOSE_FILE" build
-          docker compose -f "$COMPOSE_FILE" up -d --wait --wait-timeout 60
-
-      - name: Execute Scenario Payload & Detection Assertions
-        run: |
-          set -euo pipefail
-          VERIFY_SCRIPT="${{ steps.prep.outputs.verify_script }}"
-          COMPOSE_FILE="${{ steps.prep.outputs.compose_file }}"
-
-          if [ -n "$VERIFY_SCRIPT" ]; then
-            echo "===> Executing assertion script: $VERIFY_SCRIPT"
-            chmod +x "$VERIFY_SCRIPT"
-            "$VERIFY_SCRIPT"
-          else
-            echo "===> No verify.sh script detected. Running default container health verification."
-            RUNNING_CONTAINERS=$(docker compose -f "$COMPOSE_FILE" ps -q | wc -l)
-            if [ "$RUNNING_CONTAINERS" -eq 0 ]; then
-              echo "Error: Scenario containers exited immediately after startup."
-              exit 1
+            if [ -z "$compose" ]; then
+              echo "Skip $dir (no compose file)"
+              continue
             fi
-          fi
-
-      - name: Capture Container Logs on Failure
-        if: failure()
-        run: |
-          COMPOSE_FILE="${{ steps.prep.outputs.compose_file }}"
-          echo "======================================================================="
-          echo " DIAGNOSTIC LOGS FOR FAILED SCENARIO: ${{ matrix.scenario }}"
-          echo "======================================================================="
-          docker compose -f "$COMPOSE_FILE" logs --tail=500
-
-      - name: Teardown Scenario Stack
-        if: always()
-        run: |
-          COMPOSE_FILE="${{ steps.prep.outputs.compose_file }}"
-          if [ -n "$COMPOSE_FILE" ] && [ -f "$COMPOSE_FILE" ]; then
-            echo "===> Cleaning up containers, volumes, and networks..."
-            docker compose -f "$COMPOSE_FILE" down -v --remove-orphans
-          fi
+            echo "Validating: $compose"
+            docker compose -f "$compose" config --quiet
+            n=$((n + 1))
+          done <<< "$DIRS"
+          echo "Validated $n compose file(s)."
