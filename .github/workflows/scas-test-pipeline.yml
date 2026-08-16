@@ -85,9 +85,10 @@ jobs:
             echo "has_scenarios=false" >> "$GITHUB_OUTPUT"
             echo "matrix=[]" >> "$GITHUB_OUTPUT"
           else
-            MATRIX_JSON=$(printf '%s\n' "${TARGETS[@]}" | jq -R . | jq -s .)
+            # Compact JSON: GITHUB_OUTPUT cannot contain raw newlines in a value.
+            MATRIX_JSON=$(printf '%s\n' "${TARGETS[@]}" | jq -R . | jq -sc '{scenario: .}')
             echo "has_scenarios=true" >> "$GITHUB_OUTPUT"
-            echo "matrix={\"scenario\": $MATRIX_JSON}" >> "$GITHUB_OUTPUT"
+            echo "matrix=$MATRIX_JSON" >> "$GITHUB_OUTPUT"
             echo "Matrix: $MATRIX_JSON"
           fi
 
@@ -126,7 +127,9 @@ jobs:
 
           # Deduplicate
           mapfile -t DOCKERFILES < <(printf '%s\n' "${DOCKERFILES[@]}" | sort -u)
-          docker run --rm -v "$PWD":/work -w /work hadolint/hadolint:2.12.0-alpine \
+          # alpine image has no ENTRYPOINT; without --entrypoint the first flag is exec'd.
+          docker run --rm -v "$PWD":/work -w /work --entrypoint /bin/hadolint \
+            hadolint/hadolint:2.12.0-alpine \
             --failure-threshold error \
             --ignore DL3008 --ignore DL3018 \
             "${DOCKERFILES[@]}"
