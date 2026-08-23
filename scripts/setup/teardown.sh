@@ -56,8 +56,8 @@ find "${ROOT_DIR}/scenarios" -type f \
   \( -name "captured-data.json" -o -name "captured-credentials.json" \) \
   -exec rm -f {} \;
 
-echo "Removing scenario and sample app node_modules..."
-find "${ROOT_DIR}/scenarios" "${ROOT_DIR}/vulnerable-apps" -type d -name "node_modules" -prune -exec rm -rf {} +
+echo "Removing scenario node_modules..."
+find "${ROOT_DIR}/scenarios" -type d -name "node_modules" -prune -exec rm -rf {} +
 
 if [[ "${SCAS_STOP_OBSERVABILITY:-}" == "1" ]]; then
   echo "Stopping optional Elasticsearch + Kibana stack..."

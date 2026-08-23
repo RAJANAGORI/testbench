@@ -51,7 +51,6 @@ For the full numbered list, see [Scenario walkthroughs](documentation/reference/
 ```
 supply-chain-attack-simulator/
 ├── scenarios/                  # Labs 01-23
-├── vulnerable-apps/            # Optional sample app (scenario 03)
 ├── malicious-packages/         # Example packages for learning
 ├── detection-tools/            # Scanners and helpers
 ├── observability/              # Optional Elasticsearch + Kibana

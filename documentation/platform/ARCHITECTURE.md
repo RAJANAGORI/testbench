@@ -19,7 +19,6 @@ supply-chain-attack-simulator/
 ├── documentation/          # Canonical docs (YOU ARE HERE)
 ├── docs/                   # GitHub Pages (index.html + symlinks → documentation/)
 ├── scripts/                # setup/, smoke/, observability/, diagrams/, docs/, ui/, floci/, lib/
-├── vulnerable-apps/        # Sample vulnerable applications
 └── .github/                # CI (smoke.yml), issue templates
 ```
 
