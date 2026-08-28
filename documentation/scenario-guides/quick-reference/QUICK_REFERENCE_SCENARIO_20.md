@@ -1,46 +1,104 @@
-# Quick Reference - Scenario 20: Package Version Confusion
+# Quick Reference: Scenario 20 - Package version confusion
 
-Use this as your runbook for Scenario 20 when you are teaching live or practicing quickly.
+Highest semver wins inside `victim-app/index.js`, not npm's resolver. `npm start` does the confusion. Port **3020**.
 
-
-
-
+Do not tell the room "npm picked the wrong version." The lab's own resolver did. The README simulation-scope block is the honest line.
 
 ## Table of Contents
 
 <div class="doc-toc">
 
-- [Setup](#setup)
-- [Mock server](#mock-server)
-- [Run](#run)
-- [Inspect](#inspect)
-- [Evidence](#evidence)
-- [Detect](#detect)
+- [Boot](#boot)
+- [Resolve then start](#resolve-then-start)
+- [Detector](#detector)
+- [Handy extras](#handy-extras)
+- [Layout](#layout)
+- [Teaching trap](#teaching-trap)
+- [Companion docs](#companion-docs)
 
 </div>
 
 ---
-## Setup
+## Boot
 
-`cd scenarios/20-package-version-confusion && export TESTBENCH_MODE=enabled && ./setup.sh`
+```bash
+source .scas.env
+echo $TESTBENCH_MODE
+cd scenarios/20-package-version-confusion
+export TESTBENCH_MODE=enabled
+./setup.sh
+node infrastructure/mock-server.js
+```
 
-## Mock server
+Listen on 3020.
 
-`node scenarios/20-package-version-confusion/infrastructure/mock-server.js` (port **3020**)
+## Resolve then start
 
-## Run
+```bash
+cd scenarios/20-package-version-confusion/victim-app
+rm -rf node_modules package-lock.json
+npm install
+export TESTBENCH_MODE=enabled
+npm start
+curl -s http://127.0.0.1:3020/captured-data
+cat installed-version.json
+```
 
-`cd scenarios/20-package-version-confusion/victim-app && npm start`
+Registry fixtures:
 
-## Inspect
+```text
+registry/version-confuser-lib/1.0.1/
+registry/version-confuser-lib/999.999.999/
+```
 
-`scenarios/20-package-version-confusion/victim-app/installed-version.json` · versions under `scenarios/20-package-version-confusion/registry/`
+The ridiculous version is the trap. Confirm selected version before and after `npm start`.
 
-## Evidence
+## Detector
 
-`curl http://localhost:3020/captured-data` · `scenarios/20-package-version-confusion/infrastructure/captured-data.json`
+From scenario root:
 
-## Detect
+```bash
+cd scenarios/20-package-version-confusion
+node detection-tools/version-confusion-detector.js victim-app
+curl -X DELETE http://127.0.0.1:3020/captured-data
+```
 
-`node scenarios/20-package-version-confusion/detection-tools/version-confusion-detector.js scenarios/20-package-version-confusion/victim-app`
+## Handy extras
 
+```bash
+echo $TESTBENCH_MODE
+lsof -i :3020
+./scripts/setup/kill-port.sh 3020
+export SCAS_FLOCI_ENABLED=1
+./infrastructure/floci/seed.sh
+../../detection-tools/floci/cloud-context.sh 20
+```
+
+## Layout
+
+```text
+scenarios/20-package-version-confusion/
+├── registry/version-confuser-lib/1.0.1/
+├── registry/version-confuser-lib/999.999.999/
+├── victim-app/installed-version.json
+├── detection-tools/version-confusion-detector.js
+├── infrastructure/mock-server.js     # :3020
+├── DETECT.md
+└── FLOCI.md
+```
+
+## Teaching trap
+
+| Problem | What I check |
+|---------|----------------|
+| Empty capture | Gate, mock, `npm start` not run |
+| Detector disagrees with npm ls | Expected. Lab resolver, not npm |
+| Port busy | `kill-port.sh 3020` |
+| Students rewriting package.json | Stop them. The resolver is the demo |
+
+## Companion docs
+
+- Walkthrough: `../zero-to-hero/ZERO_TO_HERO_SCENARIO_20.md`
+- Lab README: `scenarios/20-package-version-confusion/README.md`
+- DETECT.md and FLOCI.md in that folder
+- Session setup: `../../getting-started/SETUP.md`

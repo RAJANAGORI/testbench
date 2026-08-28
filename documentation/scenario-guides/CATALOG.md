@@ -1,4 +1,4 @@
-# Scenario catalog (01-23)
+# Scenario catalog (01-29)
 
 Complete index of every lab. Use this table as the fastest way to jump to **runtime instructions**, **blue-team runbooks**, **learner walkthroughs**, and **instructor modules**.
 
@@ -27,12 +27,18 @@ Complete index of every lab. Use this table as the fastest way to jump to **runt
 | 21 | [Axios-style npm release](../../scenarios/21-axios-compromised-release-attack/) | Advanced | 3021 | `POST /beacon` | [README](../../scenarios/21-axios-compromised-release-attack/README.md) · [DETECT](../../scenarios/21-axios-compromised-release-attack/DETECT.md) · [Zero-to-Hero](./zero-to-hero/ZERO_TO_HERO_SCENARIO_21.md) · [Quick Ref](./quick-reference/QUICK_REFERENCE_SCENARIO_21.md) · [Module](../modules/MODULE_INSTANCE_SCENARIO_21.md) |
 | 22 | [LiteLLM-style PyPI compromise](../../scenarios/22-litellm-pypi-compromise/) | Advanced | 3022 | `POST /collect` | [README](../../scenarios/22-litellm-pypi-compromise/README.md) · [DETECT](../../scenarios/22-litellm-pypi-compromise/DETECT.md) · [Zero-to-Hero](./zero-to-hero/ZERO_TO_HERO_SCENARIO_22.md) · [Quick Ref](./quick-reference/QUICK_REFERENCE_SCENARIO_22.md) · [Module](../modules/MODULE_INSTANCE_SCENARIO_22.md) |
 | 23 | [Trivy Supply Chain Attack](../../scenarios/23-trivy-supply-chain-attack/) | Advanced | 3023 | `POST /collect` | [README](../../scenarios/23-trivy-supply-chain-attack/README.md) · [DETECT](../../scenarios/23-trivy-supply-chain-attack/DETECT.md) · [Zero-to-Hero](./zero-to-hero/ZERO_TO_HERO_SCENARIO_23.md) · [Quick Ref](./quick-reference/QUICK_REFERENCE_SCENARIO_23.md) · [Module](../modules/MODULE_INSTANCE_SCENARIO_23.md) |
+| 24 | [Slopsquatting](../../scenarios/24-slopsquatting/) | Intermediate | 3024 | `POST /collect` | [README](../../scenarios/24-slopsquatting/README.md) · [DETECT](../../scenarios/24-slopsquatting/DETECT.md) · [Zero-to-Hero](./zero-to-hero/ZERO_TO_HERO_SCENARIO_24.md) · [Quick Ref](./quick-reference/QUICK_REFERENCE_SCENARIO_24.md) · [Module](../modules/MODULE_INSTANCE_SCENARIO_24.md) |
+| 25 | [Compromised reusable GitHub Action](../../scenarios/25-gha-reusable-workflow/) | Advanced | 3025 | `POST /collect` | [README](../../scenarios/25-gha-reusable-workflow/README.md) · [DETECT](../../scenarios/25-gha-reusable-workflow/DETECT.md) · [Zero-to-Hero](./zero-to-hero/ZERO_TO_HERO_SCENARIO_25.md) · [Quick Ref](./quick-reference/QUICK_REFERENCE_SCENARIO_25.md) · [Module](../modules/MODULE_INSTANCE_SCENARIO_25.md) |
+| 26 | [Malicious MCP server](../../scenarios/26-malicious-mcp-server/) | Advanced | 3026 | `POST /collect` | [README](../../scenarios/26-malicious-mcp-server/README.md) · [DETECT](../../scenarios/26-malicious-mcp-server/DETECT.md) · [Zero-to-Hero](./zero-to-hero/ZERO_TO_HERO_SCENARIO_26.md) · [Quick Ref](./quick-reference/QUICK_REFERENCE_SCENARIO_26.md) · [Module](../modules/MODULE_INSTANCE_SCENARIO_26.md) |
+| 27 | [npm provenance bypass](../../scenarios/27-npm-provenance-bypass/) | Advanced | 3027 | `POST /collect` | [README](../../scenarios/27-npm-provenance-bypass/README.md) · [DETECT](../../scenarios/27-npm-provenance-bypass/DETECT.md) · [Zero-to-Hero](./zero-to-hero/ZERO_TO_HERO_SCENARIO_27.md) · [Quick Ref](./quick-reference/QUICK_REFERENCE_SCENARIO_27.md) · [Module](../modules/MODULE_INSTANCE_SCENARIO_27.md) |
+| 28 | [Go module confusion](../../scenarios/28-go-module-confusion/) | Advanced | 3028 | `POST /collect` | [README](../../scenarios/28-go-module-confusion/README.md) · [DETECT](../../scenarios/28-go-module-confusion/DETECT.md) · [Zero-to-Hero](./zero-to-hero/ZERO_TO_HERO_SCENARIO_28.md) · [Quick Ref](./quick-reference/QUICK_REFERENCE_SCENARIO_28.md) · [Module](../modules/MODULE_INSTANCE_SCENARIO_28.md) |
+| 29 | [Hugging Face-style model artifact](../../scenarios/29-hf-model-artifact/) | Advanced | 3029 | `POST /collect` | [README](../../scenarios/29-hf-model-artifact/README.md) · [DETECT](../../scenarios/29-hf-model-artifact/DETECT.md) · [Zero-to-Hero](./zero-to-hero/ZERO_TO_HERO_SCENARIO_29.md) · [Quick Ref](./quick-reference/QUICK_REFERENCE_SCENARIO_29.md) · [Module](../modules/MODULE_INSTANCE_SCENARIO_29.md) |
 
 ## Special infrastructure notes
 
 ### Optional Floci cloud track
 
-All **23** scenarios support optional dual-write to Floci S3 (`source .floci.env`). Extended AWS primitives on **05, 06, 11, 14, 17, 19, 23**. Hub: [FLOCI_INTEGRATION.md](../guides/FLOCI_INTEGRATION.md) · per-scenario `FLOCI.md`.
+All **29** scenarios support optional Floci (`source .floci.env`). Seed plants a dummy org (S3 `org/`, IAM, STS, SSM, Logs, EventBridge) plus story-shaped services. Dump: `detection-tools/floci/cloud-context.sh NN`. Hub: [FLOCI_INTEGRATION.md](../guides/FLOCI_INTEGRATION.md) · per-scenario `FLOCI.md`.
 
 | Scenario | Extra listeners | Notes |
 |----------|-----------------|-------|

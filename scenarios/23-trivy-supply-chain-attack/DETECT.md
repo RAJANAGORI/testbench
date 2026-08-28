@@ -60,4 +60,5 @@ rule Trivy_Supply_Chain_IOC {
 
 ## Floci (optional cloud track)
 - Unexpected `PutObject` under `s3://scas-sc23-artifacts/exfil/` when `SCAS_FLOCI_ENABLED=1`.
+- After seed, dump the pretend org (S3 `org/`, Secrets Manager, SSM, Logs): `detection-tools/floci/cloud-context.sh 23`.
 - Verify: `./infrastructure/floci/verify.sh` or `detection-tools/floci/s3-exfil-check.sh 23`.

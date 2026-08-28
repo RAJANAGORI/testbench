@@ -9,7 +9,10 @@ cd scenarios/20-package-version-confusion
 ./infrastructure/floci/seed.sh
 # ... run normal README lab steps ...
 ./infrastructure/floci/verify.sh
+../../detection-tools/floci/cloud-context.sh 20
 ../../detection-tools/floci/s3-exfil-check.sh 20
 ```
 
 Dual-write: mock server (primary) + `s3://scas-sc20-artifacts/exfil/version-exfil-*.json`
+
+SSM `/scas/sc20/canonical-version` stays `1.2.3` unless you change it. EventBridge `scas.version.resolve` is the seed ping.

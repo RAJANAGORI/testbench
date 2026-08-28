@@ -77,7 +77,7 @@ warm_dashboard_routes() {
   echo "Precompiling dashboard routes…"
   local path
   # /scenarios/01 compiles shared app/scenarios/[id] for all 23 labs (not per-id bundles).
-  for path in / /scenarios /scenarios/01 /teardown; do
+  for path in / /learn /scenarios /scenarios/01 /teardown; do
     if curl -sf --max-time 120 "http://127.0.0.1:3100${path}" >/dev/null; then
       echo "  ✓ ${path}"
     else

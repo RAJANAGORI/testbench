@@ -1,41 +1,114 @@
-# Quick Reference - Scenario 15: Developer Tool Compromise
+# Quick Reference: Scenario 15 - Developer tool compromise
 
-Use this as your runbook for Scenario 15 when you are teaching live or practicing quickly.
+Lab 15 is a malicious local "dev tool" package, not an IDE marketplace install. Port **3015**. Distinct from 26 (MCP `tools/call` on a server the agent already trusted).
 
-
-
-
+I open both `dev-tools/*/index.js` files before the install so the room sees the diff, not a surprise POST.
 
 ## Table of Contents
 
 <div class="doc-toc">
 
-- [Setup](#setup)
-- [Mock server](#mock-server)
-- [Attack path](#attack-path)
-- [Evidence](#evidence)
-- [Detect](#detect)
+- [Folder setup](#folder-setup)
+- [Victim installs the bad tool](#victim-installs-the-bad-tool)
+- [Detector](#detector)
+- [Handy extras](#handy-extras)
+- [Where it lives](#where-it-lives)
+- [Misses](#misses)
+- [Companion docs](#companion-docs)
 
 </div>
 
 ---
-## Setup
+## Folder setup
 
-`cd scenarios/15-developer-tool-compromise && export TESTBENCH_MODE=enabled && ./setup.sh`
+```bash
+source .scas.env
+echo $TESTBENCH_MODE
+cd scenarios/15-developer-tool-compromise
+export TESTBENCH_MODE=enabled
+./setup.sh
+node infrastructure/mock-server.js
+```
 
-## Mock server
+Listen on 3015.
 
-`node scenarios/15-developer-tool-compromise/infrastructure/mock-server.js` (port **3015**)
+## Victim installs the bad tool
 
-## Attack path
+New terminal:
 
-`cd scenarios/15-developer-tool-compromise/victim-app && rm -rf node_modules package-lock.json && npm install ../dev-tools/malicious-dev-tool && npm start`
+```bash
+cd scenarios/15-developer-tool-compromise/victim-app
+rm -rf node_modules package-lock.json
+export TESTBENCH_MODE=enabled
+npm install ../dev-tools/malicious-dev-tool
+npm start
+curl -s http://127.0.0.1:3015/captured-data
+```
 
-## Evidence
+Clear between runs:
 
-`curl http://localhost:3015/captured-data` · file: `scenarios/15-developer-tool-compromise/infrastructure/captured-data.json`
+```bash
+curl -X DELETE http://127.0.0.1:3015/captured-data
+```
 
-## Detect
+## Detector
 
-`node scenarios/15-developer-tool-compromise/detection-tools/dev-tool-compromise-detector.js scenarios/15-developer-tool-compromise/victim-app`
+From the scenario root:
 
+```bash
+cd scenarios/15-developer-tool-compromise
+node detection-tools/dev-tool-compromise-detector.js victim-app
+```
+
+Compare trees:
+
+```bash
+diff -u dev-tools/legitimate-dev-tool/index.js dev-tools/malicious-dev-tool/index.js
+```
+
+## Handy extras
+
+```bash
+echo $TESTBENCH_MODE
+lsof -i :3015
+./scripts/setup/kill-port.sh 3015
+grep -n "TESTBENCH_MODE\|3015" dev-tools/malicious-dev-tool/index.js
+```
+
+Optional Floci:
+
+```bash
+export SCAS_FLOCI_ENABLED=1
+./infrastructure/floci/seed.sh
+../../detection-tools/floci/cloud-context.sh 15
+```
+
+## Where it lives
+
+```text
+scenarios/15-developer-tool-compromise/
+├── dev-tools/legitimate-dev-tool/
+├── dev-tools/malicious-dev-tool/     # postinstall.js is part of the story
+├── victim-app/
+├── detection-tools/dev-tool-compromise-detector.js
+├── infrastructure/mock-server.js     # :3015
+├── DETECT.md
+└── FLOCI.md
+```
+
+## Misses
+
+| Problem | What I check |
+|---------|----------------|
+| Empty JSON | Mock not on 3015, or gate off |
+| Module missing | `npm install ../dev-tools/malicious-dev-tool` |
+| Mixing this up with 26 | 15 is the plugin package you installed. 26 is an MCP server the agent called |
+| Detector path errors | Run from scenario root, argument is `victim-app` |
+| Port busy | `kill-port.sh 3015` |
+
+## Companion docs
+
+- Walkthrough: `../zero-to-hero/ZERO_TO_HERO_SCENARIO_15.md`
+- Lab README: `scenarios/15-developer-tool-compromise/README.md`
+- DETECT.md and FLOCI.md in that folder
+- Session setup: `../../getting-started/SETUP.md`

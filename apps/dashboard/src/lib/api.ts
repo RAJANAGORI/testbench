@@ -13,6 +13,17 @@ async function api<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+export interface ScenarioLearn {
+  minutes: number;
+  track: 'foundation' | 'intermediate' | 'advanced';
+  why: string;
+  youWill: { prepare: string; execute: string; observe: string };
+  expect: string;
+  next: string | null;
+  nextTitle?: string;
+  walkthrough: string;
+}
+
 export interface ScenarioSummary {
   id: string;
   slug: string;
@@ -20,6 +31,7 @@ export interface ScenarioSummary {
   level: string;
   ports: number[];
   activeProcesses?: number;
+  learn?: ScenarioLearn;
 }
 
 export interface ScenarioDetail extends ScenarioSummary {
@@ -30,6 +42,17 @@ export interface ScenarioDetail extends ScenarioSummary {
   floci?: { seed?: string; verify?: string };
   docs: { readme: string; detect: string };
   processes?: { id: string; label: string; status: string }[];
+}
+
+export interface LearnTrack {
+  id: 'foundation' | 'intermediate' | 'advanced';
+  label: string;
+  scenarios: ScenarioSummary[];
+}
+
+export interface LearnIndex {
+  startId: string;
+  tracks: LearnTrack[];
 }
 
 export interface PlatformStatus {
@@ -85,8 +108,10 @@ export async function waitForSession(
 }
 
 export const cp = {
+  getLearn: () => api<LearnIndex>('/learn'),
   getScenarios: () => api<ScenarioSummary[]>('/scenarios'),
   getScenario: (id: string) => api<ScenarioDetail>(`/scenarios/${id}`),
+  getWalkthrough: (id: string) => api<{ path: string; markdown: string }>(`/scenarios/${id}/walkthrough`),
   setup: (id: string) => api<ActionResult>(`/scenarios/${id}/setup`, { method: 'POST' }),
   startServices: (id: string) => api<ActionResult>(`/scenarios/${id}/services/start`, { method: 'POST' }),
   stopServices: (id: string) => api(`/scenarios/${id}/services/stop`, { method: 'POST' }),

@@ -1,4 +1,4 @@
-# Module Instances Index (01-23)
+# Module Instances Index (01-29)
 
 Direct links to per-scenario module teaching files.
 
@@ -61,3 +61,9 @@ Direct links to per-scenario module teaching files.
 - [21](./MODULE_INSTANCE_SCENARIO_21.md)
 - [22](./MODULE_INSTANCE_SCENARIO_22.md)
 - [23](./MODULE_INSTANCE_SCENARIO_23.md)
+- [24](./MODULE_INSTANCE_SCENARIO_24.md)
+- [25](./MODULE_INSTANCE_SCENARIO_25.md)
+- [26](./MODULE_INSTANCE_SCENARIO_26.md)
+- [27](./MODULE_INSTANCE_SCENARIO_27.md)
+- [28](./MODULE_INSTANCE_SCENARIO_28.md)
+- [29](./MODULE_INSTANCE_SCENARIO_29.md)

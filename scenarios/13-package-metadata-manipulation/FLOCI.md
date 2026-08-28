@@ -9,7 +9,10 @@ cd scenarios/13-package-metadata-manipulation
 ./infrastructure/floci/seed.sh
 # ... run normal README lab steps ...
 ./infrastructure/floci/verify.sh
+../../detection-tools/floci/cloud-context.sh 13
 ../../detection-tools/floci/s3-exfil-check.sh 13
 ```
 
 Dual-write: mock server (primary) + `s3://scas-sc13-artifacts/exfil/metadata-exfil-*.json`
+
+SSM `/scas/sc13/published-metadata` and `org/registry-packument.json` are the last reviewed packument. Diff those after the rewrite.

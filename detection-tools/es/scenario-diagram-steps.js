@@ -213,6 +213,156 @@ const SCENARIO_DIAGRAMS = {
       { from: 'MalPkg', to: 'Mock', message: 'POST http://127.0.0.1:3023/collect - CI env vars harvested' },
       { from: 'MalPkg', to: 'Victim', message: 'scanTarget() runs - pipeline output appears normal' }
     ]
+  },
+  '24': {
+    "intro": "Slopsquatting: an LLM-invented name (python-asyncio-utils) is installed even though the catalog 404s. Not a typo of lodash.",
+    "attack_steps": [
+      {
+        "from": "Learner",
+        "to": "Mock",
+        "message": "check-catalog.js python-asyncio-utils -> 404"
+      },
+      {
+        "from": "Learner",
+        "to": "Victim",
+        "message": "npm start (file: hallucinated package)"
+      },
+      {
+        "from": "Victim",
+        "to": "MalPkg",
+        "message": "require python-asyncio-utils on load"
+      },
+      {
+        "from": "MalPkg",
+        "to": "Mock",
+        "message": "POST 127.0.0.1:3024/collect"
+      }
+    ]
+  },
+  '25': {
+    "intro": "Reusable GitHub Action: local runner executes changed-files-like@v1. Distinct from 05 (build script) and 23 (Trivy).",
+    "attack_steps": [
+      {
+        "from": "Learner",
+        "to": "Victim",
+        "message": "diff unsafe.yml vs safe.yml"
+      },
+      {
+        "from": "Learner",
+        "to": "Victim",
+        "message": "gha-runner.js workflows/unsafe.yml"
+      },
+      {
+        "from": "Victim",
+        "to": "MalPkg",
+        "message": "require changed-files-like/index.js"
+      },
+      {
+        "from": "MalPkg",
+        "to": "Mock",
+        "message": "POST 127.0.0.1:3025/collect"
+      }
+    ]
+  },
+  '26': {
+    "intro": "Malicious MCP: victim agent lists tools and calls read_env. Distinct from 15 (IDE/CLI plugin).",
+    "attack_steps": [
+      {
+        "from": "Learner",
+        "to": "MalPkg",
+        "message": "start mcp-server.js :3926"
+      },
+      {
+        "from": "Learner",
+        "to": "Victim",
+        "message": "node victim-agent/agent.js"
+      },
+      {
+        "from": "Victim",
+        "to": "MalPkg",
+        "message": "tools/call read_env"
+      },
+      {
+        "from": "MalPkg",
+        "to": "Mock",
+        "message": "POST dummy.env keys to :3026/collect"
+      }
+    ]
+  },
+  '27': {
+    "intro": "npm provenance: 1.0.0 issuer is a GitHub workflow; 1.0.1 is laptop publish. Distinct from 09 and 21.",
+    "attack_steps": [
+      {
+        "from": "Learner",
+        "to": "Mock",
+        "message": "check-provenance.js widget-lib 1.0.0 (pass)"
+      },
+      {
+        "from": "Learner",
+        "to": "Mock",
+        "message": "check-provenance.js widget-lib 1.0.1 (fail)"
+      },
+      {
+        "from": "Learner",
+        "to": "Victim",
+        "message": "npm start dirty 1.0.1"
+      },
+      {
+        "from": "MalPkg",
+        "to": "Mock",
+        "message": "POST 127.0.0.1:3027/collect"
+      }
+    ]
+  },
+  '28': {
+    "intro": "Go module confusion: mock GOPROXY serves example.com/corp/widget; init() posts to :3028. GOSUMDB=off is the self-own.",
+    "attack_steps": [
+      {
+        "from": "Learner",
+        "to": "Mock",
+        "message": "GOPROXY=http://127.0.0.1:3028 GOSUMDB=off"
+      },
+      {
+        "from": "Learner",
+        "to": "Victim",
+        "message": "go run . in victim-module"
+      },
+      {
+        "from": "Victim",
+        "to": "MalPkg",
+        "message": "init() in widget.go"
+      },
+      {
+        "from": "MalPkg",
+        "to": "Mock",
+        "message": "POST 127.0.0.1:3028/collect"
+      }
+    ]
+  },
+  '29': {
+    "intro": "HF-style model artifact: fake hub serves modeling.py. trust_remote_code execs it. 01-23 stay software supply chain.",
+    "attack_steps": [
+      {
+        "from": "Learner",
+        "to": "Victim",
+        "message": "load_model.py (refuses remote code)"
+      },
+      {
+        "from": "Learner",
+        "to": "Victim",
+        "message": "load_model.py --trust-remote-code"
+      },
+      {
+        "from": "Victim",
+        "to": "MalPkg",
+        "message": "exec hub modeling.py"
+      },
+      {
+        "from": "MalPkg",
+        "to": "Mock",
+        "message": "POST 127.0.0.1:3029/collect"
+      }
+    ]
   }
 };
 

@@ -9,7 +9,10 @@ cd scenarios/15-developer-tool-compromise
 ./infrastructure/floci/seed.sh
 # ... run normal README lab steps ...
 ./infrastructure/floci/verify.sh
+../../detection-tools/floci/cloud-context.sh 15
 ../../detection-tools/floci/s3-exfil-check.sh 15
 ```
 
 Dual-write: mock server (primary) + `s3://scas-sc15-artifacts/exfil/devtool-exfil-*.json`
+
+Harvest bait is Slack `scas/sc15/slack-bot` plus GitHub `scas/sc15/github-pat`. Workstation-shaped, still lab-only.

@@ -9,3 +9,6 @@ scas_floci_s3_put_string "$BUCKET" "baseline/status.txt" <<< "npm/request-lib ba
 
 echo "✅ Floci seeded for scenario 01"
 echo "   Bucket: s3://${BUCKET}"
+echo "   Org:    s3://${BUCKET}/org/  (account, inventory, critical-assets, sts-caller)"
+echo "   Hunt:   ../../detection-tools/floci/cloud-context.sh 01"
+echo "   Decoys: Secrets Manager scas/sc01/npm-publish-token, SSM allowlist, SNS registry-alerts"

@@ -301,5 +301,83 @@
     "mock_start": "node infrastructure/mock-c2-server.js",
     "lab_run": "cd victim-ci && export TESTBENCH_MODE=enabled && node run-pipeline.js",
     "verify_cli": "curl -s http://127.0.0.1:3023/captured-data"
+  },
+  {
+    "scenario_id": "24",
+    "title": "Slopsquatting",
+    "folder": "24-slopsquatting",
+    "victim_label": "victim-app (npm start)",
+    "malicious_label": "python-asyncio-utils (hallucinated)",
+    "mock_label": "mock-server :3024",
+    "mock_endpoint": "POST /collect",
+    "trigger_action": "require hallucinated package after catalog 404",
+    "mock_start": "node infrastructure/mock-server.js",
+    "lab_run": "cd victim-app && npm start",
+    "verify_cli": "curl -s http://127.0.0.1:3024/captured-data"
+  },
+  {
+    "scenario_id": "25",
+    "title": "Compromised reusable GitHub Action",
+    "folder": "25-gha-reusable-workflow",
+    "victim_label": "gha-runner (unsafe.yml)",
+    "malicious_label": "changed-files-like@v1",
+    "mock_label": "mock-server :3025",
+    "mock_endpoint": "POST /collect",
+    "trigger_action": "local runner loads floating-tag action",
+    "mock_start": "node infrastructure/mock-server.js",
+    "lab_run": "node infrastructure/gha-runner.js workflows/unsafe.yml",
+    "verify_cli": "curl -s http://127.0.0.1:3025/captured-data"
+  },
+  {
+    "scenario_id": "26",
+    "title": "Malicious MCP server",
+    "folder": "26-malicious-mcp-server",
+    "victim_label": "victim-agent (agent.js)",
+    "malicious_label": "mcp-server read_env tool",
+    "mock_label": "mock-server :3026",
+    "mock_endpoint": "POST /collect",
+    "trigger_action": "tools/call read_env",
+    "mock_start": "node infrastructure/mock-server.js",
+    "lab_run": "node infrastructure/mcp-server.js && node victim-agent/agent.js",
+    "verify_cli": "curl -s http://127.0.0.1:3026/captured-data"
+  },
+  {
+    "scenario_id": "27",
+    "title": "npm provenance bypass",
+    "folder": "27-npm-provenance-bypass",
+    "victim_label": "victim-app (npm start)",
+    "malicious_label": "widget-lib@1.0.1 (laptop issuer)",
+    "mock_label": "mock-server :3027",
+    "mock_endpoint": "POST /collect",
+    "trigger_action": "require dirty package after failed provenance check",
+    "mock_start": "node infrastructure/mock-server.js",
+    "lab_run": "cd victim-app && npm start",
+    "verify_cli": "curl -s http://127.0.0.1:3027/captured-data"
+  },
+  {
+    "scenario_id": "28",
+    "title": "Go module confusion",
+    "folder": "28-go-module-confusion",
+    "victim_label": "victim-module (go run)",
+    "malicious_label": "example.com/corp/widget init()",
+    "mock_label": "mock GOPROXY :3028",
+    "mock_endpoint": "POST /collect",
+    "trigger_action": "go run fetches zip from mock GOPROXY",
+    "mock_start": "node infrastructure/mock-server.js",
+    "lab_run": "cd victim-module && GOPROXY=http://127.0.0.1:3028,off GOSUMDB=off go run -mod=mod .",
+    "verify_cli": "curl -s http://127.0.0.1:3028/captured-data"
+  },
+  {
+    "scenario_id": "29",
+    "title": "Hugging Face-style model artifact",
+    "folder": "29-hf-model-artifact",
+    "victim_label": "load_model.py",
+    "malicious_label": "acme/fast-embed modeling.py",
+    "mock_label": "mock_hub.py :3029",
+    "mock_endpoint": "POST /collect",
+    "trigger_action": "trust_remote_code exec of hub Python",
+    "mock_start": "python3 infrastructure/mock_hub.py",
+    "lab_run": "python3 victim-app/load_model.py --trust-remote-code",
+    "verify_cli": "curl -s http://127.0.0.1:3029/captured-data"
   }
 ]

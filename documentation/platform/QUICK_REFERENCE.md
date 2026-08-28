@@ -1,37 +1,27 @@
 # Quick reference
 
-One-page navigation for the test bench. **Master index:** [Documentation index](../index.md) · **Full scenario link matrix:** [scenario-guides/CATALOG.md](../scenario-guides/CATALOG.md)
+One page of pointers. Master hub: [Documentation index](../index.md). Lab matrix: [CATALOG.md](../scenario-guides/CATALOG.md).
 
-Authoritative content lives under **`documentation/`**. The **`docs/`** directory (GitHub Pages) adds **`index.html`** and **symlinks** to this tree.
+Canonical files live under `documentation/`. `docs/` is GitHub Pages (HTML plus symlinks).
 
-## Start here
+## First command
 
-| Doc | Purpose |
-| --- | --- |
-| [Documentation index](../index.md) | **Master documentation index** |
-| [FAQ.md](./FAQ.md) | Troubleshooting and common questions |
-| [ZERO_TO_HERO.md](../getting-started/ZERO_TO_HERO.md) | First lab for beginners |
-| [QUICK_START.md](../getting-started/QUICK_START.md) | Fast setup |
-| [SETUP.md](../getting-started/SETUP.md) | Detailed setup |
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | Platform design |
-| [OPERATIONS.md](./OPERATIONS.md) | Scripts, ports, teardown |
-| [DETECTION_AND_OBSERVABILITY.md](./DETECTION_AND_OBSERVABILITY.md) | Blue team + Elasticsearch/Kibana |
-| [BEST_PRACTICES.md](./BEST_PRACTICES.md) | Defensive patterns |
-| [SCENARIOS.md](../reference/SCENARIOS.md) | Scenario summaries |
+`./install.sh`, then `source .scas.env`, then scenario 01. [ZERO_TO_HERO.md](../getting-started/ZERO_TO_HERO.md) is the short version. [QUICK_START.md](../getting-started/QUICK_START.md) if you already know npm. [SETUP.md](../getting-started/SETUP.md) is labs-only detail. [FAQ.md](./FAQ.md) when something is on fire.
 
-## Scenario guides
+Also: [ARCHITECTURE](./ARCHITECTURE.md), [OPERATIONS](./OPERATIONS.md), [DETECTION_AND_OBSERVABILITY](./DETECTION_AND_OBSERVABILITY.md), [BEST_PRACTICES](./BEST_PRACTICES.md), [SCENARIOS.md](../reference/SCENARIOS.md).
+
+## Lab walkthroughs
 
 | Type | Index |
 | --- | --- |
-| **Full catalog (23 scenarios)** | [scenario-guides/CATALOG.md](../scenario-guides/CATALOG.md) |
+| Full catalog (29 scenarios) | [scenario-guides/CATALOG.md](../scenario-guides/CATALOG.md) |
 | Zero-to-hero walkthroughs | [scenario-guides/zero-to-hero/README.md](../scenario-guides/zero-to-hero/README.md) |
 | Quick reference cards | [scenario-guides/quick-reference/README.md](../scenario-guides/quick-reference/README.md) |
 
 ## Common commands
 
 ```bash
-source .testbench.env   # created by scripts/setup/setup.sh
-export TESTBENCH_MODE=enabled
+source .scas.env   # written by ./install.sh (and a minimal copy by setup.sh)
 cd scenarios/01-typosquatting && ./setup.sh
 ./scripts/setup/kill-port.sh 3000
 ./scripts/setup/kill-port.sh --all
@@ -54,7 +44,7 @@ Centralized in [`scripts/setup/ports.env`](../../scripts/setup/ports.env). See [
 
 | Doc | Purpose |
 | --- | --- |
-| [learning-path/SCENARIO_LEARNING_PATH.md](../learning-path/SCENARIO_LEARNING_PATH.md) | Beginner → advanced order |
+| [learning-path/SCENARIO_LEARNING_PATH.md](../learning-path/SCENARIO_LEARNING_PATH.md) | Beginner to advanced order |
 | [learning-path/SUPPLY_CHAIN_ATTACKS_ZERO_TO_HERO.md](../learning-path/SUPPLY_CHAIN_ATTACKS_ZERO_TO_HERO.md) | Full curriculum |
 | [learning-path/CAPSTONE_RUBRIC.md](../learning-path/CAPSTONE_RUBRIC.md) | Capstone scoring |
 

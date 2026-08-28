@@ -1,0 +1,8 @@
+module example.com/corp/app
+
+go 1.22
+
+require example.com/corp/widget v1.2.3
+
+// Looks like a local pin. It is not a safe pin. Diff this against go.mod.
+replace example.com/corp/widget => ../attacker-module

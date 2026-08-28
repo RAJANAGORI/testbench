@@ -81,6 +81,7 @@ export function Hero({
               </a>
             </Magnetic>
           </div>
+          <p className="mt-4 font-mono text-xs text-[var(--scas-text-faint)]">{site.hero.installHint}</p>
         </div>
       </div>
     </Spotlight>

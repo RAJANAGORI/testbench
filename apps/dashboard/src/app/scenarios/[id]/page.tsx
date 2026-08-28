@@ -7,6 +7,7 @@ import { useLabSession } from '@/components/LabSessionContext';
 import { cp, waitForSession, type ActionResult, type ScenarioDetail } from '@/lib/api';
 
 const WORKFLOW = [
+  { id: 'guide', label: 'Guide', hint: 'Why this lab' },
   { id: 'prepare', label: 'Prepare', hint: 'Setup & services' },
   { id: 'execute', label: 'Execute', hint: 'Attack steps' },
   { id: 'observe', label: 'Observe', hint: 'Captures' },
@@ -21,10 +22,14 @@ export default function ScenarioDetailPage({ params }: { params: Promise<{ id: s
   const [captures, setCaptures] = useState<Record<string, unknown>>({});
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');
-  const [phase, setPhase] = useState<Phase>('prepare');
+  const [phase, setPhase] = useState<Phase>('guide');
+  const [walkthrough, setWalkthrough] = useState<string | null>(null);
+  const [walkBusy, setWalkBusy] = useState(false);
 
   useEffect(() => {
     setLabId(id);
+    setWalkthrough(null);
+    setPhase('guide');
     return () => setLabId(undefined);
   }, [id, setLabId]);
 
@@ -36,6 +41,19 @@ export default function ScenarioDetailPage({ params }: { params: Promise<{ id: s
       setError(e instanceof Error ? e.message : 'Failed');
     }
   }, [id]);
+
+  const loadWalkthrough = async () => {
+    if (walkthrough || walkBusy) return;
+    setWalkBusy(true);
+    try {
+      const doc = await cp.getWalkthrough(id);
+      setWalkthrough(doc.markdown);
+    } catch {
+      setWalkthrough('');
+    } finally {
+      setWalkBusy(false);
+    }
+  };
 
   const loadCaptures = useCallback(async () => {
     try {
@@ -155,6 +173,81 @@ export default function ScenarioDetailPage({ params }: { params: Promise<{ id: s
       <WorkflowTabs steps={[...WORKFLOW]} active={phase} onChange={(tabId) => setPhase(tabId as Phase)} />
 
       <div className="mt-6">
+        {phase === 'guide' && (
+          <div className="space-y-4">
+            <Card
+              title="Why this lab"
+              subtitle={
+                scenario.learn
+                  ? `~${scenario.learn.minutes} min · ${scenario.learn.track} track`
+                  : 'Compact coaching for this scenario'
+              }
+            >
+              {scenario.learn ? (
+                <div className="space-y-4 text-sm leading-relaxed text-ink-secondary">
+                  <p>{scenario.learn.why}</p>
+                  <dl className="space-y-3">
+                    <div>
+                      <dt className="text-xs font-semibold uppercase tracking-wide text-ink-muted">Prepare</dt>
+                      <dd className="mt-1">{scenario.learn.youWill.prepare}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-xs font-semibold uppercase tracking-wide text-ink-muted">Execute</dt>
+                      <dd className="mt-1">{scenario.learn.youWill.execute}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-xs font-semibold uppercase tracking-wide text-ink-muted">Observe</dt>
+                      <dd className="mt-1">{scenario.learn.youWill.observe}</dd>
+                    </div>
+                  </dl>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">A successful capture</p>
+                    <p className="mt-1">{scenario.learn.expect}</p>
+                  </div>
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    <Btn variant="secondary" onClick={() => setPhase('prepare')}>
+                      Go to Prepare
+                    </Btn>
+                    {scenario.learn.next ? (
+                      <Btn variant="ghost" href={`/scenarios/${scenario.learn.next}`}>
+                        Next: {scenario.learn.nextTitle ?? `lab ${scenario.learn.next}`}
+                      </Btn>
+                    ) : (
+                      <Btn variant="ghost" href="/learn">
+                        Back to Learn track
+                      </Btn>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-ink-faint">
+                    Full write-up in the repo: {scenario.learn.walkthrough}
+                  </p>
+                </div>
+              ) : (
+                <p className="text-sm text-ink-muted">No Guide copy for this lab yet. Use Prepare / Execute / Observe.</p>
+              )}
+            </Card>
+            {scenario.learn ? (
+              <Card title="Full walkthrough" subtitle="Same markdown as the docs site - collapse if you do not need 800 lines">
+                <Btn
+                  variant="secondary"
+                  size="sm"
+                  disabled={walkBusy}
+                  onClick={() => void loadWalkthrough()}
+                >
+                  {walkBusy ? 'Loading…' : walkthrough != null ? 'Reload from disk' : 'Load from repo'}
+                </Btn>
+                {walkthrough != null && walkthrough !== '' ? (
+                  <pre className="mt-4 max-h-96 overflow-auto whitespace-pre-wrap rounded-xl border border-line bg-[#0c0b14] p-4 font-mono text-[11px] leading-relaxed text-white/70">
+                    {walkthrough}
+                  </pre>
+                ) : walkthrough === '' ? (
+                  <p className="mt-3 text-xs text-ink-muted">File missing on disk. Open the path above in the repo.</p>
+                ) : null}
+              </Card>
+            ) : null}
+          </div>
+        )}
+
         {phase === 'prepare' && (
           <div className="space-y-4">
             <Card

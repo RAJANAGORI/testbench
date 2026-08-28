@@ -1,16 +1,16 @@
 # Getting started
 
-Guides for first-time setup and your first lab.
+Pick one. They all assume you already cloned the repo.
 
-| Document | Description |
-|----------|-------------|
-| [FULL_STACK_SETUP.md](./FULL_STACK_SETUP.md) | Workshop install - `./install.sh -y` or step-by-step SCAS + ES/Kibana + Floci |
-| [ZERO_TO_HERO.md](./ZERO_TO_HERO.md) | Short path from zero to a first scenario - safety and lab flow |
-| [QUICK_START.md](./QUICK_START.md) | Fast path if you already know npm and want a scenario running |
-| [DOCKER_LABS.md](./DOCKER_LABS.md) | Docker install hub - `./docker/install.sh` (platform + all 23 labs) |
-| [SETUP.md](./SETUP.md) | SCAS-only install, env, prerequisites |
-| [RASPBERRY_PI_STORAGE.md](./RASPBERRY_PI_STORAGE.md) | Pi / USB HDD via `install-external.sh` (everyone else: `install.sh`) |
+| File | When to open it |
+|------|-----------------|
+| [ZERO_TO_HERO.md](./ZERO_TO_HERO.md) | First capture on scenario 01 after `./install.sh` |
+| [QUICK_START.md](./QUICK_START.md) | You know npm and want the same lab faster |
+| [FULL_STACK_SETUP.md](./FULL_STACK_SETUP.md) | Workshop: `./install.sh -y` plus ES/Kibana/Floci |
+| [SETUP.md](./SETUP.md) | Labs only, env file, prereqs without Docker |
+| [DOCKER_LABS.md](./DOCKER_LABS.md) | `./docker/install.sh` (also option 3 in `./install.sh`) |
+| [RASPBERRY_PI_STORAGE.md](./RASPBERRY_PI_STORAGE.md) | USB HDD / Pi via `install-external.sh`. Everyone else stays on `./install.sh` |
 
-**Next steps:** [Scenario 01 walkthrough](../scenario-guides/zero-to-hero/ZERO_TO_HERO_SCENARIO_01.md) · [Full catalog](../scenario-guides/CATALOG.md)
+Canonical command: `./install.sh`. Then `source .scas.env`. Then scenario 01.
 
-**Related:** [Learning path](../learning-path/index.md) · [Platform & operations](../platform/index.md) · [↑ Documentation index](../index.md)
+**After that:** [Scenario 01 walkthrough](../scenario-guides/zero-to-hero/ZERO_TO_HERO_SCENARIO_01.md) · [Catalog](../scenario-guides/CATALOG.md) · [Learning path](../learning-path/index.md)

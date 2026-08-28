@@ -17,6 +17,12 @@ By the end of this guide, you will:
 - Apply the **Mitigation Playbook** from this guide and the scenario README
 ---
 
+
+
+
+
+
+
 ## Table of Contents
 
 <div class="doc-toc">
@@ -25,11 +31,12 @@ By the end of this guide, you will:
 - [Part 2: Prerequisites Check (5 minutes)](#part-2-prerequisites-check-5-minutes)
 - [Part 3: Setting Up Scenario 23 (10 minutes)](#part-3-setting-up-scenario-23-10-minutes)
 - [Part 4: Understanding the File Structure (15 minutes)](#part-4-understanding-the-file-structure-15-minutes)
-- [Part 5: The Attack - CI Secret Exfiltration (30 minutes)](#part-5-the-attack--ci-secret-exfiltration-30-minutes)
+- [Part 5: The Attack - CI Secret Exfiltration (30 minutes)](#part-5-the-attack---ci-secret-exfiltration-30-minutes)
 - [Part 6: Detection Methods (30 minutes)](#part-6-detection-methods-30-minutes)
 - [Part 7: Forensic Investigation (20 minutes)](#part-7-forensic-investigation-20-minutes)
 - [Part 8: Incident Response and Mitigation (25 minutes)](#part-8-incident-response-and-mitigation-25-minutes)
 - [Mitigation Playbook](#mitigation-playbook)
+- [Code-level workflow](#code-level-workflow)
 - [Elasticsearch + Kibana observability (optional)](#elasticsearch--kibana-observability-optional)
 - [Part 9: Key Takeaways](#part-9-key-takeaways)
 - [Part 10: Advanced Exercises](#part-10-advanced-exercises)
@@ -397,6 +404,8 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 *Code-level workflow for Scenario 23. Editable source: [`scas-codeflow-scenario-23.excalidraw`](../../assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-23.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-codeflow-diagrams.js`.*
 
+---
+
 ## Elasticsearch + Kibana observability (optional)
 
 Scenario **23 - Trivy Supply Chain Attack (CVE-2026-33634)** is indexed in Elasticsearch when the observability stack is running.
@@ -493,7 +502,7 @@ From the repository root:
 
 ```bash
 ./scripts/observability/elasticsearch-up.sh
-./scripts/observability/setup-kibana-data-views.sh   # data views + saved searches for all 23 scenarios
+./scripts/observability/setup-kibana-data-views.sh   # data views + saved searches for all 29 scenarios
 ```
 
 ### Run this scenario with live Elasticsearch forwarding

@@ -1,61 +1,60 @@
-# First lab in 10 minutes (Zero to Hero)
+# First capture in about ten minutes
 
-> **Which "Zero to Hero" is this?** This is the short hands-on start: clone, set up, run a first scenario.
-> - Conceptual curriculum (trust-edge model, staged learning) → [Curriculum overview](../learning-path/SUPPLY_CHAIN_ATTACKS_ZERO_TO_HERO.md)
-> - All 23 step-by-step walkthroughs → [Zero-to-hero walkthroughs](../scenario-guides/zero-to-hero/index.md)
+This page is the short hands-on start: clone, `./install.sh`, run **scenario 01**. It is not the curriculum and it is not a 800-line walkthrough.
 
-From zero to a running lab, with the safety controls in mind.
+- Curriculum (trust-edge model, staged learning) -> [SUPPLY_CHAIN_ATTACKS_ZERO_TO_HERO.md](../learning-path/SUPPLY_CHAIN_ATTACKS_ZERO_TO_HERO.md)
+- Per-lab walkthroughs -> [zero-to-hero/index.md](../scenario-guides/zero-to-hero/index.md)
 
-1) Prerequisites
-   - Node.js 16+, npm
-   - Python 3.8+ (some helpers)
-   - Git
+Do not start on scenario 07. Typosquatting is the first capture on purpose.
 
-2) Clone and setup
+## What you need
 
-   ```bash
-   git clone https://github.com/RAJANAGORI/supply-chain-attack-simulator.git
-   cd supply-chain-attack-simulator
-   chmod +x scripts/setup/setup.sh
-   ./scripts/setup/setup.sh
-   ```
+Node 16+ (20 if you will run the UI), npm, Git, Python 3.8+ for a few helpers. Docker only if you pick the workshop stack or Docker labs.
 
-   Docker path: [DOCKER_LABS.md](./DOCKER_LABS.md).
+## Clone, then one installer
 
-3) Safety first
-   - Malicious paths need `TESTBENCH_MODE=enabled`.
-   - Mock exfiltration endpoints use `localhost`.
-   - Do not run these labs on production or public networks.
+```bash
+git clone https://github.com/RAJANAGORI/supply-chain-attack-simulator.git
+cd supply-chain-attack-simulator
+chmod +x install.sh
+./install.sh
+```
 
-4) Run a first scenario (example: Transitive Dependency)
+No flags: a three-way menu. Labs only is the fast path (Node/Python, no Docker). Workshop stack is npm workspaces plus Elasticsearch/Kibana plus Floci (`-y` still means that, so old snippets keep their meaning). Docker labs execs `./docker/install.sh`.
 
-   ```bash
-   cd scenarios/07-transitive-dependency
-   export TESTBENCH_MODE=enabled
-   ./setup.sh
-   # start mock server (separate terminal)
-   node infrastructure/mock-server.js
-   # run victim steps
-   cd victim-app
-   npm install
-   # follow README steps for detection & response
-   ```
+Every session after that:
 
-   Prefer starting at typosquatting? Use [Scenario 01](../../scenarios/01-typosquatting/README.md) or the [Scenario 01 walkthrough](../scenario-guides/zero-to-hero/ZERO_TO_HERO_SCENARIO_01.md).
+```bash
+source .scas.env
+```
 
-5) How to move through the labs
-   - Start with scenarios 1-3 for the basic vectors.
-   - Intermediate (7-8, 10-12, 13) for more realistic cases.
-   - Advanced (9, 11, 14, ...) need more crypto, registry, or container background.
-   - Use `detection-tools/` and SBOMs (`npm ls --json > sbom.json`) when you practice verification.
+That file always gets written, even on labs-only. It pulls in `.testbench.env` so `TESTBENCH_MODE=enabled`.
 
-6) Contribute
-   - Add scenarios under `scenarios/` following the usual layout:
-     - `legitimate-packages/`, `compromised-packages/`, `victim-app/`, `infrastructure/`, `detection-tools/`, `templates/`
-   - Include `README.md`, `setup.sh`, a quick-reference doc, and a zero-to-hero doc.
+## Safety, said once
 
-7) Troubleshooting
-   - Mock server will not start → check the port in `infrastructure/mock-server.js`.
-   - Installs skip postinstall → confirm `TESTBENCH_MODE=enabled` is exported.
+Malicious paths stay off unless that env is on. Mock exfil is `127.0.0.1` / `localhost`. Isolated VM. Do not publish the packages.
 
-Use the labs carefully and keep them on isolated machines.
+## Scenario 01 (typosquatting)
+
+```bash
+cd scenarios/01-typosquatting
+./setup.sh
+```
+
+Second terminal: `node infrastructure/mock-server.js`. Then in `victim-app`:
+
+```bash
+npm install ../malicious-packages/request-lib
+npm start
+curl http://localhost:3000/captured-data
+```
+
+You should see a captures array, not `[]`. Shape is in `scenarios/01-typosquatting/README.md`. The long form is [ZERO_TO_HERO_SCENARIO_01.md](../scenario-guides/zero-to-hero/ZERO_TO_HERO_SCENARIO_01.md).
+
+Prefer the browser? After install, `./scripts/ui/start-dashboard.sh`, open lab 01, read the Guide tab, then Prepare / Execute / Observe.
+
+## After 01
+
+02, then 03. That is the foundation track. Then [SCENARIO_LEARNING_PATH.md](../learning-path/SCENARIO_LEARNING_PATH.md) (intermediate is not 04-16 in numeric order).
+
+If `npm install` skips postinstall, you forgot `source .scas.env`. If the mock will not bind, `./scripts/setup/kill-port.sh 3000`.

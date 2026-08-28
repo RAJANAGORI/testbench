@@ -1,0 +1,16 @@
+# Unsafe path: floating tag, pwn-request, fat token.
+# Not a real GitHub workflow. The local runner executes it.
+
+name: ci-unsafe
+on:
+  pull_request_target:
+    branches: [main]
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+jobs:
+  changed:
+    runs-on: ubuntu-lab
+    steps:
+      - uses: changed-files-like/action@v1

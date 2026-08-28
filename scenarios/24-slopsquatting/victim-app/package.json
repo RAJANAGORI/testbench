@@ -1,0 +1,12 @@
+{
+  "name": "slopsquat-victim",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "node -r ../../_shared/testbench-env.js index.js"
+  },
+  "dependencies": {
+    "python-asyncio-utils": "file:../malicious-packages/python-asyncio-utils"
+  }
+}

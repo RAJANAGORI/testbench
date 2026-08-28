@@ -11,6 +11,7 @@ TESTBENCH_MODE=enabled node images/compromised-image/malicious-start.js
 docker build -t scas-compromised images/compromised-image
 ./infrastructure/floci/push-compromised.sh
 ./infrastructure/floci/verify.sh
+../../detection-tools/floci/cloud-context.sh 14
 ```
 
 Runtime simulation still beacons to `:3002`; Floci track adds cloud registry trust abuse.
@@ -23,3 +24,4 @@ After `./infrastructure/floci/push-compromised.sh`, optionally run:
 
 This requests an **ECS RunTask** on cluster `scas-sc14` using task definition `scas-sc14-compromised`.
 
+Secrets Manager `scas/sc14/registry-pull` is the dummy docker pull secret. `cloud-context.sh 14` also shows ECS `scas-sc14`.

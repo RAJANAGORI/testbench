@@ -97,7 +97,14 @@ export default function ScenariosPage() {
           >
             <div className="flex items-start justify-between gap-2">
               <span className="font-mono text-xs text-ink-faint">#{s.id.padStart(2, '0')}</span>
-              <LevelBadge level={s.level} />
+              <div className="flex flex-wrap items-center justify-end gap-1.5">
+                {s.id === '01' ? (
+                  <span className="rounded-md border border-brand/30 bg-brand/10 px-2 py-0.5 text-[11px] font-medium text-brand">
+                    Begin here
+                  </span>
+                ) : null}
+                <LevelBadge level={s.level} />
+              </div>
             </div>
             <h2 className="mt-3 text-base font-semibold text-ink-primary transition group-hover:text-brand">
               {s.title}
@@ -108,6 +115,9 @@ export default function ScenariosPage() {
               ) : (
                 <StatusPill status="offline" label="Idle" />
               )}
+              {s.learn?.track ? (
+                <span className="text-[11px] capitalize text-ink-muted">{s.learn.track} track</span>
+              ) : null}
               <span className="text-[11px] text-ink-faint">ports {s.ports.join(', ')}</span>
             </div>
           </Link>

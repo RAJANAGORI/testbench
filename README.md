@@ -8,22 +8,22 @@ Local labs for learning how software supply chain attacks work - and how to spot
 
 ## Start here
 
-Pick one path. The rest of the docs are linked so you do not have to read this whole file.
+Pick one path. You do not have to read this whole file.
 
 | You are... | Do this |
 |----------|---------|
-| New to the project | `./install.sh -y` (SCAS + ES + Floci) · [Full-stack setup](documentation/getting-started/FULL_STACK_SETUP.md) · or `./START_HERE.sh` |
-| Prefer Docker | `./docker/install.sh` · [Docker labs](documentation/getting-started/DOCKER_LABS.md) |
+| New to the project | `./install.sh` then `source .scas.env`. First lab is 01. [Zero to hero](documentation/getting-started/ZERO_TO_HERO.md) · [Workshop stack](documentation/getting-started/FULL_STACK_SETUP.md) |
+| Prefer Docker | Option 3 in `./install.sh`, or `./docker/install.sh` · [Docker labs](documentation/getting-started/DOCKER_LABS.md) |
 | Pi / USB HDD host | Optional: [`install-external.sh`](install-external.sh) - [Pi storage](documentation/getting-started/RASPBERRY_PI_STORAGE.md) |
-| Prefer a browser UI | [Dashboard](documentation/platform/DASHBOARD.md) - `./scripts/ui/start-dashboard.sh` (localhost only) |
+| Prefer a browser UI | After install: [Dashboard](documentation/platform/DASHBOARD.md) - `./scripts/ui/start-dashboard.sh` |
 | Teaching or building a curriculum | [Scenario learning path](documentation/learning-path/SCENARIO_LEARNING_PATH.md) |
-| Already comfortable with npm and VMs | [Quick start](#quick-start-experienced-users) below, then open each scenario's README |
+| Already comfortable with npm and VMs | [Quick start](#quick-start-experienced-users) below, then each scenario README |
 
 **Safety:** Education only, in isolated environments. Read [Safety & ethics](#safety--ethics) before you run anything.
 
 ## What this is
 
-Twenty-three small labs under `scenarios/` (`01-` through `23-`). Each one walks through an attack, shows how you might detect it, and points at mitigations. You mostly work from the CLI; there is an optional [localhost dashboard](documentation/platform/DASHBOARD.md) if you want a UI.
+Twenty-nine small labs under `scenarios/` (`01-` through `29-`). Each one walks through an attack, shows how you might detect it, and points at mitigations. You mostly work from the CLI; there is an optional [localhost dashboard](documentation/platform/DASHBOARD.md) if you want a UI.
 
 Guides and learning paths live in [`documentation/`](documentation/index.md). Malicious bits only run when you opt in (for example `TESTBENCH_MODE=enabled`), and exfiltration stays aimed at localhost - see [Security notice](#security-notice).
 
@@ -50,7 +50,7 @@ For the full numbered list, see [Scenario walkthroughs](documentation/reference/
 
 ```
 supply-chain-attack-simulator/
-├── scenarios/                  # Labs 01-23
+├── scenarios/                  # Labs 01-29
 ├── malicious-packages/         # Example packages for learning
 ├── detection-tools/            # Scanners and helpers
 ├── observability/              # Optional Elasticsearch + Kibana
@@ -73,25 +73,28 @@ Use your own fork URL if that is what you cloned.
 
 ### 2. Install
 
-Full stack (SCAS + Elasticsearch/Kibana + Floci - needs Docker):
+Canonical command: `./install.sh`. No flags opens a menu (labs / workshop / docker). `-y` is the workshop stack (npm + ES + Floci, needs Docker). Labs only:
 
 ```bash
 chmod +x install.sh
+./install.sh -y --core-only
+source .scas.env
+```
+
+Workshop:
+
+```bash
 ./install.sh -y
 source .scas.env
 ```
 
-Labs only, no Docker services:
-
-```bash
-./install.sh -y --core-only
-```
-
-Docker-first path:
+Docker-first (same as menu option 3):
 
 ```bash
 ./docker/install.sh
 ```
+
+`START_HERE.sh` is a thin wrapper around `./install.sh`.
 
 ### 3. Run Scenario 1 (CLI)
 
@@ -145,6 +148,12 @@ Each folder's README has the steps. Levels match [documentation/reference/SCENAR
 | 21 | [Axios-style npm release (simulation)](scenarios/21-axios-compromised-release-attack/) | Advanced |
 | 22 | [LiteLLM-style PyPI compromise (simulation)](scenarios/22-litellm-pypi-compromise/) | Advanced |
 | 23 | [Trivy supply chain attack (simulation)](scenarios/23-trivy-supply-chain-attack/) | Advanced |
+| 24 | [Slopsquatting (LLM-hallucinated names)](scenarios/24-slopsquatting/) | Intermediate |
+| 25 | [Compromised reusable GitHub Action](scenarios/25-gha-reusable-workflow/) | Advanced |
+| 26 | [Malicious MCP server](scenarios/26-malicious-mcp-server/) | Advanced |
+| 27 | [npm provenance bypass](scenarios/27-npm-provenance-bypass/) | Advanced |
+| 28 | [Go module confusion](scenarios/28-go-module-confusion/) | Advanced |
+| 29 | [Hugging Face-style model artifact](scenarios/29-hf-model-artifact/) | Advanced |
 
 ## Defense and detection
 
@@ -186,10 +195,10 @@ Start at the **[documentation index](documentation/index.md)**. Same files rende
 | Doc | Purpose |
 |-----|---------|
 | [Documentation index](documentation/index.md) | Main hub |
-| [Scenario catalog](documentation/scenario-guides/CATALOG.md) | All 23 labs |
+| [Scenario catalog](documentation/scenario-guides/CATALOG.md) | All 29 labs |
 | [Full-stack setup](documentation/getting-started/FULL_STACK_SETUP.md) | SCAS + ES + Floci |
 | [Docker labs](documentation/getting-started/DOCKER_LABS.md) | `./docker/install.sh` |
-| [First lab in 10 minutes](documentation/getting-started/ZERO_TO_HERO.md) | Short guided start |
+| [First lab (scenario 01)](documentation/getting-started/ZERO_TO_HERO.md) | Clone, `./install.sh`, first capture |
 | [SCAS-only setup](documentation/getting-started/SETUP.md) | Core install |
 | [Scenario learning path](documentation/learning-path/SCENARIO_LEARNING_PATH.md) | Beginner → advanced |
 | [Architecture](documentation/platform/ARCHITECTURE.md) | How the platform fits together |
@@ -216,7 +225,7 @@ There is no single required order. A workable default:
 
 1. Do **01 → 02 → 03** first.
 2. Finish **01-05** before **06** (Shai-Hulud) - it is the heaviest single lab.
-3. After that, pick by interest: registry/repo labs (**07, 08, 10, 12, 13, 16**), or CI/signing/container labs (**05, 09, 11, 14, 15, 17-23**).
+3. After that, pick by interest: registry/repo labs (**07, 08, 10, 12, 13, 16**), or CI/signing/container labs (**05, 09, 11, 14, 15, 17-29**).
 
 More structure: [Scenario learning path](documentation/learning-path/SCENARIO_LEARNING_PATH.md) and [Capstone rubric](documentation/learning-path/CAPSTONE_RUBRIC.md).
 

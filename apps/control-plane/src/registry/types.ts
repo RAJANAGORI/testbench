@@ -1,3 +1,18 @@
+export interface ScenarioLearn {
+  minutes: number;
+  track: 'foundation' | 'intermediate' | 'advanced';
+  why: string;
+  youWill: {
+    prepare: string;
+    execute: string;
+    observe: string;
+  };
+  expect: string;
+  next: string | null;
+  nextTitle?: string;
+  walkthrough: string;
+}
+
 export interface ScenarioService {
   id: string;
   label: string;
@@ -40,6 +55,7 @@ export interface ScenarioDefinition {
   captures: ScenarioCapture[];
   floci?: ScenarioFloci;
   docs: { readme: string; detect: string };
+  learn?: ScenarioLearn;
 }
 
 export interface ProcessRecord {

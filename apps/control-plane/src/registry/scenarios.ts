@@ -1,4 +1,5 @@
 import type { ScenarioDefinition } from './types.js';
+import { LEARN } from './learn.js';
 import { getRepoRoot } from '../env.js';
 
 function scenarioPath(slug: string): string {
@@ -59,6 +60,7 @@ function baseScenario(
       readme: `scenarios/${slug}/README.md`,
       detect: `scenarios/${slug}/DETECT.md`,
     },
+    learn: extra.learn ?? LEARN[id],
   };
 }
 
@@ -112,6 +114,7 @@ export const SCENARIOS: ScenarioDefinition[] = [
     ],
     floci: { seed: 'infrastructure/floci/seed.sh', verify: 'infrastructure/floci/verify.sh' },
     docs: { readme: 'scenarios/06-sha-hulud/README.md', detect: 'scenarios/06-sha-hulud/DETECT.md' },
+    learn: LEARN['06'],
   },
   baseScenario('07', '07-transitive-dependency', 'Transitive dependency', 'Intermediate', 3000, [
     victimStep('install', 'Install dependencies', 'npm', ['install']),
@@ -211,6 +214,7 @@ export const SCENARIOS: ScenarioDefinition[] = [
     ],
     captures: [capture(3022)],
     docs: { readme: 'scenarios/22-litellm-pypi-compromise/README.md', detect: 'scenarios/22-litellm-pypi-compromise/DETECT.md' },
+    learn: LEARN['22'],
   },
   baseScenario('23', '23-trivy-supply-chain-attack', 'Trivy supply chain attack', 'Advanced', 3023, [
     victimStep('install', 'Install compromised trivy module', 'npm', ['install'], 'victim-ci'),
@@ -220,6 +224,67 @@ export const SCENARIOS: ScenarioDefinition[] = [
     services: [{ id: 'mock-c2', label: 'Mock C2 server :3023', command: 'node', args: ['infrastructure/mock-c2-server.js'], cwd: '.', port: 3023 }],
     floci: { seed: 'infrastructure/floci/seed.sh', verify: 'infrastructure/floci/verify.sh' },
   }),
+  baseScenario('24', '24-slopsquatting', 'Slopsquatting', 'Intermediate', 3024, [
+    victimStep('install', 'Install hallucinated package', 'npm', ['install', '../malicious-packages/python-asyncio-utils']),
+    victimStep('run', 'Run victim app', 'npm', ['start']),
+  ], { ports: [3024], floci: { seed: 'infrastructure/floci/seed.sh', verify: 'infrastructure/floci/verify.sh' } }),
+  baseScenario('25', '25-gha-reusable-workflow', 'Compromised reusable GitHub Action', 'Advanced', 3025, [
+    victimStep('run', 'Simulate unsafe workflow', 'node', ['infrastructure/gha-runner.js', 'workflows/unsafe.yml'], '.'),
+  ], { ports: [3025], floci: { seed: 'infrastructure/floci/seed.sh', verify: 'infrastructure/floci/verify.sh' } }),
+  baseScenario('26', '26-malicious-mcp-server', 'Malicious MCP server', 'Advanced', 3026, [
+    victimStep('run', 'Run victim agent', 'node', ['agent.js'], 'victim-agent'),
+  ], {
+    ports: [3026, 3926],
+    services: [
+      mockService('mock', 3026),
+      { id: 'mcp', label: 'MCP-shaped server :3926', command: 'node', args: ['infrastructure/mcp-server.js'], cwd: '.', port: 3926 },
+    ],
+    floci: { seed: 'infrastructure/floci/seed.sh', verify: 'infrastructure/floci/verify.sh' },
+  }),
+  baseScenario('27', '27-npm-provenance-bypass', 'npm provenance bypass', 'Advanced', 3027, [
+    victimStep('install', 'Install dirty widget-lib 1.0.1', 'npm', ['install']),
+    victimStep('run', 'Run victim app', 'npm', ['start']),
+  ], { ports: [3027], floci: { seed: 'infrastructure/floci/seed.sh', verify: 'infrastructure/floci/verify.sh' } }),
+  baseScenario('28', '28-go-module-confusion', 'Go module confusion', 'Advanced', 3028, [
+    {
+      id: 'run',
+      label: 'go run against mock GOPROXY',
+      command: 'bash',
+      args: ['-c', "GOPROXY=http://127.0.0.1:3028,off GOSUMDB=off GONOSUMDB='*' go run -mod=mod ."],
+      cwd: 'victim-module',
+    },
+  ], { ports: [3028], floci: { seed: 'infrastructure/floci/seed.sh', verify: 'infrastructure/floci/verify.sh' } }),
+  {
+    id: '29',
+    slug: '29-hf-model-artifact',
+    title: 'Hugging Face-style model artifact',
+    level: 'Advanced',
+    ports: [3029],
+    setup: { command: './setup.sh', cwd: scenarioPath('29-hf-model-artifact') },
+    services: [
+      {
+        id: 'mock-hub',
+        label: 'Fake hub + collector :3029',
+        command: 'python3',
+        args: ['infrastructure/mock_hub.py'],
+        cwd: '.',
+        port: 3029,
+      },
+    ],
+    steps: [
+      {
+        id: 'run',
+        label: 'Load model with trust_remote_code',
+        command: 'python3',
+        args: ['load_model.py', '--trust-remote-code'],
+        cwd: 'victim-app',
+      },
+    ],
+    captures: [capture(3029)],
+    floci: { seed: 'infrastructure/floci/seed.sh', verify: 'infrastructure/floci/verify.sh' },
+    docs: { readme: 'scenarios/29-hf-model-artifact/README.md', detect: 'scenarios/29-hf-model-artifact/DETECT.md' },
+    learn: LEARN['29'],
+  },
 ];
 
 export function getScenario(id: string): ScenarioDefinition | undefined {

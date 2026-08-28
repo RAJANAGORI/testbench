@@ -13,6 +13,7 @@ set -a && source .env.ci-lab && set +a
 # run lab per README - malicious trivy-action-like.js harvests CI env
 ./infrastructure/floci/push-compromised.sh
 ./infrastructure/floci/verify.sh
+../../detection-tools/floci/cloud-context.sh 23
 ../../detection-tools/floci/cloudtrail-hunt.sh 23
 ../../detection-tools/floci/s3-exfil-check.sh 23
 ```
@@ -20,3 +21,4 @@ set -a && source .env.ci-lab && set +a
 Dual-write: mock C2 `:3023` + `s3://scas-sc23-artifacts/exfil/trivy-exfil-*.json`
 
 Seeded decoys: SSM `/scas/sc23/github-pat` (`ghp_...SCAS`), Secrets Manager `scas/sc23/ci-aws` + `ci-docker`.
+

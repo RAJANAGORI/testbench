@@ -74,6 +74,8 @@ scenarios/_shared/lookalike-secrets.json
 scenarios/**/.env.lab
 scenarios/**/.env.ci-lab
 scenarios/06-sha-hulud/victim-app/.npmrc
+scenarios/28-go-module-confusion/infrastructure/goproxy-store/
+scenarios/29-hf-model-artifact/victim-app/.cache/
 
 # Floci AWS emulator (cloned + runtime data)
 vendor/floci-aws/

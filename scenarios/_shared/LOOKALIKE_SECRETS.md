@@ -1,8 +1,8 @@
 # Lookalike secrets (generated locally)
 
-LAB-ONLY credential shapes for Floci harvest demos (**05 / 06 / 21 / 23**).
+LAB-ONLY credential shapes for Floci. Every lab's seed puts a subset into Secrets Manager / SSM. Victim files are planted only for harvest demos 05, 06, 21, 23, and 25.
 
-**Not committed.** Generated on the machine by:
+Not committed. Generated on the machine by:
 
 ```bash
 python3 scenarios/_shared/generate-lookalike-secrets.py
@@ -13,11 +13,11 @@ python3 scenarios/_shared/generate-lookalike-secrets.py
 
 Outputs (gitignored):
 
-- `lookalike-secrets.env` - source before a harvest run  
-- `lookalike-secrets.json` - Floci Secrets Manager / SSM seeds  
+- `lookalike-secrets.env` - source before a harvest run
+- `lookalike-secrets.json` - Floci Secrets Manager / SSM seeds (`npm`, `github`, `aws_ci`, `docker`, `stripe`, `slack`, `openai`, `pypi`, `huggingface`, `azure`, `database`)
 
 ```bash
 set -a && source scenarios/_shared/lookalike-secrets.env && set +a
 ```
 
-Do **not** use these as Floci emulator credentials (`test` / `test` via `.floci.env`).
+Do not use these as Floci emulator credentials (`test` / `test` via `.floci.env`).

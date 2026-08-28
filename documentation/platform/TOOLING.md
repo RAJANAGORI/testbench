@@ -18,13 +18,13 @@ Every maintainer-facing script in [`scripts/`](../../scripts/), grouped by purpo
 | [`scripts/setup/setup.sh`](../../scripts/setup/setup.sh) | Repo-wide setup; creates `.testbench.env` |
 | [`scripts/setup/teardown.sh`](../../scripts/setup/teardown.sh) | Kill scenario ports, remove captures & `node_modules` |
 | [`scripts/setup/kill-port.sh`](../../scripts/setup/kill-port.sh) | Free one port, or `--all` ports from `ports.env` |
-| [`scripts/smoke/smoke-all-scenarios.sh`](../../scripts/smoke/smoke-all-scenarios.sh) | End-to-end smoke test across all 23 scenarios |
+| [`scripts/smoke/smoke-all-scenarios.sh`](../../scripts/smoke/smoke-all-scenarios.sh) | End-to-end smoke test across all 29 scenarios |
 | [`scripts/docs/check-info-consistency.js`](../../scripts/docs/check-info-consistency.js) | **CI harness** - fail if public lab counts / indexes / ranges drift from on-disk `scenarios/NN-*` |
 | [`scripts/docs/check-markdown-watermarks.js`](../../scripts/docs/check-markdown-watermarks.js) | **CI harness** - fail if tracked `.md`/`.mdc` contain em/en dash, curly quotes, or zero-width marks |
 | [`scripts/diagrams/check-diagram-assets.js`](../../scripts/diagrams/check-diagram-assets.js) | **CI harness** - Excalidraw/SVG drawing contract (`scripts/lib/diagram-specs.js`); also in [Smoke](../../.github/workflows/smoke.yml) + path-filtered [Diagrams](../../.github/workflows/diagrams.yml) |
 | [`scripts/lib/diagram-specs.js`](../../scripts/lib/diagram-specs.js) | Canonical nodes/edges/labels for diagrams - edit before redrawing |
-| [`scripts/diagrams/generate-scenario-observability-diagrams.js`](../../scripts/diagrams/generate-scenario-observability-diagrams.js) | Generate unique `scas-observability-scenario-NN.{excalidraw,svg}` for all 23 labs (CI regenerates and fails on drift) |
-| [`scripts/diagrams/generate-scenario-codeflow-diagrams.js`](../../scripts/diagrams/generate-scenario-codeflow-diagrams.js) | Generate dense `scas-codeflow-scenario-NN.{excalidraw,svg}` for all 23 labs (Panel A-E code-level workflow) |
+| [`scripts/diagrams/generate-scenario-observability-diagrams.js`](../../scripts/diagrams/generate-scenario-observability-diagrams.js) | Generate unique `scas-observability-scenario-NN.{excalidraw,svg}` for all 29 labs (CI regenerates and fails on drift) |
+| [`scripts/diagrams/generate-scenario-codeflow-diagrams.js`](../../scripts/diagrams/generate-scenario-codeflow-diagrams.js) | Generate dense `scas-codeflow-scenario-NN.{excalidraw,svg}` for all 29 labs (Panel A-E code-level workflow) |
 | [`scripts/setup/ports.env`](../../scripts/setup/ports.env) | Source-of-truth port allow-list (see [Operations → port matrix](./OPERATIONS.md#port-matrix)) |
 
 ### Observability (Elasticsearch + Kibana)
@@ -40,7 +40,7 @@ Full workflow: [Detection & observability](./DETECTION_AND_OBSERVABILITY.md) · 
 
 ### Floci cloud track (optional)
 
-Local-AWS emulator track for all 23 scenarios (S3 universal; extended on 05, 06, 11, 14, 17, 19, 23). Full guide: [Floci integration](../guides/FLOCI_INTEGRATION.md).
+Local-AWS emulator track for all 29 scenarios. Seed plants a dummy org plus story-shaped services (S3, IAM, STS, SSM, Logs, EventBridge, and the extras that match the lab). Dump: `detection-tools/floci/cloud-context.sh NN`. Full guide: [Floci integration](../guides/FLOCI_INTEGRATION.md).
 
 | Script | Purpose |
 |--------|---------|
@@ -48,8 +48,9 @@ Local-AWS emulator track for all 23 scenarios (S3 universal; extended on 05, 06,
 | [`scripts/floci/floci-up.sh`](../../scripts/floci/floci-up.sh) | Start emulator and wait for health |
 | [`scripts/floci/floci-down.sh`](../../scripts/floci/floci-down.sh) | Stop emulator |
 | [`scripts/floci/floci-status.sh`](../../scripts/floci/floci-status.sh) | Health + container status |
-| [`scripts/floci/floci-bridge.sh`](../../scripts/floci/floci-bridge.sh) | Shared S3/ECR/Secrets helpers, sourced by scenario seed/verify scripts |
-| [`scripts/floci/floci-upload-json.sh`](../../scripts/floci/floci-upload-json.sh) | Pipe JSON → `s3://scas-scNN-artifacts/` |
+| [`scripts/floci/floci-bridge.sh`](../../scripts/floci/floci-bridge.sh) | Shared AWS helpers + org seed, sourced by scenario seed/verify scripts |
+| [`scripts/floci/floci-upload-json.sh`](../../scripts/floci/floci-upload-json.sh) | Pipe JSON → `s3://scas-scNN-artifacts/` plus Logs + EventBridge |
+| [`detection-tools/floci/cloud-context.sh`](../../detection-tools/floci/cloud-context.sh) | Dump STS/S3/IAM/SM/SSM/Logs/SQS/SNS/ECR/ECS/pipeline/SFN/Glue for one lab |
 
 ### Documentation maintenance
 
@@ -124,7 +125,7 @@ node scripts/diagrams/generate-scenario-codeflow-diagrams.js
 node scripts/diagrams/check-diagram-assets.js
 ```
 
-**Diagrams:** specs in [`scripts/lib/diagram-specs.js`](../../scripts/lib/diagram-specs.js); assets in [`documentation/assets/diagrams/`](../assets/diagrams/README.md) under `platform/`, `observability/`, and `codeflow/` (each with `svg/` + `excalidraw/`). Markdown embeds SVG only. Zero-to-hero uses unique `scas-observability-scenario-NN` and `scas-codeflow-scenario-NN` diagrams for all 23 labs.
+**Diagrams:** specs in [`scripts/lib/diagram-specs.js`](../../scripts/lib/diagram-specs.js); assets in [`documentation/assets/diagrams/`](../assets/diagrams/README.md) under `platform/`, `observability/`, and `codeflow/` (each with `svg/` + `excalidraw/`). Markdown embeds SVG only. Zero-to-hero uses unique `scas-observability-scenario-NN` and `scas-codeflow-scenario-NN` diagrams for all 29 labs.
 
 **What goes where:**
 

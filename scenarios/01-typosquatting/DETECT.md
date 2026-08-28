@@ -47,4 +47,5 @@ rule Typosquat_Install_Script {
 
 ## Floci (optional cloud track)
 - Unexpected `PutObject` under `s3://scas-sc01-artifacts/exfil/` when `SCAS_FLOCI_ENABLED=1`.
+- After seed, dummy org data sits in S3 `org/`, Secrets Manager `scas/sc01/npm-publish-token`, SSM `/scas/sc01/allowed-packages`, SNS `scas-sc01-registry-alerts`. Dump it with `detection-tools/floci/cloud-context.sh 01`.
 - Verify: `./infrastructure/floci/verify.sh` or `detection-tools/floci/s3-exfil-check.sh 01`.

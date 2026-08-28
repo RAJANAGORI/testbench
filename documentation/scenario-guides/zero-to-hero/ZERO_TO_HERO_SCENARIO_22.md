@@ -17,6 +17,12 @@ By the end of this guide, you will:
 - Apply the **Mitigation Playbook** from this guide and the scenario README
 ---
 
+
+
+
+
+
+
 ## Table of Contents
 
 <div class="doc-toc">
@@ -30,6 +36,7 @@ By the end of this guide, you will:
 - [Part 7: Forensic Investigation (30 minutes)](#part-7-forensic-investigation-30-minutes)
 - [Part 8: Incident Response & Mitigation (30 minutes)](#part-8-incident-response--mitigation-30-minutes)
 - [Mitigation Playbook](#mitigation-playbook)
+- [Code-level workflow](#code-level-workflow)
 - [Elasticsearch + Kibana observability (optional)](#elasticsearch--kibana-observability-optional)
 - [Part 9: Key Takeaways](#part-9-key-takeaways)
 - [Part 10: Advanced Exercises](#part-10-advanced-exercises)
@@ -573,6 +580,8 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 *Code-level workflow for Scenario 22. Editable source: [`scas-codeflow-scenario-22.excalidraw`](../../assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-22.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-codeflow-diagrams.js`.*
 
+---
+
 ## Elasticsearch + Kibana observability (optional)
 
 Scenario **22 - LiteLLM-style PyPI Compromise** is indexed in Elasticsearch when the observability stack is running.
@@ -669,7 +678,7 @@ From the repository root:
 
 ```bash
 ./scripts/observability/elasticsearch-up.sh
-./scripts/observability/setup-kibana-data-views.sh   # data views + saved searches for all 23 scenarios
+./scripts/observability/setup-kibana-data-views.sh   # data views + saved searches for all 29 scenarios
 ```
 
 ### Run this scenario with live Elasticsearch forwarding

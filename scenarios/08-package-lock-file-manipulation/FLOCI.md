@@ -9,7 +9,10 @@ cd scenarios/08-package-lock-file-manipulation
 ./infrastructure/floci/seed.sh
 # ... run normal README lab steps ...
 ./infrastructure/floci/verify.sh
+../../detection-tools/floci/cloud-context.sh 08
 ../../detection-tools/floci/s3-exfil-check.sh 08
 ```
 
 Dual-write: mock server (primary) + `s3://scas-sc08-artifacts/exfil/lockfile-exfil-*.json`
+
+Compare SSM `/scas/sc08/lockfile-integrity` with `s3://scas-sc08-artifacts/org/package-lock.expected.json` after the silent rewrite.

@@ -87,6 +87,9 @@ def _build() -> dict[str, str]:
         "AZURE_CLIENT_SECRET": azure,
         "STRIPE_SECRET_KEY": stripe,
         "SLACK_BOT_TOKEN": slack,
+        "OPENAI_API_KEY": "sk-" + "scas-lab-" + "not-a-real-key",
+        "PYPI_TOKEN": "pypi" + "-" + LAB + (PAD * 20) + "LABONLY",
+        "HF_TOKEN": "hf" + "_" + LAB + (PAD * 20) + "LABONLY",
         # Optional entropy stamp so regenerations are distinguishable in captures
         "SCAS_LOOKALIKE_NONCE": _hex(4),
     }
@@ -117,6 +120,9 @@ def write_env(values: dict[str, str]) -> None:
         "AZURE_CLIENT_SECRET",
         "STRIPE_SECRET_KEY",
         "SLACK_BOT_TOKEN",
+        "OPENAI_API_KEY",
+        "PYPI_TOKEN",
+        "HF_TOKEN",
         "SCAS_LOOKALIKE_NONCE",
     ]
     for key in order:
@@ -146,6 +152,10 @@ def write_json(values: dict[str, str]) -> None:
         },
         "stripe": {"secret": values["STRIPE_SECRET_KEY"]},
         "slack": {"bot_token": values["SLACK_BOT_TOKEN"]},
+        "openai": {"api_key": values["OPENAI_API_KEY"]},
+        "pypi": {"token": values["PYPI_TOKEN"]},
+        "huggingface": {"token": values["HF_TOKEN"]},
+        "azure": {"client_secret": values["AZURE_CLIENT_SECRET"]},
         "nonce": values["SCAS_LOOKALIKE_NONCE"],
     }
     JSON_OUT.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")

@@ -9,7 +9,10 @@ cd scenarios/09-package-signing-bypass
 ./infrastructure/floci/seed.sh
 # ... run normal README lab steps ...
 ./infrastructure/floci/verify.sh
+../../detection-tools/floci/cloud-context.sh 09
 ../../detection-tools/floci/s3-exfil-check.sh 09
 ```
 
 Dual-write: mock server (primary) + `s3://scas-sc09-artifacts/exfil/signing-bypass-exfil-*.json`
+
+Lookalike signing material is `scas/sc09/publisher-signing`. IAM `scas-sc09-publisher-role` is the trusted-publisher decoy.

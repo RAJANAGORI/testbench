@@ -20,3 +20,7 @@ KEY="${PREFIX}/${KEY_SUFFIX}-${TS}.json"
 
 scas_floci_s3_put_string "$BUCKET" "$KEY"
 echo "[FLOCI] Uploaded s3://${BUCKET}/${KEY}" >&2
+
+ID2="$(scas_floci_id2 "$SCENARIO_ID")"
+scas_floci_logs_put "/scas/sc${ID2}/exfil" "put-object" "s3://${BUCKET}/${KEY}"
+scas_floci_eventbridge_put "scas.exfil.put" "{\"scenario\":\"${ID2}\",\"bucket\":\"${BUCKET}\",\"key\":\"${KEY}\",\"lab_only\":true}"

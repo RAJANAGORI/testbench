@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import { spawn } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
 import { createServer } from 'node:http';
-import { resolve } from 'node:path';
+import { relative, resolve } from 'node:path';
+import { LEARN_TRACK_ORDER } from '../registry/learn.js';
 import { SCENARIOS, getScenario } from '../registry/scenarios.js';
 import type { PlatformStatus } from '../registry/types.js';
 import { processManager } from '../process-manager.js';
@@ -58,12 +60,51 @@ export function createApiRouter(): Router {
   const router = Router();
 
   router.get('/health', async (_req, res) => {
-    const ports = [3000, 3001, 3002, 3003, 3015, 3016, 3017, 3018, 3019, 3020, 3021, 3022, 3023, 4873, 4874, 4566, 9200, 5601];
+    const ports = [3000, 3001, 3002, 3003, 3015, 3016, 3017, 3018, 3019, 3020, 3021, 3022, 3023, 3024, 3025, 3026, 3027, 3028, 3029, 3926, 4873, 4874, 4566, 9200, 5601];
     const conflicts: number[] = [];
     for (const port of ports) {
       if (await checkPort(port)) conflicts.push(port);
     }
     res.json({ ok: true, port: Number(process.env.CONTROL_PLANE_PORT ?? 3101), portConflicts: conflicts });
+  });
+
+  router.get('/learn', (_req, res) => {
+    const tracks = (['foundation', 'intermediate', 'advanced'] as const).map((id) => {
+      const ids = LEARN_TRACK_ORDER[id];
+      return {
+        id,
+        label: id === 'foundation' ? 'Foundation' : id === 'intermediate' ? 'Intermediate' : 'Advanced',
+        scenarios: ids
+          .map((sid) => {
+            const s = getScenario(sid);
+            if (!s) return null;
+            return {
+              id: s.id,
+              slug: s.slug,
+              title: s.title,
+              level: s.level,
+              ports: s.ports,
+              learn: s.learn,
+            };
+          })
+          .filter(Boolean),
+      };
+    });
+    res.json({ startId: '01', tracks });
+  });
+
+  router.get('/scenarios/:id/walkthrough', (req, res) => {
+    const scenario = getScenario(req.params.id);
+    const relPath = scenario?.learn?.walkthrough;
+    if (!relPath) return res.status(404).json({ error: 'No walkthrough for scenario' });
+    const abs = resolve(REPO, relPath);
+    const allowedRoot = resolve(REPO, 'documentation/scenario-guides/zero-to-hero');
+    const rel = relative(allowedRoot, abs);
+    if (!rel || rel.startsWith('..')) {
+      return res.status(400).json({ error: 'Invalid walkthrough path' });
+    }
+    if (!existsSync(abs)) return res.status(404).json({ error: 'Walkthrough file missing' });
+    res.json({ path: relPath, markdown: readFileSync(abs, 'utf8') });
   });
 
   router.get('/scenarios', (_req, res) => {
@@ -313,7 +354,7 @@ export function createApiRouter(): Router {
 
   router.get('/platform/status', async (_req, res) => {
     // Lab/scenario ports only — do not flag ES/Kibana/Floci as "conflicts" when the stack owns them
-    const labPorts = [3000, 3001, 3002, 3003, 3015, 3016, 3017, 3018, 3019, 3020, 3021, 3022, 3023, 4873, 4874];
+    const labPorts = [3000, 3001, 3002, 3003, 3015, 3016, 3017, 3018, 3019, 3020, 3021, 3022, 3023, 3024, 3025, 3026, 3027, 3028, 3029, 3926, 4873, 4874];
     const [portHits, elasticsearchOk, kibanaOk, flociOk] = await Promise.all([
       Promise.all(labPorts.map(async (port) => ((await checkPort(port)) ? port : null))),
       probe(`http://${platformHost()}:9200`),

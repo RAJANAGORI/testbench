@@ -1,13 +1,15 @@
 # Scenario guides
 
-Learner walkthroughs, command cheat sheets, and the master scenario catalog. Zero-to-hero guides and quick-reference cards include a **table of contents** (jump links); zero-to-hero guides also include a **Mitigation Playbook** aligned with each scenario README.
+Walkthroughs, cheat sheets, and the numbered catalog. Zero-to-hero pages have a TOC and a Mitigation Playbook that matches the scenario README.
 
-| Document | Description |
-|----------|-------------|
-| [CATALOG.md](./CATALOG.md) | Master table - all 23 scenarios with links to README, DETECT, walkthrough, and module |
-| [zero-to-hero/index.md](./zero-to-hero/index.md) | Step-by-step learner guides (23 walkthroughs) with TOC and mitigation playbooks |
-| [quick-reference/index.md](./quick-reference/index.md) | Command cheat sheets for live teaching (22 cards) with TOC |
+| File | What it is |
+|------|------------|
+| [CATALOG.md](./CATALOG.md) | All 29 labs: README, DETECT, walkthrough, module |
+| [zero-to-hero/index.md](./zero-to-hero/index.md) | Long learner guides (29 of them) |
+| [quick-reference/index.md](./quick-reference/index.md) | 29 command cards for live teaching |
 
-**Runtime labs:** [`scenarios/`](../../scenarios/) (README + **Mitigation Playbook**) · **Blue-team runbooks:** `scenarios/*/DETECT.md` (detection + **Mitigation**)
+Runtime trees sit under [`scenarios/`](../../scenarios/). Blue-team runbooks are `scenarios/*/DETECT.md`.
 
-**Related:** [Getting started](../getting-started/index.md) · [Learning path](../learning-path/index.md) · [↑ Documentation index](../index.md)
+New to the repo? [ZERO_TO_HERO.md](../getting-started/ZERO_TO_HERO.md) then lab 01, not a random card from this table.
+
+[Getting started](../getting-started/index.md) · [Learning path](../learning-path/index.md) · [Docs hub](../index.md)

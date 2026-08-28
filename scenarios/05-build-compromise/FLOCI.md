@@ -1,10 +1,10 @@
 # Scenario 05 + Floci (optional cloud track)
 
-Extend **Build System Compromise** with a local AWS emulator so learners see the same attack hit **real S3 APIs**, not only the HTTP mock on port 3000.
+I run this lab against the local AWS emulator so the same build harvest hits S3 APIs, not only the HTTP mock on port 3000.
 
 ## Prerequisites
 
-From **repo root** (one-time + each session):
+From repo root (one-time + each session):
 
 ```bash
 ./scripts/floci/floci-setup.sh          # once: clone vendor/floci-aws + build
@@ -34,7 +34,7 @@ set -a && source .env.lab 2>/dev/null || source ../../_shared/lookalike-secrets.
 npm run build
 ```
 
-**What changes with Floci enabled:**
+What changes with Floci enabled:
 
 | Step | Mock (port 3000) | Floci (S3 + IAM/STS + Logs) |
 |------|------------------|---------------------------|
@@ -46,6 +46,7 @@ npm run build
 
 ```bash
 ./infrastructure/floci/verify.sh
+../../detection-tools/floci/cloud-context.sh 05
 ../../detection-tools/floci/s3-exfil-check.sh 05
 ../../detection-tools/floci/cloudtrail-hunt.sh 05
 ```
@@ -59,8 +60,8 @@ scas_floci_aws s3 ls s3://scas-sc05-artifacts/releases/ --recursive
 
 ## Learning goals (Floci layer)
 
-- Build pipelines with `AWS_*` in env are a **real exfil target** (CodeCov-style).
-- HTTP beacons are not the only channel - **artifact buckets** get overwritten too.
+- Build pipelines with `AWS_*` in env are a real exfil target (CodeCov-style).
+- HTTP beacons are not the only channel. Artifact buckets get overwritten too.
 - Detection: monitor S3 `PutObject` on release prefixes, not just outbound HTTP.
 
 ## Without Floci
@@ -71,7 +72,7 @@ Unset `SCAS_FLOCI_ENABLED`. The lab behaves exactly as before (smoke tests uncha
 
 ### `PutObject` 500 / `upload failed` on `seed.sh`
 
-**Full reset (most reliable fix):**
+Full reset (most reliable fix):
 
 ```bash
 cd ~/supply-chain-attack-simulator
@@ -88,10 +89,10 @@ cd scenarios/05-build-compromise
 ./infrastructure/floci/seed.sh
 ```
 
-1. **Floci init ready?** `./scripts/floci/floci-status.sh` - must show `Init: ✅ ready`
-2. **Use emulator credentials:** `source .floci.env` from repo root (do not rely on host `~/.aws/credentials`)
-3. **Inspect logs:** `docker logs scas-floci --tail 80`
-4. **Manual upload test** (inside container):
+1. Floci init ready? `./scripts/floci/floci-status.sh` - must show `Init: ready`
+2. Use emulator credentials: `source .floci.env` from repo root (do not rely on host `~/.aws/credentials`)
+3. Inspect logs: `docker logs scas-floci --tail 80`
+4. Manual upload test (inside container):
    ```bash
    docker exec scas-floci aws --endpoint-url http://127.0.0.1:4566 s3 mb s3://scas-sc05-artifacts
    docker cp scenarios/05-build-compromise/legitimate-build/dist/manifest.json scas-floci:/tmp/m.json
@@ -110,4 +111,4 @@ set -a && source .env.lab 2>/dev/null || source ../../_shared/lookalike-secrets.
 npm run build
 ```
 
-Start `node infrastructure/mock-server.js` **before** `npm run build`.
+Start `node infrastructure/mock-server.js` before `npm run build`.

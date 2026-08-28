@@ -167,17 +167,6 @@ scas_floci_bucket_for_scenario() {
   printf 'scas-sc%02d-artifacts' "$id"
 }
 
-scas_floci_seed_scenario() {
-  local id="${1:?scenario id}"
-  local bucket
-  bucket="$(scas_floci_bucket_for_scenario "$id")"
-  scas_floci_require
-  if ! scas_floci_aws s3 ls "s3://${bucket}" >/dev/null 2>&1; then
-    scas_floci_aws s3 mb "s3://${bucket}" >/dev/null 2>&1
-  fi
-  echo "$bucket"
-}
-
 scas_floci_s3_put() {
   local bucket="${1:?bucket}"
   local key="${2:?key}"
@@ -391,6 +380,68 @@ scas_floci_ssm_put_parameter() {
   scas_floci_aws ssm put-parameter --name "$name" --value "$value" --type String --overwrite >/dev/null 2>&1 || true
 }
 
+scas_floci_glue_create_database() {
+  local name="${1:?database name}"
+  local desc="${2:-SCAS lab catalog}"
+  scas_floci_aws glue create-database --database-input "{\"Name\":\"${name}\",\"Description\":\"${desc}\"}" >/dev/null 2>&1 || true
+}
+
+scas_floci_id2() {
+  printf '%02d' $((10#${1}))
+}
+
+# Plant org JSON + IAM/STS/SSM/Logs/EventBridge, then story-shaped extras.
+scas_floci_seed_cloud_context() {
+  local id bucket here assets
+  id="$(scas_floci_id2 "${1:?scenario id}")"
+  bucket="$(scas_floci_bucket_for_scenario "$id")"
+  here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  assets="${here}/cloud-context-assets.py"
+  # shellcheck disable=SC1091
+  source "${here}/seed-story-extras.sh"
+
+  if [ -f "$assets" ]; then
+    scas_floci_s3_put_string "$bucket" "org/account.json" < <(python3 "$assets" "$id" account)
+    scas_floci_s3_put_string "$bucket" "org/inventory.json" < <(python3 "$assets" "$id" inventory)
+    scas_floci_s3_put_string "$bucket" "org/critical-assets.json" < <(python3 "$assets" "$id" critical)
+  fi
+
+  local caller
+  caller="$(scas_floci_sts_get_caller 2>/dev/null || echo '{"Account":"000000000000","lab_only":true}')"
+  scas_floci_s3_put_string "$bucket" "org/sts-caller.json" <<< "$caller"
+
+  scas_floci_iam_create_role "scas-sc${id}-workload-role"
+  scas_floci_ssm_put_parameter "/scas/sc${id}/lab-mode" "testbench"
+  scas_floci_logs_put "/scas/sc${id}/lab" "seed" "cloud context seeded for scenario ${id}"
+  scas_floci_eventbridge_put "scas.lab.seeded" "{\"scenario\":\"${id}\",\"lab_only\":true}"
+
+  scas_floci_seed_story_secrets "$id"
+  scas_floci_seed_story_extras "$id" "$bucket"
+
+  case "$id" in
+    05|06|21|23|25)
+      local plant
+      plant="$(scas_floci_lookalike_root)/plant-lookalike-secrets.sh"
+      if [ -x "$plant" ] || [ -f "$plant" ]; then
+        bash "$plant" "$id" || true
+      fi
+      ;;
+  esac
+}
+
+scas_floci_seed_scenario() {
+  local id="${1:?scenario id}"
+  local bucket
+  bucket="$(scas_floci_bucket_for_scenario "$id")"
+  scas_floci_require
+  if ! scas_floci_aws s3 ls "s3://${bucket}" >/dev/null 2>&1; then
+    scas_floci_aws s3 mb "s3://${bucket}" >/dev/null 2>&1
+  fi
+  # Chatty seed (plant echoes, aws noise) must not leak into BUCKET=$(...).
+  scas_floci_seed_cloud_context "$id" >&2 || true
+  echo "$bucket"
+}
+
 # --- Lookalike lab secrets (never overwrite SCAS_FLOCI_AWS_* / emulator auth) ---
 
 scas_floci_lookalike_root() {
@@ -421,51 +472,18 @@ scas_floci_lookalike_json() {
   local file
   scas_floci_ensure_lookalike
   file="$(scas_floci_lookalike_root)/lookalike-secrets.json"
-  python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); print(json.dumps(d[sys.argv[2]]))' "$file" "$key"
+  python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); print(json.dumps(d.get(sys.argv[2], {})))' "$file" "$key"
 }
 
-# Seed Secrets Manager / SSM with realistic lookalike values for harvest labs.
+# Seed Secrets Manager / SSM (all labs) and plant victim fixtures (05, 06, 21, 23, 25).
 # Does not export AWS_* into this shell (emulator auth stays SCAS_FLOCI_*).
 scas_floci_seed_lookalike_secrets() {
-  local id="${1:?scenario id e.g. 05}"
-  # normalize 5 → 05
-  if [[ "$id" =~ ^[0-9]$ ]]; then
-    id="0${id}"
-  fi
-
-  local npm_json aws_json github_token db_url
-  npm_json="$(scas_floci_lookalike_json npm)"
-  aws_json="$(scas_floci_lookalike_json aws_ci)"
-  github_token="$(scas_floci_lookalike_get GITHUB_TOKEN)"
-  db_url="$(scas_floci_lookalike_get DATABASE_URL)"
-
-  case "$id" in
-    05)
-      scas_floci_ssm_put_parameter "/scas/sc05/ci-database-url" "$db_url"
-      scas_floci_secret_put "scas/sc05/ci-aws" "$aws_json"
-      scas_floci_secret_put "scas/sc05/ci-database" "$(scas_floci_lookalike_json database)"
-      ;;
-    06)
-      scas_floci_secret_put "scas/sc06/decoy-npm-token" "$npm_json"
-      scas_floci_secret_put "scas/sc06/decoy-github-pat" "$(scas_floci_lookalike_json github)"
-      scas_floci_secret_put "scas/sc06/decoy-aws" "$aws_json"
-      ;;
-    21)
-      scas_floci_secret_put "scas/sc21/ci-aws-role" "$aws_json"
-      scas_floci_secret_put "scas/sc21/decoy-npm-token" "$npm_json"
-      ;;
-    23)
-      scas_floci_ssm_put_parameter "/scas/sc23/github-pat" "$github_token"
-      scas_floci_secret_put "scas/sc23/ci-aws" "$aws_json"
-      scas_floci_secret_put "scas/sc23/ci-docker" "$(scas_floci_lookalike_json docker)"
-      ;;
-    *)
-      echo "   (no Floci lookalike SM/SSM map for scenario ${id})" >&2
-      return 0
-      ;;
-  esac
-
-  local plant
+  local id here plant
+  id="$(scas_floci_id2 "${1:?scenario id e.g. 05}")"
+  here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  # shellcheck disable=SC1091
+  source "${here}/seed-story-extras.sh"
+  scas_floci_seed_story_secrets "$id"
   plant="$(scas_floci_lookalike_root)/plant-lookalike-secrets.sh"
   if [ -x "$plant" ] || [ -f "$plant" ]; then
     bash "$plant" "$id" || true

@@ -9,7 +9,10 @@ cd scenarios/10-git-submodule-attack
 ./infrastructure/floci/seed.sh
 # ... run normal README lab steps ...
 ./infrastructure/floci/verify.sh
+../../detection-tools/floci/cloud-context.sh 10
 ../../detection-tools/floci/s3-exfil-check.sh 10
 ```
 
 Dual-write: mock server (primary) + `s3://scas-sc10-artifacts/exfil/git-submodule-*.json`
+
+SSM `/scas/sc10/submodule-canonical-url` is the last good remote. Secrets Manager `scas/sc10/github-pat` is the dummy PAT.

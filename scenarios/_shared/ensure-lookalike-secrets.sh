@@ -13,7 +13,12 @@ if [ ! -f "$GEN" ]; then
   exit 1
 fi
 
-# Regenerate when missing, or when FORCE_LOOKALIKE_REGEN=1
+need_gen=0
 if [ "${FORCE_LOOKALIKE_REGEN:-0}" = "1" ] || [ ! -f "$ENV_OUT" ] || [ ! -f "$JSON_OUT" ]; then
+  need_gen=1
+elif ! python3 -c 'import json,sys; json.load(open(sys.argv[1]))["huggingface"]' "$JSON_OUT" >/dev/null 2>&1; then
+  need_gen=1
+fi
+if [ "$need_gen" = "1" ]; then
   python3 "$GEN"
 fi

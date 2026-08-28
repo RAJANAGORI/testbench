@@ -14,6 +14,12 @@ By the end of this guide, you will:
 - Apply the **Mitigation Playbook** from this guide and the scenario README
 ---
 
+
+
+
+
+
+
 ## Table of Contents
 
 <div class="doc-toc">
@@ -28,6 +34,7 @@ By the end of this guide, you will:
 - [Part 8: Prevention and Mitigation (30 minutes)](#part-8-prevention-and-mitigation-30-minutes)
 - [Part 9: Advanced Topics (20 minutes)](#part-9-advanced-topics-20-minutes)
 - [Mitigation Playbook](#mitigation-playbook)
+- [Code-level workflow](#code-level-workflow)
 - [Elasticsearch + Kibana observability (optional)](#elasticsearch--kibana-observability-optional)
 - [Part 10: Clean Up and Next Steps (5 minutes)](#part-10-clean-up-and-next-steps-5-minutes)
 - [🆘 Troubleshooting](#🆘-troubleshooting)
@@ -542,6 +549,8 @@ Canonical prevention and mitigation controls (aligned with the [scenario README]
 
 *Code-level workflow for Scenario 02. Editable source: [`scas-codeflow-scenario-02.excalidraw`](../../assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-02.excalidraw). Regenerate with `node scripts/diagrams/generate-scenario-codeflow-diagrams.js`.*
 
+---
+
 ## Elasticsearch + Kibana observability (optional)
 
 Scenario **02 - Dependency Confusion** is indexed in Elasticsearch when the observability stack is running.
@@ -638,7 +647,7 @@ From the repository root:
 
 ```bash
 ./scripts/observability/elasticsearch-up.sh
-./scripts/observability/setup-kibana-data-views.sh   # data views + saved searches for all 23 scenarios
+./scripts/observability/setup-kibana-data-views.sh   # data views + saved searches for all 29 scenarios
 ```
 
 ### Run this scenario with live Elasticsearch forwarding

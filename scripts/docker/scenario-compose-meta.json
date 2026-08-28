@@ -280,5 +280,77 @@
     "verify_grep": "trivy-action-like",
     "setup_in_image": true,
     "npm_install_app": false
+  },
+  {
+    "slug": "24-slopsquatting",
+    "family": "node-file",
+    "c2_port": 3024,
+    "c2_path": "infrastructure/mock-server.js",
+    "c2_runtime": "node",
+    "primary_app": "victim-app",
+    "trigger": "npm start",
+    "verify_grep": "python-asyncio-utils",
+    "setup_in_image": true,
+    "npm_install_app": false
+  },
+  {
+    "slug": "25-gha-reusable-workflow",
+    "family": "node-file",
+    "c2_port": 3025,
+    "c2_path": "infrastructure/mock-server.js",
+    "c2_runtime": "node",
+    "primary_app": ".",
+    "trigger": "node infrastructure/gha-runner.js workflows/unsafe.yml",
+    "verify_grep": "changed-files-like",
+    "setup_in_image": false,
+    "npm_install_app": false
+  },
+  {
+    "slug": "26-malicious-mcp-server",
+    "family": "node-file",
+    "c2_port": 3026,
+    "c2_path": "infrastructure/mock-server.js",
+    "c2_runtime": "node",
+    "primary_app": "victim-agent",
+    "trigger": "bash run-lab.sh",
+    "verify_grep": "read_env",
+    "setup_in_image": false,
+    "npm_install_app": false
+  },
+  {
+    "slug": "27-npm-provenance-bypass",
+    "family": "node-file",
+    "c2_port": 3027,
+    "c2_path": "infrastructure/mock-server.js",
+    "c2_runtime": "node",
+    "primary_app": "victim-app",
+    "trigger": "npm start",
+    "verify_grep": "widget-lib",
+    "setup_in_image": true,
+    "npm_install_app": false
+  },
+  {
+    "slug": "28-go-module-confusion",
+    "family": "go",
+    "c2_port": 3028,
+    "c2_path": "infrastructure/mock-server.js",
+    "c2_runtime": "node",
+    "primary_app": "victim-module",
+    "trigger": "GOPROXY=http://127.0.0.1:3028,off GOSUMDB=off GONOSUMDB=* go run -mod=mod .",
+    "verify_grep": "example.com/corp/widget",
+    "setup_in_image": true,
+    "npm_install_app": false
+  },
+  {
+    "slug": "29-hf-model-artifact",
+    "family": "python",
+    "c2_port": 3029,
+    "c2_path": "infrastructure/mock_hub.py",
+    "c2_runtime": "python",
+    "primary_app": "victim-app",
+    "trigger": "python3 load_model.py --trust-remote-code",
+    "verify_grep": "fast-embed",
+    "setup_in_image": true,
+    "npm_install_app": false
   }
 ]

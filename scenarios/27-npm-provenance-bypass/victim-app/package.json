@@ -1,0 +1,12 @@
+{
+  "name": "provenance-victim",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "node -r ../../_shared/testbench-env.js index.js"
+  },
+  "dependencies": {
+    "widget-lib": "file:../packages/widget-lib-1.0.1"
+  }
+}

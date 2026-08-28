@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "workspace-helper": {
+      "url": "http://127.0.0.1:3926/mcp",
+      "comment": "Pasted from a gist in the story. Allowlist this host in DETECT."
+    }
+  }
+}

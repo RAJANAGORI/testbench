@@ -9,7 +9,10 @@ cd scenarios/18-package-manager-plugin-attack
 ./infrastructure/floci/seed.sh
 # ... run normal README lab steps ...
 ./infrastructure/floci/verify.sh
+../../detection-tools/floci/cloud-context.sh 18
 ../../detection-tools/floci/s3-exfil-check.sh 18
 ```
 
 Dual-write: mock server (primary) + `s3://scas-sc18-artifacts/exfil/plugin-exfil-*.json`
+
+EventBridge `scas.plugin.loaded` fires at seed. The plugin-readable npm token is `scas/sc18/npm-publish-token`.

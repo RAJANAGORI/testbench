@@ -1,6 +1,6 @@
 /**
  * Editable SCAS landing content.
- * Change copy, CTAs, and section text here — sections read from this file only.
+ * Change copy, CTAs, and section text here. Sections read from this file only.
  */
 
 export const site = {
@@ -17,10 +17,11 @@ export const site = {
     brand: 'SCAS',
     headline: 'Break the chain. Learn to defend it.',
     support:
-      'Twenty-three localhost-only labs for modeling, detecting, and mitigating software supply chain attacks.',
+      'Twenty-nine localhost-only labs. Clone the repo, run ./install.sh, then model, detect, and mitigate software supply chain attacks.',
     primaryCta: 'Start Dashboard',
     secondaryCta: 'Learn More',
     orbitLabel: 'localhost only',
+    installHint: 'Install first: ./install.sh',
   },
 
   scenarioTicker: [
@@ -47,17 +48,23 @@ export const site = {
     { id: '21', title: 'Axios-style npm Release', level: 'Advanced' },
     { id: '22', title: 'LiteLLM-style PyPI', level: 'Advanced' },
     { id: '23', title: 'Trivy CI Compromise', level: 'Advanced' },
+    { id: '24', title: 'Slopsquatting', level: 'Intermediate' },
+    { id: '25', title: 'Compromised GitHub Action', level: 'Advanced' },
+    { id: '26', title: 'Malicious MCP Server', level: 'Advanced' },
+    { id: '27', title: 'npm Provenance Bypass', level: 'Advanced' },
+    { id: '28', title: 'Go Module Confusion', level: 'Advanced' },
+    { id: '29', title: 'HF-style Model Artifact', level: 'Advanced' },
   ],
 
   killChain: {
     eyebrow: 'How you learn',
     headline: 'Attack. Detect. Mitigate.',
-    support: 'Every lab walks the same loop — with real mechanics, gated for education.',
+    support: 'Every lab walks the same loop, with real mechanics, gated for education.',
     verbs: ['Attack', 'Detect', 'Mitigate', 'Defend'],
     steps: [
       {
         title: 'Attack',
-        body: 'Run intentionally malicious packages, mirrors, builds, and CI patterns — only when TESTBENCH_MODE is enabled.',
+        body: 'Run intentionally malicious packages, mirrors, builds, and CI patterns, only when TESTBENCH_MODE is enabled.',
       },
       {
         title: 'Detect',
@@ -74,18 +81,18 @@ export const site = {
     eyebrow: 'Safety model',
     headline: 'Gated payloads. Localhost only.',
     support:
-      'Malicious paths never run unless TESTBENCH_MODE is enabled — and exfiltration targets 127.0.0.1 only.',
+      'Malicious paths never run unless TESTBENCH_MODE is enabled, and exfiltration targets 127.0.0.1 only.',
     shimmerText: 'TESTBENCH_MODE=enabled',
     dialogTitle: 'How the gate works',
     dialogBody:
-      'Every scenario setup sources enable-testbench.sh. Payloads check process.env.TESTBENCH_MODE (or Python equivalent) before any malicious path. Without the flag, code prints [SAFE MODE] and exits. Captures stay on localhost mock collectors — never external hosts.',
+      'Every scenario setup sources enable-testbench.sh. Payloads check process.env.TESTBENCH_MODE (or Python equivalent) before any malicious path. Without the flag, code prints [SAFE MODE] and exits. Captures stay on localhost mock collectors, never external hosts.',
   },
 
   stats: {
     eyebrow: 'Built for workshops',
     headline: 'A full test bench, not a slide deck.',
     items: [
-      { value: 23, label: 'Attack labs', suffix: '' },
+      { value: 29, label: 'Attack labs', suffix: '' },
       { value: 3, label: 'Optional tracks', suffix: '' },
       { value: 1, label: 'Safety gate', suffix: '' },
     ],
@@ -100,7 +107,7 @@ export const site = {
       },
       {
         title: 'Cloud track',
-        body: 'Optional Floci local-AWS dual-write for S3/ECR-style evidence.',
+        body: 'Optional Floci dummy org on :4566 (S3, secrets, logs, story-shaped services).',
       },
     ],
   },
@@ -110,14 +117,14 @@ export const site = {
     headline: 'Observe and extend when you need them.',
     items: [
       { title: 'Elasticsearch + Kibana', body: 'Index runbooks and live captures for SIEM-style review.' },
-      { title: 'Floci local AWS', body: 'Mirror exfil into a local emulator on :4566 — no real cloud account.' },
+      { title: 'Floci local AWS', body: 'Dummy org on :4566 (S3, secrets, logs, and the services that match the lab). No real cloud account.' },
       { title: 'Control Center UI', body: 'Drive labs from the browser with live logs and platform controls.' },
     ],
   },
 
   finalCta: {
     headline: 'Open the Control Center.',
-    support: 'Prepare labs, stream output, and inspect captures — still localhost-only.',
+    support: 'Install first if the dashboard is not up. Prepare labs, stream output, inspect captures. Still localhost-only.',
     primaryCta: 'Start Dashboard',
     secondaryCta: 'Read the docs',
   },

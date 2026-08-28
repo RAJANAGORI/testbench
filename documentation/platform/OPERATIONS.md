@@ -25,12 +25,12 @@ Day-two operations for running, cleaning up, and validating the test bench.
 ```bash
 git clone https://github.com/RAJANAGORI/supply-chain-attack-simulator.git
 cd supply-chain-attack-simulator
-chmod +x START_HERE.sh && find scripts -name '*.sh' -type f -exec chmod +x {} +
-./scripts/setup/setup.sh
-source .testbench.env
+chmod +x install.sh
+./install.sh
+source .scas.env
 ```
 
-Or use the interactive helper: `./START_HERE.sh`
+`START_HERE.sh` is a wrapper around `./install.sh`. Inner helper (no npm): `./scripts/setup/setup.sh -y`.
 
 ## Environment variables
 
@@ -56,7 +56,7 @@ source .testbench.env
 | [`scripts/setup/setup.sh`](../../scripts/setup/setup.sh) | Repo-wide setup, creates `.testbench.env` |
 | [`scripts/setup/teardown.sh`](../../scripts/setup/teardown.sh) | Kill scenario ports, remove captures & node_modules |
 | [`scripts/setup/kill-port.sh`](../../scripts/setup/kill-port.sh) | Free one port or all ports from `ports.env` |
-| [`scripts/smoke/smoke-all-scenarios.sh`](../../scripts/smoke/smoke-all-scenarios.sh) | End-to-end smoke for all 23 scenarios |
+| [`scripts/smoke/smoke-all-scenarios.sh`](../../scripts/smoke/smoke-all-scenarios.sh) | End-to-end smoke for all 29 scenarios |
 | [`scripts/docs/check-info-consistency.js`](../../scripts/docs/check-info-consistency.js) | Fail CI if public lab counts / indexes drift from on-disk scenarios |
 | [`scripts/diagrams/check-diagram-assets.js`](../../scripts/diagrams/check-diagram-assets.js) | Fail CI if Excalidraw/SVG diagram contract drifts |
 | [`scripts/observability/elasticsearch-up.sh`](../../scripts/observability/elasticsearch-up.sh) | Start ES + Kibana, seed runbooks |
@@ -83,7 +83,7 @@ Source of truth: [`scripts/setup/ports.env`](../../scripts/setup/ports.env)
 | 3015-3022 | Scenarios 15-22 (dedicated mock servers) |
 | 9200 | Elasticsearch (optional) |
 | 5601 | Kibana (optional) |
-| 4566 | Floci AWS emulator (optional; all scenarios - S3 universal; extended on 05, 06, 11, 14, 17, 19, 23) |
+| 4566 | Floci AWS emulator (optional; all 29 labs plant a dummy org; `cloud-context.sh NN`) |
 
 Free a port after a lab:
 
@@ -121,6 +121,7 @@ source .testbench.env && source .floci.env
 ./scripts/floci/floci-up.sh
 ./scripts/floci/floci-status.sh
 # scenario seed/verify under scenarios/NN-*/infrastructure/floci/
+# dump dummy org: detection-tools/floci/cloud-context.sh NN
 ./scripts/floci/floci-down.sh
 ```
 

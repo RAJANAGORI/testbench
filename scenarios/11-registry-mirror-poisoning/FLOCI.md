@@ -9,6 +9,7 @@ cd scenarios/11-registry-mirror-poisoning
 ./infrastructure/floci/seed.sh
 # ... run normal README lab steps ...
 ./infrastructure/floci/verify.sh
+../../detection-tools/floci/cloud-context.sh 11
 ../../detection-tools/floci/s3-exfil-check.sh 11
 ```
 
@@ -16,3 +17,4 @@ Dual-write: mock server (primary) + `s3://scas-sc11-artifacts/exfil/mirror-exfil
 
 Extended seed also creates **ECR** repo `scas-sc11-app` as an enterprise container-registry analog.
 
+Secrets Manager `scas/sc11/mirror-pull-token` sits next to ECR `scas-sc11-app`. Dump: `cloud-context.sh 11`.

@@ -9,6 +9,7 @@ cd scenarios/16-package-cache-poisoning
 ./infrastructure/floci/seed.sh
 # ... run normal README lab steps ...
 ./infrastructure/floci/verify.sh
+../../detection-tools/floci/cloud-context.sh 16
 ../../detection-tools/floci/s3-exfil-check.sh 16
 ```
 

@@ -9,7 +9,10 @@ cd scenarios/12-workspace-monorepo-attack
 ./infrastructure/floci/seed.sh
 # ... run normal README lab steps ...
 ./infrastructure/floci/verify.sh
+../../detection-tools/floci/cloud-context.sh 12
 ../../detection-tools/floci/s3-exfil-check.sh 12
 ```
 
 Dual-write: mock server (primary) + `s3://scas-sc12-artifacts/exfil/workspace-exfil-*.json`
+
+SQS `scas-sc12-workspace-build` is the monorepo job queue analog. The root npm token is `scas/sc12/npm-publish-token`.

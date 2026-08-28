@@ -1,0 +1,23 @@
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "subject": [
+    {
+      "name": "pkg:npm/widget-lib@1.0.0"
+    }
+  ],
+  "predicateType": "https://slsa.dev/provenance/v1",
+  "predicate": {
+    "buildDefinition": {
+      "buildType": "https://github.com/npm/cli/trusted-publishing",
+      "externalParameters": {
+        "repository": "https://github.com/example/repo"
+      }
+    },
+    "runDetails": {
+      "builder": {
+        "id": "https://github.com/example/repo/.github/workflows/release.yml"
+      }
+    }
+  },
+  "note": "Lab fixture. Not a real npm provenance document."
+}

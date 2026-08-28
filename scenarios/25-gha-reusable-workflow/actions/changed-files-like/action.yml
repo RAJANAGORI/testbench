@@ -1,0 +1,5 @@
+name: changed-files-like
+description: Lab stand-in for a third-party changed-files action. Educational only.
+runs:
+  using: node20
+  main: index.js

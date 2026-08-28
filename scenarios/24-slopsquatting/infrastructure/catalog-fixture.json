@@ -1,0 +1,13 @@
+{
+  "packages": [
+    "lodash",
+    "axios",
+    "react",
+    "python-dateutil",
+    "asyncio",
+    "stripe",
+    "@stripe/stripe-js",
+    "requests"
+  ],
+  "note": "Fictional 'real catalog'. Hallucinated names are absent on purpose."
+}

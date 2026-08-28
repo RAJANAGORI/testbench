@@ -511,6 +511,111 @@ free_common_ports
   kill "$(cat /tmp/tb23-mock.pid)" 2>/dev/null || true
 }
 
+# --- 24 ---
+note "Scenario 24 slopsquatting"
+free_common_ports
+{
+  cd "$ROOT"
+  cd scenarios/24-slopsquatting
+  node infrastructure/mock-server.js >/tmp/tb24-mock.log 2>&1 &
+  echo $! >/tmp/tb24-mock.pid
+  sleep 1
+  cd victim-app
+  npm install >/tmp/tb24-npm.log 2>&1
+  TESTBENCH_MODE=enabled npm start >/tmp/tb24-app.log 2>&1 || true
+  C="$(curl -s http://127.0.0.1:3024/captured-data)"
+  if has_capture_payload "$C"; then ok "24"; else bad "24"; fi
+  kill "$(cat /tmp/tb24-mock.pid)" 2>/dev/null || true
+}
+
+# --- 25 ---
+note "Scenario 25 compromised reusable GitHub Action"
+free_common_ports
+{
+  cd "$ROOT"
+  cd scenarios/25-gha-reusable-workflow
+  node infrastructure/mock-server.js >/tmp/tb25-mock.log 2>&1 &
+  echo $! >/tmp/tb25-mock.pid
+  sleep 1
+  TESTBENCH_MODE=enabled node infrastructure/gha-runner.js workflows/unsafe.yml >/tmp/tb25-run.log 2>&1 || true
+  C="$(curl -s http://127.0.0.1:3025/captured-data)"
+  if has_capture_payload "$C"; then ok "25"; else bad "25"; fi
+  kill "$(cat /tmp/tb25-mock.pid)" 2>/dev/null || true
+}
+
+# --- 26 ---
+note "Scenario 26 malicious MCP server"
+free_common_ports
+{
+  cd "$ROOT"
+  cd scenarios/26-malicious-mcp-server
+  node infrastructure/mock-server.js >/tmp/tb26-mock.log 2>&1 &
+  echo $! >/tmp/tb26-mock.pid
+  node infrastructure/mcp-server.js >/tmp/tb26-mcp.log 2>&1 &
+  echo $! >/tmp/tb26-mcp.pid
+  sleep 1
+  TESTBENCH_MODE=enabled node victim-agent/agent.js >/tmp/tb26-app.log 2>&1 || true
+  C="$(curl -s http://127.0.0.1:3026/captured-data)"
+  if has_capture_payload "$C"; then ok "26"; else bad "26"; fi
+  kill "$(cat /tmp/tb26-mcp.pid)" 2>/dev/null || true
+  kill "$(cat /tmp/tb26-mock.pid)" 2>/dev/null || true
+}
+
+# --- 27 ---
+note "Scenario 27 npm provenance bypass"
+free_common_ports
+{
+  cd "$ROOT"
+  cd scenarios/27-npm-provenance-bypass
+  node infrastructure/mock-server.js >/tmp/tb27-mock.log 2>&1 &
+  echo $! >/tmp/tb27-mock.pid
+  sleep 1
+  cd victim-app
+  npm install >/tmp/tb27-npm.log 2>&1
+  TESTBENCH_MODE=enabled npm start >/tmp/tb27-app.log 2>&1 || true
+  C="$(curl -s http://127.0.0.1:3027/captured-data)"
+  if has_capture_payload "$C"; then ok "27"; else bad "27"; fi
+  kill "$(cat /tmp/tb27-mock.pid)" 2>/dev/null || true
+}
+
+# --- 28 ---
+note "Scenario 28 Go module confusion"
+free_common_ports
+{
+  cd "$ROOT"
+  cd scenarios/28-go-module-confusion
+  python3 infrastructure/pack-module.py >/tmp/tb28-pack.log 2>&1
+  node infrastructure/mock-server.js >/tmp/tb28-mock.log 2>&1 &
+  echo $! >/tmp/tb28-mock.pid
+  sleep 1
+  if command -v go >/dev/null 2>&1; then
+    (
+      cd victim-module
+      TESTBENCH_MODE=enabled GOPROXY=http://127.0.0.1:3028,off GOSUMDB=off GONOSUMDB='*' go run -mod=mod . >/tmp/tb28-app.log 2>&1 || true
+    )
+  else
+    TESTBENCH_MODE=enabled node infrastructure/goproxy-client.js >/tmp/tb28-app.log 2>&1 || true
+  fi
+  C="$(curl -s http://127.0.0.1:3028/captured-data)"
+  if has_capture_payload "$C"; then ok "28"; else bad "28"; fi
+  kill "$(cat /tmp/tb28-mock.pid)" 2>/dev/null || true
+}
+
+# --- 29 ---
+note "Scenario 29 HF-style model artifact"
+free_common_ports
+{
+  cd "$ROOT"
+  cd scenarios/29-hf-model-artifact
+  python3 infrastructure/mock_hub.py >/tmp/tb29-mock.log 2>&1 &
+  echo $! >/tmp/tb29-mock.pid
+  sleep 1
+  TESTBENCH_MODE=enabled python3 victim-app/load_model.py --trust-remote-code >/tmp/tb29-app.log 2>&1 || true
+  C="$(curl -s http://127.0.0.1:3029/captured-data)"
+  if has_capture_payload "$C"; then ok "29"; else bad "29"; fi
+  kill "$(cat /tmp/tb29-mock.pid)" 2>/dev/null || true
+}
+
 free_common_ports
 
 echo ""

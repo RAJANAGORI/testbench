@@ -7,6 +7,7 @@ export TESTBENCH_MODE=enabled SCAS_FLOCI_ENABLED=1
 ./infrastructure/floci/seed.sh
 # run lab - malicious SBOM generator omits malicious-lib
 ./infrastructure/floci/verify.sh
+../../detection-tools/floci/cloud-context.sh 19
 ../../detection-tools/floci/s3-exfil-check.sh 19
 ```
 

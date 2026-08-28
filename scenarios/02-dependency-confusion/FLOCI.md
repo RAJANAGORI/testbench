@@ -9,7 +9,10 @@ cd scenarios/02-dependency-confusion
 ./infrastructure/floci/seed.sh
 # ... run normal README lab steps ...
 ./infrastructure/floci/verify.sh
+../../detection-tools/floci/cloud-context.sh 02
 ../../detection-tools/floci/s3-exfil-check.sh 02
 ```
 
 Dual-write: mock server (primary) + `s3://scas-sc02-artifacts/exfil/config-exfil-*.json`
+
+Seed also fills SQS `scas-sc02-dep-resolve` and SSM `/scas/sc02/internal-scope` (`@corp`). `cloud-context.sh 02` dumps the rest.

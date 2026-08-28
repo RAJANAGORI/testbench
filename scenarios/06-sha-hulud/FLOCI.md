@@ -10,6 +10,7 @@ export TESTBENCH_MODE=enabled SCAS_FLOCI_ENABLED=1
 # Terminal B: cd victim-app && npm install ../compromised-package/data-processor
 # (seed/setup plants victim-app/.npmrc + .env with lookalike npm/GitHub/AWS tokens)
 ./infrastructure/floci/verify.sh
+../../detection-tools/floci/cloud-context.sh 06
 ../../detection-tools/floci/s3-exfil-check.sh 06
 ../../detection-tools/floci/secrets-check.sh scas/sc06/decoy-npm-token
 ```

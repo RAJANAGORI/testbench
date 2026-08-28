@@ -1,6 +1,6 @@
 'use strict';
 
-/** Canonical mitigation bullets per scenario (01-23). Single source for README, DETECT, zero-to-hero. */
+/** Canonical mitigation bullets per scenario (01-29). Single source for README, DETECT, zero-to-hero. */
 const PLAYBOOKS = {
   '01': {
     scenarioDir: '01-typosquatting',
@@ -239,6 +239,66 @@ const PLAYBOOKS = {
       'Recover: rotate all CI secrets (GITHUB_TOKEN, AWS keys, registry credentials, database URLs) accessible to affected pipeline runs.',
       'Hunt: scan every workflow YAML in the organization for compromised version strings; check Dockerfiles and container registries for `trivy:0.69.4/5/6`.',
       'Harden: enforce SHA pinning for all third-party actions via policy (e.g. `step-security/harden-runner`, Allstar, or custom CI lint); alert on unexpected outbound network calls from action steps.',
+    ],
+  },
+  '24': {
+    scenarioDir: '24-slopsquatting',
+    bullets: [
+      'Resolve every new package name against a known catalog (allowlist or registry), not edit-distance.',
+      'Treat LLM or chat install lines as untrusted until the name exists in that catalog.',
+      'Commit the lockfile and use `npm ci` in CI. Do not `npm install <invented-name>` from a gist.',
+      'Prefer scoped private registries for first-party libraries.',
+      'Check publish age and download history before adding a name nobody has seen.',
+    ],
+  },
+  '25': {
+    scenarioDir: '25-gha-reusable-workflow',
+    bullets: [
+      'Pin third-party actions to a full commit SHA, not `@v1`.',
+      'Do not use `pull_request_target` unless you have a written reason and a locked-down token.',
+      'Default `GITHUB_TOKEN` to least privilege (`contents: read`).',
+      'Treat marketplace "copy this `@v1` snippet" as marketing, not policy.',
+      'Watch action tags for force-pushes. Lab 23 is the scanner-as-payload case; this one is the generic `uses:` line.',
+    ],
+  },
+  '26': {
+    scenarioDir: '26-malicious-mcp-server',
+    bullets: [
+      'Allowlist MCP servers in client config. Refuse gist-pasted endpoints.',
+      'Read tool schemas before connecting. `read_env` and broad file tools are the tell.',
+      'Keep secrets out of the agent environment when you can. Sandbox the server process.',
+      'Alert on unexpected collectors from MCP child processes.',
+      'Distinct trust edge from lab 15 (IDE/CLI plugin). Here the agent invoked a tool.',
+    ],
+  },
+  '27': {
+    scenarioDir: '27-npm-provenance-bypass',
+    bullets: [
+      'Require trusted-publisher / provenance from a known workflow issuer.',
+      'Reject publishes whose attestation is missing or names a laptop when policy wants OIDC.',
+      'Keep this distinct from 09 (signing) and 21 (compromised release + postinstall).',
+      'Pin exact versions and verify the lockfile in CI.',
+      'Alert on version bumps that do not match a GitHub Actions provenance subject.',
+    ],
+  },
+  '28': {
+    scenarioDir: '28-go-module-confusion',
+    bullets: [
+      'Point `GOPROXY` at a proxy you actually run. Do not paste an unknown host.',
+      'Keep `GOSUMDB` on. Treat `GOSUMDB=off` as an incident, not a convenience flag.',
+      'Review every `replace` in `go.mod` like a new dependency.',
+      'Vendor or pin through a verified mirror in CI.',
+      'Diff `go.sum` after every bump and fail the build on surprise hashes.',
+    ],
+  },
+  '29': {
+    scenarioDir: '29-hf-model-artifact',
+    bullets: [
+      'Do not enable `trust_remote_code` for untrusted hubs.',
+      'Prefer safetensors-class formats (or anything that is not pickle) over pickle-class loads.',
+      'Hash-pin model revisions. Do not float `main`.',
+      'Keep 01-23 in the software catalog. This lab is the ML-artifact track, not a claim that Trivy or Axios is an ML backdoor.',
+      'Scan hub snapshots for unexpected Python next to weights.',
     ],
   },
 };

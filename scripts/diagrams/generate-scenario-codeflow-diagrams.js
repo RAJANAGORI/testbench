@@ -12,7 +12,7 @@
  *   scripts/lib/diagram-paths.js
  *   scripts/lib/scenario-codeflow-detail.js
  *
- * Writes (for each scenario 01–23):
+ * Writes (for each scenario 01-29):
  *   documentation/assets/diagrams/codeflow/svg/scas-codeflow-scenario-NN.svg
  *   documentation/assets/diagrams/codeflow/excalidraw/scas-codeflow-scenario-NN.excalidraw
  *

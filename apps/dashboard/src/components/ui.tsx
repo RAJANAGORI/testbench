@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import Link from 'next/link';
 
 /* ── Status ───────────────────────────────────────── */
 
@@ -125,6 +126,7 @@ type BtnVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success';
 export function Btn({
   children,
   onClick,
+  href,
   variant = 'primary',
   disabled,
   size = 'md',
@@ -132,6 +134,7 @@ export function Btn({
 }: {
   children: ReactNode;
   onClick?: () => void;
+  href?: string;
   variant?: BtnVariant;
   disabled?: boolean;
   size?: 'sm' | 'md' | 'lg';
@@ -149,13 +152,16 @@ export function Btn({
     danger: 'bg-state-error/12 text-state-error border border-state-error/25 hover:bg-state-error/20',
     success: 'bg-state-ok/12 text-state-ok border border-state-ok/25 hover:bg-state-ok/20',
   };
+  const cls = `focus-ring inline-flex items-center justify-center gap-2 rounded-full font-medium transition disabled:cursor-not-allowed disabled:opacity-45 ${sizes[size]} ${variants[variant]} ${className}`;
+  if (href && !disabled) {
+    return (
+      <Link href={href} className={cls}>
+        {children}
+      </Link>
+    );
+  }
   return (
-    <button
-      type="button"
-      disabled={disabled}
-      onClick={onClick}
-      className={`focus-ring inline-flex items-center justify-center gap-2 rounded-full font-medium transition disabled:cursor-not-allowed disabled:opacity-45 ${sizes[size]} ${variants[variant]} ${className}`}
-    >
+    <button type="button" disabled={disabled} onClick={onClick} className={cls}>
       {children}
     </button>
   );

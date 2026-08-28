@@ -9,7 +9,10 @@ cd scenarios/04-malicious-update
 ./infrastructure/floci/seed.sh
 # ... run normal README lab steps ...
 ./infrastructure/floci/verify.sh
+../../detection-tools/floci/cloud-context.sh 04
 ../../detection-tools/floci/s3-exfil-check.sh 04
 ```
 
 Dual-write: mock server (primary) + `s3://scas-sc04-artifacts/exfil/update-exfil-*.json`
+
+SNS `scas-sc04-update-alerts` and EventBridge `scas.package.update` are the version-bump watchers. Dump with `cloud-context.sh 04`.

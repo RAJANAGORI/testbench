@@ -305,6 +305,7 @@ ${victimFlociVolumes()}
 function composePythonFixed(meta) {
   const project = `scas-${meta.slug}`;
   const port = meta.c2_port;
+  const c2File = path.posix.basename(meta.c2_path);
   return `# Auto-generated local Docker lab — ${meta.slug} (Python)
 # Floci via host.docker.internal:4566
 name: ${project}
@@ -320,7 +321,7 @@ services:
       - ../../detection-tools:/detection-tools:ro
 ${mockPlatformEnv()}
 ${flociExtraHosts()}
-    command: ["python", "mock_server.py"]
+    command: ["python", "${c2File}"]
     ports:
       - "${port}:${port}"
     healthcheck:
@@ -340,6 +341,30 @@ ${victimFlociVolumes()}
     tty: true
     stdin_open: true
     command: ["sleep", "infinity"]
+`;
+}
+
+function dockerfileGo(meta) {
+  return `# Auto-generated for ${meta.slug} — build context: scenarios/
+FROM golang:1.22-bookworm
+
+ENV TESTBENCH_MODE=enabled \\
+    GOTOOLCHAIN=local
+
+RUN apt-get update \\
+ && apt-get install -y --no-install-recommends git ca-certificates curl python3 python3-pip \\
+ && pip3 install --break-system-packages --no-cache-dir awscli \\
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /lab
+
+COPY _shared /lab/_shared
+COPY ${meta.slug} /lab/${meta.slug}
+
+WORKDIR /lab/${meta.slug}
+RUN chmod +x setup.sh && ./setup.sh
+
+CMD ["sleep", "infinity"]
 `;
 }
 
@@ -424,6 +449,10 @@ function writeScenario(meta) {
     case 'python':
       compose = composePythonFixed(meta);
       dockerfile = dockerfilePython(meta);
+      break;
+    case 'go':
+      compose = composeNodeFile(meta);
+      dockerfile = dockerfileGo(meta);
       break;
     case 'container':
     case 'trivy':

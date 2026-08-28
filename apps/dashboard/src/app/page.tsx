@@ -36,7 +36,7 @@ function ServiceRow({ name, description, online, url, actions }: ServiceRowProps
 
 export default function OverviewPage() {
   const [status, setStatus] = useState<PlatformStatus | null>(null);
-  const [scenarioCount, setScenarioCount] = useState(23);
+  const [scenarioCount, setScenarioCount] = useState(29);
   const [busy, setBusy] = useState('');
   const [cpReachable, setCpReachable] = useState(true);
   const cpDisplayHost = useControlPlaneDisplayHost();
@@ -108,9 +108,10 @@ export default function OverviewPage() {
         title="Your lab command center"
         description="Start scenarios, watch live output, and manage observability — all on localhost."
         action={
-          <Link href="/scenarios">
-            <Btn size="lg">Browse labs →</Btn>
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Btn size="lg" href="/scenarios/01">Start here: lab 01</Btn>
+            <Btn size="lg" variant="secondary" href="/learn">Learn track</Btn>
+          </div>
         }
       />
 
@@ -236,15 +237,15 @@ export default function OverviewPage() {
       </div>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        <Card title="Quick start" subtitle="Recommended flow for first-time users">
-          <ol className="space-y-3 text-sm text-ink-secondary">
-            <li className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">1</span>Open a lab from the Labs page</li>
-            <li className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">2</span>Run <strong className="text-ink-primary">Prepare</strong> then <strong className="text-ink-primary">Execute</strong></li>
-            <li className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">3</span>Watch the live terminal dock under Labs</li>
-          </ol>
-          <Link href="/scenarios" className="mt-5 inline-block">
-            <Btn variant="secondary">Go to labs</Btn>
-          </Link>
+        <Card title="Start here" subtitle="Typosquatting is the first capture, not lab 07">
+          <p className="text-sm leading-relaxed text-ink-secondary">
+            Open lab 01, read the Guide tab, then Prepare / Execute / Observe. After a capture lands on
+            localhost, the Learn track sends you to 02 and 03.
+          </p>
+          <div className="mt-5 flex flex-wrap gap-2">
+            <Btn href="/scenarios/01">Open lab 01</Btn>
+            <Btn variant="secondary" href="/learn">See the track</Btn>
+          </div>
         </Card>
         <Card title="Safety" subtitle="Education-only constraints">
           <ul className="space-y-2 text-sm text-ink-muted">
@@ -253,9 +254,7 @@ export default function OverviewPage() {
             <li>• Payloads require <span className="font-mono text-xs text-ink-secondary">TESTBENCH_MODE=enabled</span></li>
             <li>• Use Reset lab when finished to free ports</li>
           </ul>
-          <Link href="/teardown" className="mt-5 inline-block">
-            <Btn variant="danger" size="sm">Reset lab environment</Btn>
-          </Link>
+          <Btn variant="danger" size="sm" href="/teardown">Reset lab environment</Btn>
         </Card>
       </div>
     </div>

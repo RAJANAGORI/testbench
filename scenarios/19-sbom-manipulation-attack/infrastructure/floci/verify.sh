@@ -5,6 +5,8 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 source "${REPO_ROOT}/scripts/floci/floci-bridge.sh"
 
 scas_floci_require
+"${REPO_ROOT}/detection-tools/floci/cloud-context.sh" 19 || true
+echo ""
 BUCKET="$(scas_floci_bucket_for_scenario 19)"
 
 echo "=== Floci SBOM analytics — scenario 19 ==="

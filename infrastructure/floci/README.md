@@ -1,6 +1,6 @@
 # SCAS Floci orchestration
 
-Local AWS emulator for cloud-track scenarios **05, 06, 14, 17, 21**.
+Local AWS emulator on `:4566` for the optional cloud track. All 29 labs can seed a dummy org; see `documentation/guides/FLOCI_INTEGRATION.md`.
 
 ## One-time setup
 
@@ -21,6 +21,8 @@ source .floci.env              # SCAS_FLOCI_ENABLED=1 + AWS endpoint vars
 ./scripts/floci/floci-down.sh        # stop
 ```
 
+Dump one lab: `detection-tools/floci/cloud-context.sh 01`
+
 ## Layout
 
 | Path | Purpose |
@@ -30,5 +32,3 @@ source .floci.env              # SCAS_FLOCI_ENABLED=1 + AWS endpoint vars
 | `docker-compose.image.yml` | Published `floci/floci:latest-compat` |
 | `data/` | Persistent emulator state |
 | `init/ready.d/` | Optional boot hooks (AWS CLI seed scripts) |
-
-See `documentation/guides/FLOCI_INTEGRATION.md` for per-scenario labs.

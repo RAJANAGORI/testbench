@@ -2,6 +2,7 @@
 # Plant lookalike credential fixtures for harvest labs (LAB ONLY).
 # Usage:
 #   ./scenarios/_shared/plant-lookalike-secrets.sh 06
+# Labs with victim files: 05, 06, 21, 23, 25.
 #
 # SCAS-FP-RN-8d4f2c9a1e7b3065
 
@@ -89,6 +90,18 @@ AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
 DATABASE_URL=${DATABASE_URL}
 DOCKER_USERNAME=${DOCKER_USERNAME}
 DOCKER_PASSWORD=${DOCKER_PASSWORD}
+EOF
+    echo "   Planted ${VICTIM}/.env.ci-lab"
+    ;;
+  25)
+    VICTIM="${REPO_ROOT}/scenarios/25-gha-reusable-workflow"
+    mkdir -p "$VICTIM"
+    cat >"${VICTIM}/.env.ci-lab" <<EOF
+# LAB ONLY — source before the unsafe reusable workflow
+GITHUB_TOKEN=${GITHUB_TOKEN}
+GH_TOKEN=${GITHUB_TOKEN}
+AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
 EOF
     echo "   Planted ${VICTIM}/.env.ci-lab"
     ;;

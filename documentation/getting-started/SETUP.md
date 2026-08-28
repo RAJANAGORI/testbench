@@ -1,320 +1,78 @@
-# Complete Setup Guide
+# Labs-only setup (no Docker)
 
-> **Workshop / full stack?** For SCAS + Elasticsearch/Kibana + Floci in one walkthrough, use **[Full-stack setup](./FULL_STACK_SETUP.md)**. This page covers **SCAS core only**.
+Workshop stack (Elasticsearch, Kibana, Floci) is [FULL_STACK_SETUP.md](./FULL_STACK_SETUP.md). This page is Node/Python labs, `.scas.env`, and the usual "port already bound" mess.
 
-This guide walks you through setting up the Supply Chain Attack Testbench on your local machine.
+Front door is `./install.sh`. `--core-only` is this path. `scripts/setup/setup.sh` is a contributor helper: chmod, `.testbench.env`, dirs. It does not run `npm install`. I burned an hour on that once because the script's old banner claimed it would.
 
-## 📋 Table of Contents
+## What has to be on the box
 
-1. [System Requirements](#system-requirements)
-2. [Installation](#installation)
-3. [Environment Configuration](#environment-configuration)
-4. [Starting Services](#starting-services)
-5. [Verifying Installation](#verifying-installation)
-6. [Troubleshooting](#troubleshooting)
+Linux, macOS, or Windows with WSL2. Node 16+ (20 via `.nvmrc` if you want the UI), npm 7+, Python 3.8+ (3.11 via `.python-version`), Git.
 
-## System Requirements
+4 GB RAM is enough. Canonical markdown lives in `documentation/`. `docs/` is GitHub Pages plus symlinks, so do not edit both.
 
-### Required Software
+macOS Node: `brew install node`. Debian: distro `nodejs`/`npm` or NodeSource (you may need a `node` symlink). WSL2: `wsl --install`, then the Ubuntu steps inside the distro.
 
-- **Node.js**: Version 16 or higher (project default: Node 20 via `.nvmrc`)
-- **npm**: Version 7 or higher (comes with Node.js)
-- **Python**: Version 3.8 or higher (project default: Python 3.11 via `.python-version`)
-- **Git**: For cloning the repository
-
-### Optional Software
-
-- **Docker Desktop** (or Docker Engine + Compose v2) - required for [Elasticsearch/Kibana](../platform/DETECTION_AND_OBSERVABILITY.md) and [Floci](../guides/FLOCI_INTEGRATION.md); see [Full-stack setup](./FULL_STACK_SETUP.md)
-
-### Supported Operating Systems
-
-- macOS 10.15+
-- Linux (Ubuntu 20.04+, Debian 11+, Fedora 35+)
-- Windows 10/11 with WSL2
-
-**Documentation paths:** The canonical markdown guides live in **`documentation/`** (organized under **`getting-started/`**, **`platform/`**, **`reference/`**, **`learning-path/`**, **`modules/`**, and **`scenario-guides/`**). The **`docs/`** directory is the GitHub Pages root (landing page + static assets) with **symbolic links** mirroring this tree - not separate copies. On Windows, enable symlink support if links do not resolve (see **`docs/README.md`**).
-
-### Hardware Requirements
-
-- **RAM**: Minimum 4GB, recommended 8GB
-- **Disk Space**: Minimum 2GB free space
-- **CPU**: Any modern dual-core processor
-
-## Installation
-
-### Step 1: Install Prerequisites
-
-#### macOS
+## Clone the real repo
 
 ```bash
-# Install Homebrew if not already installed
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-# Install Node.js
-brew install node
+git clone https://github.com/RAJANAGORI/supply-chain-attack-simulator.git
+cd supply-chain-attack-simulator
 ```
 
-#### Ubuntu/Debian Linux
+Not `cd testbench`. Not a `<repository-url>` placeholder.
+
+## Installer, labs only
 
 ```bash
-# Update package list
-sudo apt update
-
-# Install Node.js and npm
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-sudo apt install -y nodejs
+chmod +x install.sh
+./install.sh -y --core-only
+source .scas.env
+echo $TESTBENCH_MODE   # enabled
 ```
 
-#### Windows (WSL2)
+That checks prereqs, runs `setup.sh -y`, then root `npm install` plus `detection-tools`. Lookalike harvest fixtures are generated locally and gitignored.
+
+If you really only want chmod:
 
 ```bash
-# Install WSL2 first (PowerShell as Administrator)
-wsl --install
-
-# Inside WSL2 Ubuntu, follow Ubuntu installation steps above
+./scripts/setup/setup.sh -y
+source .scas.env
 ```
 
-### Step 2: Clone Repository
+You still need `npm install` before workspaces or the dashboard. Drop the gate in this shell with `unset TESTBENCH_MODE`. Do not paste `.testbench.env` into a gist.
 
-```bash
-git clone <repository-url>
-cd testbench
-```
-
-### Step 3: Run Setup Script
-
-```bash
-chmod +x scripts/setup/setup.sh
-./scripts/setup/setup.sh
-```
-
-The setup script will:
-
-- Check system requirements
-- Install dependencies
-- Create `.testbench.env` with `TESTBENCH_MODE=enabled`
-- Create necessary directories
-
-## Environment Configuration
-
-### Environment Variables
-
-The setup process writes a repo-local environment file:
-
-```bash
-cat .testbench.env
-# export TESTBENCH_MODE=enabled
-```
-
-Use it in your current shell:
-
-```bash
-source .testbench.env
-```
-
-Optional (for future sessions), add once to your shell profile:
-
-```bash
-[ -f "/path/to/supply-chain-attack-simulator/.testbench.env" ] && source "/path/to/supply-chain-attack-simulator/.testbench.env"
-```
-
-To disable in the current shell:
-
-```bash
-unset TESTBENCH_MODE
-```
-
-### Optional npm configuration
-
-For dependency confusion scenarios, configure npm registry scopes.
-
-Create `.npmrc` in project root:
-
-```bash
-# Private packages from private registry
-@yourcompany:registry=http://localhost:4873/
-
-# Public packages from public registry  
-registry=https://registry.npmjs.org/
-```
-
-## Starting Services
-
-### Manual Startup (CLI)
-
-#### Start Mock Server
-
-```bash
-cd scenarios/01-typosquatting/infrastructure
-node mock-server.js &
-```
-
-## Verifying Installation
-
-### Check Services
-
-1. **Mock Server**: `http://localhost:3000/captured-data`
-   - Should return: `{"captures": []}`
-
-### Run Test Scenario
+## First proof
 
 ```bash
 cd scenarios/01-typosquatting
 ./setup.sh
+```
+
+Other terminal: `node infrastructure/mock-server.js`. `curl http://localhost:3000/captured-data` should look empty. Then:
+
+```bash
 cd victim-app
 npm install ../malicious-packages/request-lib
 npm start
-```
-
-Check mock server for captured data:
-
-```bash
 curl http://localhost:3000/captured-data
 ```
 
-If you see captured data, the installation is successful!
+A capture means setup worked. Long form: [ZERO_TO_HERO_SCENARIO_01.md](../scenario-guides/zero-to-hero/ZERO_TO_HERO_SCENARIO_01.md).
 
-## Troubleshooting
+## When it fights you
 
-### Issue: "TESTBENCH_MODE not enabled"
+`TESTBENCH_MODE not enabled` -> `source .scas.env` from the repo root.
 
-**Solution**:
+EADDRINUSE -> `./scripts/setup/kill-port.sh 3000` or `--all`. Full wipe: `./scripts/setup/teardown.sh`. That script uses `scripts/setup/ports.env`, nukes capture JSON, and scenario `node_modules`.
 
-```bash
-export TESTBENCH_MODE=enabled
-```
+npm install fails -> `npm cache clean --force`, delete `node_modules` and the lockfile in that folder, try again.
 
-Or from project root:
+Permission denied on scripts -> `find scripts -name '*.sh' -type f -exec chmod +x {} +` and `chmod +x scenarios/*/setup.sh`.
 
-```bash
-source .testbench.env
-```
+Cannot find module -> run that lab's `./setup.sh`, then `npm install` in `victim-app` or `corporate-app`.
 
-### Issue: "Port already in use"
+Mock never gets data: is the mock process up? Is `TESTBENCH_MODE` set? Is localhost firewalled? Read victim stdout.
 
-**Solution**:
+Optional `.npmrc` at repo root for confusion labs (`@yourcompany:registry=http://localhost:4873/` plus public `registry.npmjs.org`). Change a mock `PORT` only if you also change the payload in that same scenario.
 
-Use the built-in script with the testbench allow-list:
-
-```bash
-./scripts/setup/kill-port.sh 3000
-./scripts/setup/kill-port.sh --all
-```
-
-For a full cleanup:
-
-```bash
-./scripts/setup/teardown.sh
-```
-
-### Issue: "npm install fails"
-
-**Solution**:
-
-```bash
-# Clear npm cache
-npm cache clean --force
-
-# Delete node_modules and package-lock.json
-rm -rf node_modules package-lock.json
-
-# Reinstall
-npm install
-```
-
-### Issue: "Permission denied" on scripts
-
-**Solution**:
-
-```bash
-# Make scripts executable
-find scripts -name '*.sh' -type f -exec chmod +x {} +
-chmod +x scenarios/*/setup.sh
-chmod +x detection-tools/*.sh
-```
-
-### Issue: "Need to reset the workspace between labs"
-
-Use teardown:
-
-```bash
-./scripts/setup/teardown.sh
-```
-
-This will:
-
-- Free known testbench ports from `scripts/setup/ports.env`
-- Remove captured files (`captured-data.json`, `captured-credentials.json`)
-- Remove scenario/sample-app `node_modules`
-
-### Issue: "Mock server not receiving data"
-
-**Solution**:
-
-1. Verify mock server is running: `curl http://localhost:3000/captured-data`
-2. Check TESTBENCH_MODE is enabled: `echo $TESTBENCH_MODE`
-3. Review application logs for network errors
-4. Check firewall settings aren't blocking localhost connections
-
-### Issue: "Cannot find module"
-
-**Solution**:
-
-```bash
-# Install dependencies in each scenario
-cd scenarios/01-typosquatting/victim-app
-npm install
-
-cd ../../02-dependency-confusion/corporate-app
-npm install
-
-# Repeat for each scenario
-```
-
-## Advanced Configuration
-
-### Custom Mock Server Port
-
-Each scenario's mock server lives at `scenarios/<name>/infrastructure/mock-server.js` after you run that scenario's `./setup.sh`. Edit the `PORT` constant in the file you are using, for example:
-
-```javascript
-const PORT = 3001; // Change from 3000
-```
-
-Update malicious package templates or exfiltration code in that scenario to use the same port.
-
-### Enable Debug Logging
-
-```bash
-export DEBUG=testbench:*
-export NODE_ENV=development
-```
-
-## Security Notes
-
-⚠️ **IMPORTANT**: This testbench contains intentionally vulnerable code.
-
-- **Never** deploy to production environments
-- **Never** expose services to public internet
-- **Always** use in isolated environments
-- **Always** set `TESTBENCH_MODE=enabled`
-
-## Next Steps
-
-After successful installation:
-
-1. Read the main [README.md](../README.md)
-2. Complete [Scenario 1: Typosquatting](../../scenarios/01-typosquatting/README.md)
-3. Review [Best Practices](../platform/BEST_PRACTICES.md)
-4. Learn about [Detection & observability](../platform/DETECTION_AND_OBSERVABILITY.md)
-
-## Getting Help
-
-- Check [FAQ / troubleshooting](../platform/FAQ.md)
-- Review scenario-specific README files
-- Open an issue on GitHub
-- Check FAQ in documentation
-
----
-
-**Happy Learning!** 🔐
+Education only. Isolated VM. Never publish the malware. Then [ZERO_TO_HERO.md](./ZERO_TO_HERO.md), then labs 02 and 03.

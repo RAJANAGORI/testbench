@@ -1,0 +1,7 @@
+{
+  "name": "widget-lib",
+  "version": "1.0.0",
+  "description": "Clean lab package with trusted-publisher fixture",
+  "main": "index.js",
+  "license": "MIT"
+}
