@@ -12,7 +12,8 @@ Every maintainer-facing script in [`scripts/`](../../scripts/), grouped by purpo
 
 | Script | Purpose |
 |--------|---------|
-| [`install.sh`](../../install.sh) | **Generic one-shot full stack** - prereqs, npm, ES/Kibana, Floci; writes `.scas.env` (workshops) |
+| [`START_HERE.sh`](../../START_HERE.sh) | **Front door** - `exec ./install.sh`. Bare run: labs / workshop / docker menu |
+| [`install.sh`](../../install.sh) | Same installer. `-y` is workshop stack (prereqs, npm, ES/Kibana, Floci; writes `.scas.env`) |
 | [`install-external.sh`](../../install-external.sh) | **Optional** external-disk wrapper - storage on USB HDD/SSD, then calls `install.sh` |
 | [`scripts/setup/setup-external-storage.sh`](../../scripts/setup/setup-external-storage.sh) | Low-level: Docker `data-root` + repo/npm cache onto an external disk (no stack install) |
 | [`scripts/setup/setup.sh`](../../scripts/setup/setup.sh) | Repo-wide setup; creates `.testbench.env` |

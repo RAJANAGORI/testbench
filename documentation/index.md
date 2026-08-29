@@ -12,7 +12,7 @@ Canonical Markdown lives in **`documentation/`**. The [`docs/`](../docs/) folder
 
 | You are... | Start here | Then |
 |----------|------------|------|
-| New to SCAS | [Full-stack setup](./getting-started/FULL_STACK_SETUP.md) | [Scenario 01 walkthrough](./scenario-guides/zero-to-hero/ZERO_TO_HERO_SCENARIO_01.md) |
+| New to SCAS | `./START_HERE.sh` then [first capture](./getting-started/ZERO_TO_HERO.md) | [Scenario 01 walkthrough](./scenario-guides/zero-to-hero/ZERO_TO_HERO_SCENARIO_01.md) |
 | Experienced developer | [Quick start](./getting-started/QUICK_START.md) · [Docker labs](./getting-started/DOCKER_LABS.md) (`./docker/install.sh`) | [Scenario catalog](./scenario-guides/CATALOG.md) |
 | Blue-team / detection | [Detection & observability](./platform/DETECTION_AND_OBSERVABILITY.md) | `scenarios/*/DETECT.md` (IOCs + mitigation) |
 | Instructor / workshop lead | [Teaching delivery pack](./learning-path/TEACHING_DELIVERY_PACK.md) | [Teaching modules](./modules/index.md) |

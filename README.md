@@ -12,8 +12,8 @@ Pick one path. The rest of the docs are linked so you do not have to read this w
 
 | You are... | Do this |
 |----------|---------|
-| New to the project | `./install.sh -y` (SCAS + ES + Floci) · [Full-stack setup](documentation/getting-started/FULL_STACK_SETUP.md) · or `./START_HERE.sh` |
-| Prefer Docker | `./docker/install.sh` · [Docker labs](documentation/getting-started/DOCKER_LABS.md) |
+| New to the project | `./START_HERE.sh` (menu: labs / workshop / docker). Then `source .scas.env`. First lab is 01. [Zero to hero](documentation/getting-started/ZERO_TO_HERO.md) · [Workshop stack](documentation/getting-started/FULL_STACK_SETUP.md) |
+| Prefer Docker | Option 3 in `./START_HERE.sh`, or `./docker/install.sh` · [Docker labs](documentation/getting-started/DOCKER_LABS.md) |
 | Pi / USB HDD host | Optional: [`install-external.sh`](install-external.sh) - [Pi storage](documentation/getting-started/RASPBERRY_PI_STORAGE.md) |
 | Prefer a browser UI | [Dashboard](documentation/platform/DASHBOARD.md) - `./scripts/ui/start-dashboard.sh` (localhost only) |
 | Teaching or building a curriculum | [Scenario learning path](documentation/learning-path/SCENARIO_LEARNING_PATH.md) |
@@ -73,24 +73,31 @@ Use your own fork URL if that is what you cloned.
 
 ### 2. Install
 
-Full stack (SCAS + Elasticsearch/Kibana + Floci - needs Docker):
+Canonical command: `./START_HERE.sh` (same as `./install.sh`). No flags opens a menu:
+
+```text
+  1) Labs only      Node/Python. No Docker. Fast path.
+  2) Workshop stack npm workspaces, Elasticsearch/Kibana, Floci.
+  3) Docker labs    exec ./docker/install.sh
+```
 
 ```bash
-chmod +x install.sh
-./install.sh -y
+chmod +x START_HERE.sh
+./START_HERE.sh
+source .scas.env
+```
+
+Non-interactive workshop (`-y` still means ES + Floci, needs Docker):
+
+```bash
+./START_HERE.sh -y
 source .scas.env
 ```
 
 Labs only, no Docker services:
 
 ```bash
-./install.sh -y --core-only
-```
-
-Docker-first path:
-
-```bash
-./docker/install.sh
+./START_HERE.sh -y --core-only
 ```
 
 ### 3. Run Scenario 1 (CLI)

@@ -5,6 +5,9 @@ Run SCAS with Docker: platform services (ES, Kibana, Floci) and any of the 23 sc
 ## Install hub
 
 ```bash
+./START_HERE.sh
+# pick 3) Docker labs
+# or:
 ./docker/install.sh
 ```
 
@@ -90,6 +93,6 @@ Metadata: [`scripts/docker/scenario-compose-meta.json`](../../scripts/docker/sce
 
 ## Host (non-Docker) path
 
-Still works: [Quick start](./QUICK_START.md) · [Full-stack setup](./FULL_STACK_SETUP.md) · root `./install.sh`
+Still works: [Quick start](./QUICK_START.md) · [Full-stack setup](./FULL_STACK_SETUP.md) · root `./START_HERE.sh`
 
 **Next:** [Scenario catalog](../scenario-guides/CATALOG.md) · [↑ Getting started](./index.md)

@@ -16,11 +16,12 @@ From zero to a running lab, with the safety controls in mind.
    ```bash
    git clone https://github.com/RAJANAGORI/supply-chain-attack-simulator.git
    cd supply-chain-attack-simulator
-   chmod +x scripts/setup/setup.sh
-   ./scripts/setup/setup.sh
+   chmod +x START_HERE.sh
+   ./START_HERE.sh
+   source .scas.env
    ```
 
-   Docker path: [DOCKER_LABS.md](./DOCKER_LABS.md).
+   No flags: a three-way menu (labs only, workshop stack, Docker labs). Same binary as `./install.sh`. Docker path: [DOCKER_LABS.md](./DOCKER_LABS.md).
 
 3) Safety first
    - Malicious paths need `TESTBENCH_MODE=enabled`.

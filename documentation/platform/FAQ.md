@@ -23,7 +23,7 @@ Only in an **isolated lab environment** (VM or dedicated machine). Malicious sam
 ### Where do I start as a complete beginner?
 
 1. Read [ZERO_TO_HERO.md](../getting-started/ZERO_TO_HERO.md)
-2. Run `./START_HERE.sh` or follow [SETUP.md](../getting-started/SETUP.md)
+2. Run `./START_HERE.sh` (menu: labs / workshop / docker; same as `./install.sh`) or follow [SETUP.md](../getting-started/SETUP.md)
 3. Complete [Scenario 01](../../scenarios/01-typosquatting/) with [ZERO_TO_HERO_SCENARIO_01.md](../scenario-guides/zero-to-hero/ZERO_TO_HERO_SCENARIO_01.md)
 
 ### What's the difference between ZERO_TO_HERO.md and SUPPLY_CHAIN_ATTACKS_ZERO_TO_HERO.md?

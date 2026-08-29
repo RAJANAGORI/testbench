@@ -19,11 +19,12 @@ Install from [nodejs.org](https://nodejs.org) if needed.
 git clone https://github.com/RAJANAGORI/supply-chain-attack-simulator.git
 cd supply-chain-attack-simulator
 
-chmod +x scripts/setup/setup.sh
-./scripts/setup/setup.sh
+chmod +x START_HERE.sh
+./START_HERE.sh
+source .scas.env
 ```
 
-Prefer Docker instead? See [DOCKER_LABS.md](./DOCKER_LABS.md).
+No flags: labs / workshop / docker. Labs only without the menu: `./START_HERE.sh -y --core-only`. Prefer Docker instead? See [DOCKER_LABS.md](./DOCKER_LABS.md).
 
 ### 3. Enable testbench mode
 

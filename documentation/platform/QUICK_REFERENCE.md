@@ -30,7 +30,8 @@ Authoritative content lives under **`documentation/`**. The **`docs/`** director
 ## Common commands
 
 ```bash
-source .testbench.env   # created by scripts/setup/setup.sh
+./START_HERE.sh         # menu: labs / workshop / docker (same as ./install.sh)
+source .scas.env        # written by the installer
 export TESTBENCH_MODE=enabled
 cd scenarios/01-typosquatting && ./setup.sh
 ./scripts/setup/kill-port.sh 3000

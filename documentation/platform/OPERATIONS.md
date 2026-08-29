@@ -25,12 +25,12 @@ Day-two operations for running, cleaning up, and validating the test bench.
 ```bash
 git clone https://github.com/RAJANAGORI/supply-chain-attack-simulator.git
 cd supply-chain-attack-simulator
-chmod +x START_HERE.sh && find scripts -name '*.sh' -type f -exec chmod +x {} +
-./scripts/setup/setup.sh
-source .testbench.env
+chmod +x START_HERE.sh
+./START_HERE.sh
+source .scas.env
 ```
 
-Or use the interactive helper: `./START_HERE.sh`
+`START_HERE.sh` is a wrapper around `./install.sh`. Bare run asks labs / workshop / docker. Inner helper (no npm): `./scripts/setup/setup.sh -y`.
 
 ## Environment variables
 

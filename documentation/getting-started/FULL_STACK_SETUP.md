@@ -8,18 +8,18 @@ Install SCAS on an isolated lab machine (macOS, Linux, or WSL2): the core labs, 
 
 ### One-shot installer
 
-After cloning, with Docker running, from the **repo root**:
+After cloning, with Docker running, from the repo root:
 
 ```bash
-chmod +x install.sh
-./install.sh -y
+chmod +x START_HERE.sh
+./START_HERE.sh -y
 ```
 
-Prefer compose labs (and optional platform) without host Node for scenarios? Use [`./docker/install.sh`](../../docker/install.sh) - see [DOCKER_LABS.md](./DOCKER_LABS.md).
+Bare `./START_HERE.sh` (no flags) asks labs / workshop / docker. `-y` is the workshop stack so old scripts do not change meaning. Compose labs: [`./docker/install.sh`](../../docker/install.sh) or pick 3 in the menu; notes in [DOCKER_LABS.md](./DOCKER_LABS.md).
 
-The workshop installer covers prerequisites, `TESTBENCH_MODE`, npm workspaces + `detection-tools`, Elasticsearch/Kibana, Floci, lookalike harvest secrets (generated locally - see `scenarios/_shared/LOOKALIKE_SECRETS.md`), and **`.scas.env`**.
+The workshop installer covers prerequisites, `TESTBENCH_MODE`, npm workspaces + `detection-tools`, Elasticsearch/Kibana, Floci, lookalike harvest secrets (generated locally - see `scenarios/_shared/LOOKALIKE_SECRETS.md`), and `.scas.env`.
 
-**USB HDD / Raspberry Pi only:** use [`install-external.sh`](../../install-external.sh) so Docker data lands on that disk first - see [Raspberry Pi storage](./RASPBERRY_PI_STORAGE.md). Everyone else can use `./install.sh`.
+USB HDD / Raspberry Pi only: use [`install-external.sh`](../../install-external.sh) so Docker data lands on that disk first. See [Raspberry Pi storage](./RASPBERRY_PI_STORAGE.md). Everyone else stays on `./START_HERE.sh`.
 
 ```bash
 source .scas.env                 # every session
@@ -111,18 +111,12 @@ cd supply-chain-attack-simulator
 ### Step 2: Run the main setup script
 
 ```bash
-chmod +x scripts/setup/setup.sh START_HERE.sh
-./scripts/setup/setup.sh
+chmod +x START_HERE.sh
+./START_HERE.sh
+source .scas.env
 ```
 
-When prompted, type `y` to continue. This script:
-
-- Checks Node, npm, and Python
-- Creates `.testbench.env` with `TESTBENCH_MODE=enabled`
-- Makes scenario `setup.sh` scripts executable
-- Creates needed directories
-
-**Guided alternative:** `./START_HERE.sh`
+`START_HERE.sh` execs `./install.sh`. Pick 1 for labs only, 2 for this workshop stack, 3 for Docker labs. `./install.sh` itself also runs `scripts/setup/setup.sh` (chmod, `.testbench.env`, dirs) before npm.
 
 ### Step 3: Load the testbench environment (every new terminal)
 

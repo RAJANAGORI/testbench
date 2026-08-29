@@ -83,17 +83,22 @@ cd testbench
 
 ### Step 3: Run Setup Script
 
+Preferred (menu: labs / workshop / docker):
+
+```bash
+chmod +x START_HERE.sh
+./START_HERE.sh
+source .scas.env
+```
+
+Labs only without the menu: `./START_HERE.sh -y --core-only`. Inner helper (no npm workspaces):
+
 ```bash
 chmod +x scripts/setup/setup.sh
 ./scripts/setup/setup.sh
 ```
 
-The setup script will:
-
-- Check system requirements
-- Install dependencies
-- Create `.testbench.env` with `TESTBENCH_MODE=enabled`
-- Create necessary directories
+`./START_HERE.sh` (and `setup.sh` underneath it) checks Node/npm/Python, writes `.testbench.env` with `TESTBENCH_MODE=enabled`, and creates the lab dirs. The menu path also runs the npm workspace install.
 
 ## Environment Configuration
 
