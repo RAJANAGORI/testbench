@@ -58,6 +58,38 @@ scas_floci_native_image_supported() {
   esac
 }
 
+# Docker socket for Lambda / ECR / the optional Floci UI sidecar.
+# :z is a no-op on Docker Desktop. On SELinux/Podman it relabels the shared API socket.
+# FLOCI_DOCKER_GID is the socket's group inside the Linux VM (not the Mac staff GID).
+scas_floci_export_docker_sock() {
+  export FLOCI_DOCKER_SOCK="${FLOCI_DOCKER_SOCK:-/var/run/docker.sock}"
+  if [ -n "${FLOCI_DOCKER_GID:-}" ]; then
+    return 0
+  fi
+  local gid=""
+  if [ "$(uname -s)" = "Linux" ] && [ -e "${FLOCI_DOCKER_SOCK}" ]; then
+    gid="$(stat -c '%g' "${FLOCI_DOCKER_SOCK}" 2>/dev/null || true)"
+  fi
+  if [ -z "$gid" ] && command -v docker >/dev/null 2>&1; then
+    gid="$(docker run --rm --network none --pull never \
+      -v "${FLOCI_DOCKER_SOCK}:/var/run/docker.sock" \
+      alpine:3.20 stat -c '%g' /var/run/docker.sock 2>/dev/null || true)"
+  fi
+  export FLOCI_DOCKER_GID="${gid:-0}"
+}
+
+# Compose files for scas-floci (image vs JVM, optional SELinux disable).
+scas_floci_compose() {
+  local floci_dir="${1:?}"
+  local compose_file="${2:?}"
+  shift 2
+  local -a args=(-f "${compose_file}" --env-file "${floci_dir}/.env")
+  if [ "${FLOCI_SELINUX_DISABLE:-0}" = "1" ]; then
+    args+=(-f "${floci_dir}/docker-compose.selinux.yml")
+  fi
+  docker compose "${args[@]}" "$@"
+}
+
 scas_floci_prepare_data_dir() {
   local dir="${1:?}"
   mkdir -p "$dir"

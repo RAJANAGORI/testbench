@@ -54,6 +54,8 @@ Elasticsearch notes: [DETECTION_AND_OBSERVABILITY.md](./DETECTION_AND_OBSERVABIL
 
 Floci dummy org: `detection-tools/floci/cloud-context.sh 01` after `./infrastructure/floci/seed.sh`. Guide: [FLOCI_INTEGRATION.md](../guides/FLOCI_INTEGRATION.md).
 
+`/_floci/ui` complaining about the container runtime is the optional console sidecar, not S3. `curl http://127.0.0.1:4566/_floci/health` is the check I care about. Recreate with `./scripts/floci/floci-down.sh && ./scripts/floci/floci-up.sh` after a compose change.
+
 `scas-detections` 404 until the first document. Workshop `.scas.env` sets `SCAS_ES_URL`. Or ship after the fact: `node detection-tools/es/ship-captures.js`.
 
 Kibana empty: `./scripts/observability/setup-kibana-data-views.sh`.

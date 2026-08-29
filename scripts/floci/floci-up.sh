@@ -18,6 +18,8 @@ fi
 
 # Fix ./data mount for container uid 1001 (avoids "not writable by floci")
 scas_floci_prepare_data_dir "${FLOCI_DIR}/data"
+scas_floci_export_docker_sock
+echo "   docker.sock GID ${FLOCI_DOCKER_GID} (${FLOCI_DOCKER_SOCK})"
 
 COMPOSE_FILE="${FLOCI_DIR}/docker-compose.yml"
 if [ "${FLOCI_USE_IMAGE:-0}" = "1" ]; then
@@ -88,7 +90,7 @@ wait_floci_health() {
 }
 
 echo "🚀 Starting SCAS Floci emulator..."
-docker compose -f "${COMPOSE_FILE}" --env-file "${FLOCI_DIR}/.env" up -d
+scas_floci_compose "${FLOCI_DIR}" "${COMPOSE_FILE}" up -d
 
 # Give the JVM/process a moment before the first probe
 sleep 5
@@ -103,7 +105,7 @@ if ! wait_floci_health "${FLOCI_HEALTH_TRIES}"; then
   # One automatic recover attempt: recreate container
   echo ""
   echo "🔁 Retrying once (compose up -d --force-recreate)…"
-  docker compose -f "${COMPOSE_FILE}" --env-file "${FLOCI_DIR}/.env" up -d --force-recreate
+  scas_floci_compose "${FLOCI_DIR}" "${COMPOSE_FILE}" up -d --force-recreate
   sleep 8
   if wait_floci_health 40; then
     echo "✅ Floci healthy after recreate"
@@ -111,10 +113,12 @@ if ! wait_floci_health "${FLOCI_HEALTH_TRIES}"; then
     floci_diag
     echo ""
     echo "Hints:"
-    echo "  • Free RAM (Elasticsearch + Kibana + Floci often need 12–16 GB total)"
+    echo "  • Free RAM (Elasticsearch + Kibana + Floci often need 12-16 GB total)"
     echo "  • Check port:  ./scripts/setup/kill-port.sh 4566   then re-run this script"
     echo "  • Logs:        docker logs -f scas-floci"
     echo "  • Status:      ./scripts/floci/floci-status.sh"
+    echo "  • UI sidecar:  /_floci/ui needs docker.sock. Labs do not. Health is /_floci/health"
+    echo "  • SELinux:     FLOCI_SELINUX_DISABLE=1 ./scripts/floci/floci-up.sh"
     exit 1
   fi
 fi

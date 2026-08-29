@@ -23,6 +23,8 @@ source .floci.env              # SCAS_FLOCI_ENABLED=1 + AWS endpoint vars
 
 Dump one lab: `detection-tools/floci/cloud-context.sh 01`
 
+Labs use `/_floci/health` and the AWS API. `/_floci/ui` is a second container. If that page says BindException / Permission denied, the emulator can still be fine. Recreate after a compose change: `./scripts/floci/floci-down.sh && ./scripts/floci/floci-up.sh`. Podman + SELinux last resort: `FLOCI_SELINUX_DISABLE=1` in `infrastructure/floci/.env`.
+
 ## Layout
 
 | Path | Purpose |

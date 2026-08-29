@@ -10,8 +10,10 @@ services:
     tty: true
     ports:
       - "${FLOCI_PORT:-4566}:4566"
+    group_add:
+      - "${FLOCI_DOCKER_GID:-0}"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - ${FLOCI_DOCKER_SOCK:-/var/run/docker.sock}:/var/run/docker.sock:z
       - ./data:/app/data
       - ./init/ready.d:/etc/floci/init/ready.d:ro
     environment:
@@ -19,6 +21,7 @@ services:
       FLOCI_STORAGE_MODE: ${FLOCI_STORAGE_MODE:-memory}
       FLOCI_STORAGE_PERSISTENT_PATH: /app/data
       FLOCI_SERVICES_DOCKER_NETWORK: scas_floci_default
+      FLOCI_DOCKER_DOCKER_HOST: unix:///var/run/docker.sock
       AWS_DEFAULT_REGION: ${FLOCI_DEFAULT_REGION:-us-east-1}
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-test}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-test}

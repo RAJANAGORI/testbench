@@ -140,6 +140,7 @@ See [FLOCI_INTEGRATION.md](../guides/FLOCI_INTEGRATION.md).
 | Kibana empty Discover | Data views not created | `./scripts/observability/setup-kibana-data-views.sh` |
 | Floci not healthy | Setup incomplete or Docker not ready | `./scripts/floci/floci-setup.sh --image` then `./scripts/floci/floci-up.sh`; `docker logs scas-floci` |
 | Port 4566 in use | Another local AWS emulator | `docker stop scas-floci` or free the port |
+| Floci UI BindException | docker.sock not usable by uid 1001 | Labs still work. Recreate via `floci-down` / `floci-up`. SELinux: `FLOCI_SELINUX_DISABLE=1` |
 
 More: [FAQ.md](./FAQ.md) · [Full-stack setup](../getting-started/FULL_STACK_SETUP.md)
 

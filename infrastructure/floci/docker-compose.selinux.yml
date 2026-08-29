@@ -1,0 +1,7 @@
+# Optional overlay. Used when FLOCI_SELINUX_DISABLE=1 (see floci-up.sh).
+# Last resort if :z on the Docker/Podman socket is not enough for the Floci UI sidecar.
+
+services:
+  floci:
+    security_opt:
+      - label=disable

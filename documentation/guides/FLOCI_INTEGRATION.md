@@ -120,7 +120,15 @@ Template lab: `scenarios/01-typosquatting/FLOCI.md`. Per-lab decoy names live in
 
 ## Port conflicts
 
-SCAS runs `scas-floci` on 4566 only - not floci-ui (`:3000`/`:4500`). Mock servers use 3000-3029.
+SCAS runs `scas-floci` on 4566 only. Mock servers use 3000-3029. Do not bind floci-ui to those mock ports.
+
+`/_floci/ui` starts a sidecar via docker.sock. Seed, verify, and `cloud-context.sh` do not. If the UI page says `BindException: Permission denied`, curl health first:
+
+```bash
+curl -sS http://127.0.0.1:4566/_floci/health
+```
+
+Compose mounts the socket with `:z` and adds the socket GID so uid 1001 can talk to Docker. Recreate the container after pulling this change (`floci-down` then `floci-up`). Still stuck on Podman/SELinux: `FLOCI_SELINUX_DISABLE=1` in `infrastructure/floci/.env`.
 
 ## Scripts reference
 
